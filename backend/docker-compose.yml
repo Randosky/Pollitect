@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:17
+    restart: always
+    environment:
+      POSTGRES_USER: surveydbuser
+      POSTGRES_PASSWORD: surveydbpass
+      POSTGRES_DB: survey_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  server:
+    build: .
+    depends_on:
+      - db
+    environment:
+      - DB_USER=surveydbuser
+      - DB_PASSWORD=surveydbpass
+      - DB_NAME=survey_db
+      - DB_HOST=db
+      - PORT=8080
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app  # Монтируем локальную директорию для горячей перезагрузки кода
+
+volumes:
+  postgres_data:
