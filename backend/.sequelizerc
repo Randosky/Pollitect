@@ -1,5 +1,5 @@
 module.exports = {
-  'config': 'config/config.json',
+  'config': 'config/config.cjs',
   'models-path': 'src/models',
   'seeders-path': 'src/seeders',
   'migrations-path': 'migrations'

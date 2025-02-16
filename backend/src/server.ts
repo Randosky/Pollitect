@@ -1,7 +1,6 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { Sequelize } from 'sequelize';
 import routes from './routes/routes';
 
 dotenv.config();
@@ -17,7 +16,7 @@ app.use(express.json());
 app.use('/api', routes);
 
 // Корневая маршрутизация для проверки работы сервера
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (_req: Request, res: Response) => {
   res.send('Сервер работает!');
 });
 

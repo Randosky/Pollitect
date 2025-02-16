@@ -1,14 +1,25 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "CommonJS",
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true
+    "target": "ES2022", // Используем более новый стандарт ES2022 (оптимизирован для современных движков)
+    "module": "NodeNext", // Поддержка ES-модулей в Node.js
+    "moduleResolution": "NodeNext", // Корректная работа с модулями
+    "strict": true, // Включает строгую проверку типов
+    "esModuleInterop": true, // Совместимость с CommonJS модулями (например, require)
+    "skipLibCheck": true, // Пропускаем проверку типов в зависимостях
+    "noEmit": true, // Не компилируем файлы
+    "resolveJsonModule": true, // Позволяет импортировать JSON-файлы
+    "allowImportingTsExtensions": true, // Позволяет импортировать файлы .ts с расширением
+    "forceConsistentCasingInFileNames": true, // Предотвращает ошибки из-за регистра символов в путях
+    "noImplicitAny": true, // Запрещает использование неявного типа any
+    "noUnusedLocals": true, // Показывает ошибки, если есть неиспользуемые переменные
+    "noUnusedParameters": true, // Показывает ошибки для неиспользуемых параметров функций
+    "noFallthroughCasesInSwitch": true // Защита от пропущенных break в switch
   },
   "include": [
-    "src",
-  ]
+    "src"
+  ], // Компилируем только код из `src`
+  "exclude": [
+    "node_modules",
+    "dist"
+  ] // Исключаем `node_modules` и `dist`
 }
