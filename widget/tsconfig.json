@@ -1,0 +1,54 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "outDir": "dist",
+    "target": "es5",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "strict": true,
+    "allowUmdGlobalAccess": true, // заставить TypeScript работать с ProvidePlugin
+    "noImplicitAny": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": false,
+    "noEmit": false,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "downlevelIteration": true,
+    "incremental": true,
+    "paths": {
+      "@components/*": [
+        "./src/widget/components/*"
+      ],
+      "@services/*": [
+        "./src/widget/services/*"
+      ],
+      "@utils/*": [
+        "./src/widget/utils/*"
+      ],
+      "@widget/*": [
+        "./src/widget/*"
+      ],
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "lib": [
+      "dom",
+      "es5",
+      "ES2015",
+      "es2015.promise"
+    ],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./js/types/*"
+    ],
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "build"
+  ]
+}
