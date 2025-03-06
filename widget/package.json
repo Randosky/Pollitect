@@ -11,6 +11,7 @@
   "scripts": {
     "dev": "vite --host localhost --port 8080",
     "build": "vite build",
+    "build-watch": "vite build --watch",
     "lint": "eslint .",
     "prettier": "npx prettier frontend/src --write --cache"
   },
@@ -18,10 +19,12 @@
     "http-server": "^14.1.1"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.26.9",
+    "@babel/preset-typescript": "^7.26.0",
     "@eslint/js": "^9.21.0",
+    "@rollup/plugin-babel": "^6.0.4",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@typescript-eslint/parser": "^8.25.0",
-    "@vitejs/plugin-legacy": "^6.0.2",
     "core-js": "^3.41.0",
     "eslint": "^9.21.0",
     "eslint-plugin-import": "^2.31.0",

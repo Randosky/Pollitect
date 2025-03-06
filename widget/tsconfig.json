@@ -2,6 +2,7 @@
   "compilerOptions": {
     "allowJs": true,
     "outDir": "dist",
+    "rootDir": "src",
     "target": "es5",
     "module": "ESNext",
     "moduleResolution": "node",
@@ -17,38 +18,15 @@
     "downlevelIteration": true,
     "incremental": true,
     "paths": {
-      "@components/*": [
-        "./src/widget/components/*"
-      ],
-      "@services/*": [
-        "./src/widget/services/*"
-      ],
-      "@utils/*": [
-        "./src/widget/utils/*"
-      ],
-      "@widget/*": [
-        "./src/widget/*"
-      ],
-      "@/*": [
-        "./src/*"
-      ]
+      "@components/*": ["./src/widget/components/*"],
+      "@services/*": ["./src/widget/services/*"],
+      "@utils/*": ["./src/widget/utils/*"],
+      "@widget/*": ["./src/widget/*"],
+      "@/*": ["./src/*"]
     },
-    "lib": [
-      "dom",
-      "es5",
-      "ES2015",
-      "es2015.promise"
-    ],
-    "typeRoots": [
-      "./node_modules/@types",
-      "./js/types/*"
-    ],
+    "lib": ["dom", "es5", "ES2015", "es2015.promise"],
+    "typeRoots": ["./node_modules/@types", "./js/types/*"]
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules",
-    "build"
-  ]
+  "include": ["src"],
+  "exclude": ["node_modules", "build"]
 }

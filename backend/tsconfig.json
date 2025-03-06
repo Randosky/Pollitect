@@ -15,11 +15,6 @@
     "noUnusedParameters": true, // Показывает ошибки для неиспользуемых параметров функций
     "noFallthroughCasesInSwitch": true // Защита от пропущенных break в switch
   },
-  "include": [
-    "src"
-  ], // Компилируем только код из `src`
-  "exclude": [
-    "node_modules",
-    "dist"
-  ] // Исключаем `node_modules` и `dist`
+  "include": ["src"], // Компилируем только код из `src`
+  "exclude": ["node_modules", "dist"] // Исключаем `node_modules` и `dist`
 }
