@@ -16,16 +16,20 @@ export default defineConfig({
   build: {
     target: ["es2015"], // Совместимость с браузерами, поддерживающими хотя бы ES2015
     rollupOptions: {
-      input: {
-        survey: path.resolve(__dirname, "src/widget/Survey.ts"),
-        surveyExternal: path.resolve(__dirname, "src/widget/Survey.external.ts"),
-      },
+      input: "src/index.ts",
       output: {
-        // Для каждого entry файла будет создан свой js файл
-        entryFileNames: "[name].bundle.js", // Название файла будет таким же, как и у входного файла
-        chunkFileNames: "[name].js", // Уникальные имена для чанков
-        inlineDynamicImports: false, // Отключаем динамические импорты
+        entryFileNames: "pollitect.js",
       },
+      // input: {
+      //   survey: path.resolve(__dirname, "src/widget/Survey.ts"),
+      //   surveyExternal: path.resolve(__dirname, "src/widget/Survey.external.ts"),
+      // },
+      // output: {
+      //   // Для каждого entry файла будет создан свой js файл
+      //   entryFileNames: "[name].js", // Название файла будет таким же, как и у входного файла
+      //   chunkFileNames: "[name]-[hash].js", // Уникальные имена для чанков
+      //   inlineDynamicImports: false, // Отключаем динамические импорты
+      // },
     },
   },
   plugins: [

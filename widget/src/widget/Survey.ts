@@ -1,12 +1,11 @@
-import "core-js/stable";
-import "regenerator-runtime/runtime";
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 class Survey {
   private data: any;
 
   constructor(data: any) {
     this.data = data;
+
+    this.init();
   }
 
   /**
@@ -23,7 +22,7 @@ class Survey {
 
   async dada() {
     // eslint-disable-next-line no-magic-numbers
-    await new Promise(resolve => setTimeout(() => resolve(console.log("таймер сработал")), 1000));
+    await new Promise(resolve => setTimeout(() => resolve(console.log("таймер сработал")), 3000));
   }
 }
 

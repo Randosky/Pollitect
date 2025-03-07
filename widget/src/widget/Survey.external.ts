@@ -1,12 +1,11 @@
-import "core-js/stable";
-import "regenerator-runtime/runtime";
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 class SurveyExternal {
   private data: any;
 
   constructor(data: any) {
     this.data = data;
+
+    this.init();
   }
 
   /**

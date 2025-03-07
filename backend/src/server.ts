@@ -7,7 +7,7 @@ import routes from "./routes/routes";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 
 // Мидлвары
 app.use(cors());
