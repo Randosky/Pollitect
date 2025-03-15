@@ -2,11 +2,7 @@
   "compilerOptions": {
     "target": "ES2022",
     "useDefineForClassFields": true,
-    "lib": [
-      "ES2022",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
     /* Bundler mode */
@@ -17,27 +13,16 @@
     "noEmit": false,
     "jsx": "react-jsx",
     "paths": {
-      "@styles/*": [
-        "./src/assets/styles/*"
-      ],
-      "@components/*": [
-        "./src/components/*"
-      ],
-      "@pages/*": [
-        "./src/pages/*"
-      ],
-      "@store/*": [
-        "./src/store/*"
-      ],
-      "@utils/*": [
-        "./src/utils/*"
-      ],
-      "@ui/*": [
-        "./src/ui/*"
-      ],
-      "@/*": [
-        "./src/*"
-      ]
+      "@styles/*": ["./src/assets/styles/*"],
+      "@components/*": ["./src/components/*"],
+      "@layout/*": ["./src/layout/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@store/*": ["./src/store/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@api/*": ["./src/api/*"],
+      "@ui/*": ["./src/ui/*"],
+      "@/*": ["./src/*"]
     },
     /* Linting */
     "strict": true,
@@ -45,11 +30,6 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules",
-    "build"
-  ]
+  "include": ["src"],
+  "exclude": ["node_modules", "build"]
 }

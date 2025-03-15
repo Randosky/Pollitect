@@ -1,0 +1,106 @@
+import { ReactElement } from "react";
+
+import useAuth from "@hooks/useAuth";
+import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
+
+/**
+ * Компонент PrivateRoute, который защищает доступ
+ * к определенным страницам, если пользователь не авторизован.
+ *
+ * @returns {ReactElement} - компонент Navigate или Outlet
+ */
+
+const PrivateRoute = (): ReactElement => {
+  const isAuthenticated = useAuth();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/" />;
+  }
+
+  return <Outlet />;
+};
+
+/**
+ * Компонент AdminRoute, который защищает доступ
+ * к определенным страницам, если пользователь не
+ * имеет права администратора.
+ *
+ * @returns {ReactElement} - компонент Navigate или Outlet
+ */
+const AdminRoute = (): ReactElement => {
+  const isAdmin = true;
+  const isAuthenticated = useAuth();
+
+  if (!isAuthenticated || !isAdmin) {
+    return <Navigate to="/" />;
+  }
+
+  return <Outlet />;
+};
+
+// Компоненты страниц
+const Home = () => <h2>Home</h2>;
+const About = () => <h2>About</h2>;
+const User = () => <h2>Users</h2>;
+const AdminDashboard = () => <h2>Admin Dashboard</h2>;
+const Login = () => <h2>Login Page</h2>;
+const Register = () => <h2>Register Page</h2>;
+const NotFound = () => <h2>Not found</h2>;
+
+/**
+ * Компонент AppRouter, который содержит все маршруты приложения.
+ * Маршруты делятся на открытые (доступные всем) и приватные (доступные только
+ * авторизованным пользователям).
+ *
+ * @returns {ReactElement} - компонент BrowserRouter со всеми маршрутами
+ */
+const AppRouter = (): ReactElement => {
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* Открытые страницы */}
+        <Route
+          path="/"
+          element={<Home />}
+        />
+        <Route
+          path="/about"
+          element={<About />}
+        />
+        <Route
+          path="/login"
+          element={<Login />}
+        />
+
+        <Route
+          path="/register"
+          element={<Register />}
+        />
+
+        {/* Страница 404 */}
+        <Route
+          path="*"
+          element={<NotFound />}
+        />
+
+        {/* Приватные маршруты с проверкой аутентификации */}
+        <Route element={<PrivateRoute />}>
+          <Route
+            path="/user"
+            element={<User />}
+          />
+        </Route>
+
+        {/* Приватные маршруты для администратора */}
+        <Route element={<AdminRoute />}>
+          <Route
+            path="/admin"
+            element={<AdminDashboard />}
+          />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
+};
+
+export default AppRouter;

@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 import routes from "./routes/routes";
+import helmet from "helmet";
 
 dotenv.config();
 
@@ -11,6 +12,7 @@ const PORT = process.env.PORT || 3000;
 
 // Мидлвары
 app.use(cors());
+app.use(helmet());
 app.use(express.json());
 
 // 📂 Раздача статических файлов (ПЕРЕД API-роутами)
