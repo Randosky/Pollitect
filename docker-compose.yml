@@ -1,0 +1,52 @@
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: surveydbuser
+      POSTGRES_PASSWORD: surveydbpass
+      POSTGRES_DB: survey_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "surveydbuser", "-d", "survey_db", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  server:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - DB_USER=surveydbuser
+      - DB_PASSWORD=surveydbpass
+      - DB_NAME=survey_db
+      - DB_HOST=db
+      - PORT=3000
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app  # Монтируем локальную директорию для горячей перезагрузки кода
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "7124:7124"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - server
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
