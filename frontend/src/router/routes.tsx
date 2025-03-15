@@ -1,6 +1,9 @@
 import { ReactElement } from "react";
 
 import useAuth from "@hooks/useAuth";
+import HomePage from "@pages/Home";
+import Login from "@pages/Login";
+import Registration from "@pages/Registration";
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
 
 /**
@@ -39,12 +42,9 @@ const AdminRoute = (): ReactElement => {
 };
 
 // Компоненты страниц
-const Home = () => <h2>Home</h2>;
 const About = () => <h2>About</h2>;
 const User = () => <h2>Users</h2>;
 const AdminDashboard = () => <h2>Admin Dashboard</h2>;
-const Login = () => <h2>Login Page</h2>;
-const Register = () => <h2>Register Page</h2>;
 const NotFound = () => <h2>Not found</h2>;
 
 /**
@@ -61,7 +61,7 @@ const AppRouter = (): ReactElement => {
         {/* Открытые страницы */}
         <Route
           path="/"
-          element={<Home />}
+          element={<HomePage />}
         />
         <Route
           path="/about"
@@ -73,8 +73,8 @@ const AppRouter = (): ReactElement => {
         />
 
         <Route
-          path="/register"
-          element={<Register />}
+          path="/registration"
+          element={<Registration />}
         />
 
         {/* Страница 404 */}
@@ -86,7 +86,7 @@ const AppRouter = (): ReactElement => {
         {/* Приватные маршруты с проверкой аутентификации */}
         <Route element={<PrivateRoute />}>
           <Route
-            path="/user"
+            path="/dashboard"
             element={<User />}
           />
         </Route>

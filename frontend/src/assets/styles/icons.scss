@@ -1,0 +1,38 @@
+$eyeOpened: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj4KPHBhdGggZD0iTTEyIDE5QzE0Ljg4NjEgMTkgMTcuNTc1OSAxNy4yNDA1IDE5LjQ0ODEgMTQuMTk1MkMyMC4xODQgMTMuMDAyNCAyMC4xODQgMTAuOTk3NiAxOS40NDgxIDkuODA0ODNDMTcuNTc1OSA2Ljc1OTUyIDE0Ljg4NjEgNSAxMiA1QzkuMTEzOTUgNSA2LjQyNDEyIDYuNzU5NTIgNC41NTE4NyA5LjgwNDgzQzMuODE2MDQgMTAuOTk3NiAzLjgxNjA0IDEzLjAwMjQgNC41NTE4NyAxNC4xOTUyQzYuNDI0MTIgMTcuMjQwNSA5LjExMzk1IDE5IDEyIDE5WiIgc3Ryb2tlPSIjRkZDODAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGQ9Ik0xNC45MjcgMTIuMDA0MkMxNC45MjcgMTMuNjc5MiAxMy42MTg5IDE1LjAzMjYgMTIuMDAwMSAxNS4wMzI2QzEwLjM4MTMgMTUuMDMyNiA5LjA3MzE0IDEzLjY3OTIgOS4wNzMxNCAxMi4wMDQyQzkuMDczMTQgMTAuMzI5MyAxMC4zODEzIDguOTc1ODQgMTIuMDAwMSA4Ljk3NTg0QzEzLjYxODkgOC45NzU4NCAxNC45MjcgMTAuMzI5MyAxNC45MjcgMTIuMDA0MloiIHN0cm9rZT0iI0ZGQzgwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4=";
+$eyeClosed: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj4KPHBhdGggZD0iTTkuMTM2MDMgMTguMDI0QzEwLjA0OCAxOC40MDggMTEuMDE2IDE4LjYxNiAxMiAxOC42MTZDMTQuODI0IDE4LjYxNiAxNy40NTYgMTYuOTUyIDE5LjI4OCAxNC4wNzJDMjAuMDA4IDEyLjk0NCAyMC4wMDggMTEuMDQ4IDE5LjI4OCA5LjkxOTk4QzE5LjAyNCA5LjUwMzk5IDE4LjczNiA5LjExMTk5IDE4LjQ0IDguNzQzOTlNMTQuMDI0IDkuOTc1OThMOS45NzYwMyAxNC4wMjRNMTQuMDI0IDkuOTc1OThDMTMuNTA0IDkuNDU1OTggMTIuNzkyIDkuMTM1OTggMTIgOS4xMzU5OEMxMC40MTYgOS4xMzU5OCA5LjEzNjAzIDEwLjQxNiA5LjEzNjAzIDEyQzkuMTM2MDMgMTIuNzkyIDkuNDU2MDMgMTMuNTA0IDkuOTc2MDMgMTQuMDI0TTE0LjAyNCA5Ljk3NTk4TDIwIDRNOS45NzYwMyAxNC4wMjRMNCAyME0xNi42NTYgNy4wMTU5OEMxNS4yNTYgNS45NTk5OCAxMy42NTYgNS4zODM5OCAxMiA1LjM4Mzk4QzkuMTc1OTYgNS4zODM5OCA2LjU0Mzk3IDcuMDQ3OTggNC43MTE5NyA5LjkyNzk4QzMuOTkxOTcgMTEuMDU2IDMuOTkxOTcgMTIuOTUyIDQuNzExOTcgMTQuMDhDNS4zNDM5NyAxNS4wNzIgNi4wNzk5NyAxNS45MjggNi44Nzk5NyAxNi42MTZNMTQuODA3OSAxMi41NTk5QzE0LjU5OTkgMTMuNjg3OSAxMy42Nzk5IDE0LjYwNzkgMTIuNTUxOSAxNC44MTU5IiBzdHJva2U9IiNDQUNGRDYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+";
+
+/** Словарь иконок к которым применяем mask-image */
+$icons: (
+  "eye-opened": $eyeOpened,
+  "eye-closed": $eyeClosed,
+);
+
+@each $name, $path in $icons {
+  .icon-#{$name} {
+    mask-image: url($path);
+    -webkit-mask-image: url($path);
+
+    width: 24px;
+    height: 24px;
+    display: block;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: grey;
+
+    mask-repeat: no-repeat;
+    -webkit-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+
+    mask-size: 100%;
+    -webkit-mask-size: 100%;
+
+    position: no-repeat;
+    mask-position: center;
+    -webkit-position: no-repeat;
+    -webkit-mask-position: center;
+  }
+}

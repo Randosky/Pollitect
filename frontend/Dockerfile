@@ -2,7 +2,7 @@
 FROM node:20 AS build
 
 # Устанавливаем рабочую директорию в контейнере
-WORKDIR /app
+WORKDIR /src
 
 # Копируем файлы package.json и package-lock.json (если есть)
 COPY package*.json ./

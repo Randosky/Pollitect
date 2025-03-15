@@ -2,7 +2,7 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 
 const AUTH_ERROR = 401;
-const baseURL = "http://localhost:3000/api";
+const baseURL = "http://localhost:3000/";
 
 /** Создаем экземпляр Axios для авторизации */
 const authAxiosInstance = axios.create({
