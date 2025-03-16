@@ -30,7 +30,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const newUser = await User.create({ name, email, password });
+    const newUser = await User.create({ name, email, password, role: "user" });
 
     const { accessToken, refreshToken } = generateTokens({ id: newUser.id });
 
@@ -48,13 +48,13 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         email: newUser.email,
       },
       accessToken,
-      refreshToken,
     });
 
     return;
   } catch (error) {
     console.error("Ошибка при регистрации:", error);
-    res.status(500).json({ message: "Ошибка сервера" });
+
+    res.status(500).json({ message: "Ошибка при регистрации" });
 
     return;
   }
@@ -109,7 +109,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         email: user.email,
       },
       accessToken,
-      refreshToken,
     });
 
     return;
@@ -163,7 +162,6 @@ export const refresh = async (req: Request, res: Response): Promise<void> => {
 
     res.status(200).json({
       accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
     });
 
     return;

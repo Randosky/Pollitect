@@ -1,4 +1,6 @@
 export type TRegistrationViewProps = {
+  /** Имя */
+  name: string;
   /** Поле электронной почты */
   email: string;
   /** Пароль */
@@ -8,6 +10,11 @@ export type TRegistrationViewProps = {
    * @param {React.FormEvent<HTMLFormElement>} event - событие отправки формы
    */
   handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+ /**
+   * Обработчик события изменения имени
+   * @param {React.ChangeEvent<HTMLInputElement>} event - событие изменения поля
+   */
+  handleNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   /**
    * Обработчик события изменения поля электронной почты
    * @param {React.ChangeEvent<HTMLInputElement>} event - событие изменения поля

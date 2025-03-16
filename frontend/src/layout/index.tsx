@@ -8,6 +8,7 @@ import styles from "./Layout.module.scss";
 import AppRouter from "../router/routes";
 
 import LayoutContainer from "./Container";
+import ErrorBoundary from "./ErrorBoundary";
 import LayoutHeader from "./Header";
 import Modal from "./Modal";
 import Toaster from "./Toaster";
@@ -30,16 +31,18 @@ const Layout = () => {
 
   return (
     <StrictMode>
-      <Provider store={store}>
-        <LayoutHeader />
+      <ErrorBoundary>
+        <Provider store={store}>
+          <LayoutHeader />
 
-        <LayoutContainer>
-          <AppRouter />
+          <LayoutContainer>
+            <AppRouter />
 
-          <Modal />
-          <Toaster />
-        </LayoutContainer>
-      </Provider>
+            <Modal />
+            <Toaster />
+          </LayoutContainer>
+        </Provider>
+      </ErrorBoundary>
     </StrictMode>
   );
 };

@@ -16,7 +16,7 @@ export const saveRefreshTokenToCookie = (
     httpOnly: true, // Доступен только на сервере
     secure: process.env.NODE_ENV === "production", // Только по HTTPS, если продакшн
     sameSite: "strict", // Защищаем куку от CSRF атак
-    maxAge: 24 * 60 * 60 * 1000, // Время жизни куки (1 день)
+    maxAge: 30 * 24 * 60 * 60 * 1000, // Время жизни куки (30 дней)
   });
 };
 

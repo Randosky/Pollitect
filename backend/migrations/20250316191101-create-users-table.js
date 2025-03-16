@@ -18,7 +18,11 @@ module.exports = {
           isEmail: true,
         },
       },
-      password_hash: {
+      password: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      role: {
         type: Sequelize.STRING,
         allowNull: false,
       },

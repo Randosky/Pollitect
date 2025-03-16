@@ -1,15 +1,21 @@
 import React from "react";
 
-import authAxiosInstance from "@api/authInstace";
+import authAxiosInstance from "@api/authInstance";
+import { useError } from "@hooks/useError";
+import { useAppDispatch } from "@store/hooks";
+import { openToaster } from "@store/slices/layout";
+import { validateEmptyFields } from "@utils/validateEmptyFields";
 import { useNavigate } from "react-router-dom";
 
 import RegistrationView from "./Registration.view";
 
-import { SUCCESS_CODE } from "@/config";
-
 const RegistrationContainer: React.FC = () => {
   const navigate = useNavigate();
+  const proccessError = useError();
 
+  const dispatch = useAppDispatch();
+
+  const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
 
@@ -17,21 +23,30 @@ const RegistrationContainer: React.FC = () => {
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
 
+      if (!validateEmptyFields({ email, password })) {
+        dispatch(openToaster({ content: "Заполните поля" }));
+
+        return;
+      }
+
       try {
-        const response = await authAxiosInstance.post("api/", {
-          title: email,
-          description: password,
+        await authAxiosInstance.post("/register", {
+          name,
+          email,
+          password,
         });
 
-        if (response.status === SUCCESS_CODE) {
-          navigate("/dashboard");
-        }
+        navigate("/dashboard");
       } catch (error) {
-        console.error(error);
+        proccessError(error);
       }
     },
     [email, password]
   );
+
+  const handleNameChange = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.currentTarget.value);
+  }, []);
 
   const handleEmailChange = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.currentTarget.value);
@@ -43,9 +58,11 @@ const RegistrationContainer: React.FC = () => {
 
   return (
     <RegistrationView
+      name={name}
       email={email}
       password={password}
       handleSubmit={handleSubmit}
+      handleNameChange={handleNameChange}
       handleEmailChange={handleEmailChange}
       handlePasswordChange={handlePasswordChange}
     />

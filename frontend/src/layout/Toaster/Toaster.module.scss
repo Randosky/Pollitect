@@ -4,6 +4,8 @@
   right: 50%;
   transform: translate(50%, 0%);
   top: 80px;
+  width: fit-content;
+  max-width: 50vw;
   pointer-events: none;
   transition: 0.3s all ease;
 
@@ -14,10 +16,8 @@
     align-items: center;
     transition: 0.3s all ease;
     font-size: 14px;
-    font-style: normal;
     font-weight: 600;
-    line-height: 140%; /* 19.6px */
-    letter-spacing: 0.042px;
+    line-height: 140%;
     border-radius: 2rem;
     text-align: center;
     background-color: rgb(242, 242, 53);
@@ -26,22 +26,6 @@
     &:not(:first-child) {
       margin-top: 16px;
     }
-  }
-
-  &__enter {
-    opacity: 0;
-  }
-  &__enterActive {
-    opacity: 0.9;
-  }
-  &__enterDone {
-    opacity: 0.9;
-  }
-  &__exit {
-    opacity: 0;
-  }
-
-  &__active {
   }
 
   &__text {

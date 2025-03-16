@@ -1,11 +1,13 @@
 import React, { ReactElement } from "react";
 
-import authAxiosInstance from "@api/authInstace";
+import authAxiosInstance from "@api/authInstance";
+import { useError } from "@hooks/useError";
+import { useAppDispatch } from "@store/hooks";
+import { openToaster } from "@store/slices/layout";
+import { validateEmptyFields } from "@utils/validateEmptyFields";
 import { useNavigate } from "react-router-dom";
 
 import LoginView from "./Login.view";
-
-import { SUCCESS_CODE } from "@/config";
 
 /**
  * Компонент-контейнер для страницы входа.
@@ -17,6 +19,8 @@ import { SUCCESS_CODE } from "@/config";
  */
 const LoginContainer: React.FC = (): ReactElement => {
   const navigate = useNavigate();
+  const proccessError = useError();
+  const dispatch = useAppDispatch();
 
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -25,17 +29,21 @@ const LoginContainer: React.FC = (): ReactElement => {
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
 
+      if (!validateEmptyFields({ email, password })) {
+        dispatch(openToaster({ content: "Заполните поля" }));
+
+        return;
+      }
+
       try {
-        const response = await authAxiosInstance.post("api/", {
-          title: email,
-          description: password,
+        await authAxiosInstance.post("/login", {
+          email,
+          password,
         });
 
-        if (response.status === SUCCESS_CODE) {
-          navigate("/dashboard");
-        }
+        navigate("/dashboard");
       } catch (error) {
-        console.error(error);
+        proccessError(error);
       }
     },
     [email, password]

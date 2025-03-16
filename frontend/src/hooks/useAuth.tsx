@@ -4,9 +4,9 @@
  * @returns {boolean} - статус авторизации
  */
 const useAuth = (): boolean => {
-  const isAuthenticated = true;
+  const accessToken = sessionStorage.getItem("accessToken");
 
-  return isAuthenticated;
+  return !!accessToken;
 };
 
 export default useAuth;

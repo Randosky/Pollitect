@@ -6,9 +6,11 @@ import { Link } from "react-router-dom";
 import type { TRegistrationViewProps } from "./Registration.types";
 
 const RegistrationView: React.FC<TRegistrationViewProps> = ({
+  name,
   email,
   password,
   handleSubmit,
+  handleNameChange,
   handleEmailChange,
   handlePasswordChange,
 }) => {
@@ -27,6 +29,17 @@ const RegistrationView: React.FC<TRegistrationViewProps> = ({
       </span>
 
       <form onSubmit={handleSubmit}>
+        <TextField
+          config={{
+            inputProps: {
+              value: name,
+              type: "text",
+              autoComplete: "name",
+              placeholder: "Имя",
+              onChange: handleNameChange,
+            },
+          }}
+        />
         <TextField
           config={{
             inputProps: {

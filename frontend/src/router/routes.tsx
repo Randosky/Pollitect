@@ -12,6 +12,24 @@ import Registration from "@pages/Registration";
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
 
 /**
+ * Компонент UnAuthorizedRoute, который защищает доступ
+ * к определенным страницам, если не получилось получить данные пользовать.
+ * Если получилось получить данные пользовать, то происходит редирект
+ * на главную страницу.
+ *
+ * @returns {ReactElement} - компонент Navigate или Outlet
+ */
+const UnAuthorizedRoute = (): ReactElement => {
+  const isAuthenticated = false;
+
+  if (isAuthenticated) {
+    return <Navigate to="/" />;
+  }
+
+  return <Outlet />;
+};
+
+/**
  * Компонент PrivateRoute, который защищает доступ
  * к определенным страницам, если пользователь не авторизован.
  *
@@ -67,18 +85,10 @@ const AppRouter = (): ReactElement => {
           path="/"
           element={<HomePage />}
         />
+
         <Route
           path="about"
           element={<About />}
-        />
-        <Route
-          path="login"
-          element={<Login />}
-        />
-
-        <Route
-          path="registration"
-          element={<Registration />}
         />
 
         {/* Страница 404 */}
@@ -86,6 +96,19 @@ const AppRouter = (): ReactElement => {
           path="*"
           element={<NotFound />}
         />
+
+        {/* Маршруты для неавторизованных пользователей */}
+        <Route element={<UnAuthorizedRoute />}>
+          <Route
+            path="login"
+            element={<Login />}
+          />
+
+          <Route
+            path="registration"
+            element={<Registration />}
+          />
+        </Route>
 
         {/* Приватные маршруты с проверкой аутентификации */}
         <Route element={<PrivateRoute />}>

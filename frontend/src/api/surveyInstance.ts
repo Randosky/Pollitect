@@ -4,13 +4,13 @@ import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 const AUTH_ERROR = 401;
 const baseURL = import.meta.env.VITE_API_URL;
 
-/** Создаем экземпляр Axios для авторизации */
-const authAxiosInstance = axios.create({
-  baseURL,
+/** Создаем экземпляр Axios для авторизированных запросов на получение данных об опросе */
+const surveyAxiosInstance = axios.create({
+  baseURL: `${baseURL}/survey`,
 });
 
 /** Устанавливаем заголовки для каждого запроса */
-const authInterceptor = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+const surveyInterceptor = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
   config.headers["Content-Type"] = "application/json";
   config.headers.Accept = "application/json";
 
@@ -23,10 +23,10 @@ const authInterceptor = (config: InternalAxiosRequestConfig): InternalAxiosReque
   return config;
 };
 
-authAxiosInstance.interceptors.request.use(authInterceptor);
+surveyAxiosInstance.interceptors.request.use(surveyInterceptor);
 
 /** Интерсептор для обработки ответов и ошибок */
-authAxiosInstance.interceptors.response.use(
+surveyAxiosInstance.interceptors.response.use(
   response => response,
   async (error: AxiosError) => {
     const originalRequest = error.config;
@@ -36,9 +36,7 @@ authAxiosInstance.interceptors.response.use(
 
     if (originalRequest && refreshToken && error.response?.status === AUTH_ERROR) {
       try {
-        const { data: responseData } = await axios.post(`${baseURL}/refresh`, {
-          refresh_token: JSON.parse(refreshToken),
-        });
+        const { data: responseData } = await axios.post(`${baseURL}/auth/refresh`);
 
         // Сохраняем новый accessToken
         sessionStorage.setItem("accessToken", JSON.stringify(responseData.access_token));
@@ -47,7 +45,7 @@ authAxiosInstance.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${responseData.access_token}`;
 
         // Повторно отправляем оригинальный запрос с обновленным токеном
-        return await authAxiosInstance(originalRequest);
+        return await surveyAxiosInstance(originalRequest);
       } catch (refreshError) {
         console.error("Token refresh failed:", refreshError);
         // Здесь можно добавить логику для обработки ошибки обновления токена
@@ -59,4 +57,4 @@ authAxiosInstance.interceptors.response.use(
   }
 );
 
-export default authAxiosInstance;
+export default surveyAxiosInstance;

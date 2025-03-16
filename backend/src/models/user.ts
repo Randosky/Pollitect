@@ -5,7 +5,8 @@ import bcrypt from "bcryptjs";
 export interface UserAttributes {
   id: number;
   email: string;
-  password_hash: string;
+  password: string;
+  role: string;
   name: string;
   phone?: string;
   avatar_url?: string;
@@ -25,7 +26,8 @@ class User
 {
   declare id: number;
   declare email: string;
-  declare password_hash: string;
+  declare password: string;
+  declare role: string;
   declare name: string;
   declare phone?: string;
   declare avatar?: string;
@@ -38,7 +40,7 @@ class User
    * @returns {Promise<boolean>} - true, если пароль верный, false - если нет
    */
   async validatePassword(password: string): Promise<boolean> {
-    return bcrypt.compare(password, this.password_hash);
+    return bcrypt.compare(password, this.password);
   }
 
   /**
@@ -70,7 +72,11 @@ export default (sequelize: Sequelize) => {
           isEmail: true,
         },
       },
-      password_hash: {
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      role: {
         type: DataTypes.STRING,
         allowNull: false,
       },
@@ -102,9 +108,9 @@ export default (sequelize: Sequelize) => {
          * @param {User} user - экземпляр модели User
          */
         beforeCreate: async (user: User) => {
-          if (user.password_hash) {
+          if (user.password) {
             const salt = await bcrypt.genSalt(10);
-            user.password_hash = await bcrypt.hash(user.password_hash, salt);
+            user.password = await bcrypt.hash(user.password, salt);
           }
         },
         /**
@@ -112,9 +118,9 @@ export default (sequelize: Sequelize) => {
          * @param {User} user - экземпляр модели User
          */
         beforeUpdate: async (user: User) => {
-          if (user.changed("password_hash")) {
+          if (user.changed("password")) {
             const salt = await bcrypt.genSalt(10);
-            user.password_hash = await bcrypt.hash(user.password_hash, salt);
+            user.password = await bcrypt.hash(user.password, salt);
           }
         },
       },

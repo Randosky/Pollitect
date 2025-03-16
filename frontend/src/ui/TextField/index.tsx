@@ -72,7 +72,7 @@ const TextField: React.FC<TTextFieldProps> = props => {
             />
           ) : (
             <input
-              type={showPasswordLocal ? inputType : "password"}
+              type={showPassword && !showPasswordLocal ? "password" : inputType}
               className={styles.field}
               {...inputProps}
             />
