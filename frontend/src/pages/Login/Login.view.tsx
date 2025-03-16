@@ -28,7 +28,7 @@ const LoginView: React.FC<TLoginViewProps> = ({
       <span>
         Нет аккаунта?{" "}
         <Link
-          to="../registration"
+          to="/registration"
           replace
         >
           Регистрация

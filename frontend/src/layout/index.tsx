@@ -7,8 +7,10 @@ import styles from "./Layout.module.scss";
 
 import AppRouter from "../router/routes";
 
-// import Modal from "./Modal";
-// import Toaster from "./Toaster";
+import LayoutContainer from "./Container";
+import LayoutHeader from "./Header";
+import Modal from "./Modal";
+import Toaster from "./Toaster";
 
 /** Лейаут для проекта в кабинете */
 const Layout = () => {
@@ -29,12 +31,14 @@ const Layout = () => {
   return (
     <StrictMode>
       <Provider store={store}>
-        <main className={styles.main}>
+        <LayoutHeader />
+
+        <LayoutContainer>
           <AppRouter />
 
-          {/* <Modal />
-          <Toaster /> */}
-        </main>
+          <Modal />
+          <Toaster />
+        </LayoutContainer>
       </Provider>
     </StrictMode>
   );

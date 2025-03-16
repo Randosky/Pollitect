@@ -1,9 +1,21 @@
-/* Светлая тема */
+/** Медиа стили экранов */
 :root {
+  --lg: 1440px;
+  --md: 1200px;
+  --sm: 992px;
+  --xs: 480px;
+}
+
+/* Светлая тема */
+:root[data-theme="light"] {
+  --grayscale-0: #ffffff;
+  --grayscale-1000: #222222;
 }
 
 /* Темная тема */
 :root[data-theme="dark"] {
+  --grayscale-0: #222222;
+  --grayscale-1000: #ffffff;
 }
 
 html,

@@ -38,7 +38,7 @@ const TextField: React.FC<TTextFieldProps> = props => {
     containerProps,
   } = config || {};
 
-  const [showPasswordLocal, changeShowPasswordLocal] = React.useReducer((state: boolean) => !state, showPassword);
+  const [showPasswordLocal, changeShowPasswordLocal] = React.useReducer((state: boolean) => !state, false);
 
   return (
     <section
@@ -80,6 +80,7 @@ const TextField: React.FC<TTextFieldProps> = props => {
 
           {showPassword && (
             <button
+              type="button"
               onClick={changeShowPasswordLocal}
               className={`icon-eye-${showPasswordLocal ? "opened" : "closed"}`}
             />

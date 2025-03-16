@@ -3,7 +3,15 @@ import React from "react";
 import { TextField } from "@ui/TextField";
 import { Link } from "react-router-dom";
 
-const RegistrationView: React.FC = () => {
+import type { TRegistrationViewProps } from "./Registration.types";
+
+const RegistrationView: React.FC<TRegistrationViewProps> = ({
+  email,
+  password,
+  handleSubmit,
+  handleEmailChange,
+  handlePasswordChange,
+}) => {
   return (
     <div>
       <h1>Регистрация</h1>
@@ -11,29 +19,34 @@ const RegistrationView: React.FC = () => {
       <span>
         Уже есть аккаунт?{" "}
         <Link
-          to="../login"
+          to="/login"
           replace
         >
           Войти
         </Link>
       </span>
 
-      <form>
+      <form onSubmit={handleSubmit}>
         <TextField
           config={{
             inputProps: {
-              placeholder: "Эл. почта",
-              autoComplete: "email",
+              value: email,
               type: "email",
+              autoComplete: "email",
+              placeholder: "Эл. почта",
+              onChange: handleEmailChange,
             },
           }}
         />
         <TextField
+          showPassword
           config={{
             inputProps: {
+              type: "text",
+              value: password,
               placeholder: "Пароль",
               autoComplete: "current-password",
-              type: "password",
+              onChange: handlePasswordChange,
             },
           }}
         />

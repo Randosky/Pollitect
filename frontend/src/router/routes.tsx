@@ -1,8 +1,13 @@
 import { ReactElement } from "react";
 
 import useAuth from "@hooks/useAuth";
+import Dashboard from "@pages/Dashboard";
 import HomePage from "@pages/Home";
 import Login from "@pages/Login";
+import Quiz from "@pages/Quiz";
+import Constructor from "@pages/Quiz/Constructor";
+import Design from "@pages/Quiz/Design";
+import Settings from "@pages/Quiz/Settings";
 import Registration from "@pages/Registration";
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
 
@@ -43,7 +48,6 @@ const AdminRoute = (): ReactElement => {
 
 // Компоненты страниц
 const About = () => <h2>About</h2>;
-const User = () => <h2>Users</h2>;
 const AdminDashboard = () => <h2>Admin Dashboard</h2>;
 const NotFound = () => <h2>Not found</h2>;
 
@@ -64,16 +68,16 @@ const AppRouter = (): ReactElement => {
           element={<HomePage />}
         />
         <Route
-          path="/about"
+          path="about"
           element={<About />}
         />
         <Route
-          path="/login"
+          path="login"
           element={<Login />}
         />
 
         <Route
-          path="/registration"
+          path="registration"
           element={<Registration />}
         />
 
@@ -86,15 +90,46 @@ const AppRouter = (): ReactElement => {
         {/* Приватные маршруты с проверкой аутентификации */}
         <Route element={<PrivateRoute />}>
           <Route
-            path="/dashboard"
-            element={<User />}
+            path="dashboard"
+            element={<Dashboard />}
           />
+
+          <Route
+            path="quiz"
+            element={<Quiz />}
+          >
+            {/* Если просто зашли на /quiz без саб-роутов */}
+            <Route
+              index
+              element={
+                <Navigate
+                  to="/dashboard"
+                  replace
+                />
+              }
+            />
+
+            <Route
+              path="edit/:quizId"
+              element={<Constructor />}
+            />
+
+            <Route
+              path="design/:quizId"
+              element={<Design />}
+            />
+
+            <Route
+              path="settings/:quizId"
+              element={<Settings />}
+            />
+          </Route>
         </Route>
 
         {/* Приватные маршруты для администратора */}
         <Route element={<AdminRoute />}>
           <Route
-            path="/admin"
+            path="admin"
             element={<AdminDashboard />}
           />
         </Route>

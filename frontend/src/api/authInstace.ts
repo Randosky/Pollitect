@@ -2,7 +2,7 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 
 const AUTH_ERROR = 401;
-const baseURL = "http://localhost:3000/";
+const baseURL = import.meta.env.VITE_API_URL;
 
 /** Создаем экземпляр Axios для авторизации */
 const authAxiosInstance = axios.create({

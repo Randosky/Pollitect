@@ -1,8 +1,11 @@
 import React, { ReactElement } from "react";
 
 import authAxiosInstance from "@api/authInstace";
+import { useNavigate } from "react-router-dom";
 
 import LoginView from "./Login.view";
+
+import { SUCCESS_CODE } from "@/config";
 
 /**
  * Компонент-контейнер для страницы входа.
@@ -13,6 +16,8 @@ import LoginView from "./Login.view";
  * данными и обработчиками.
  */
 const LoginContainer: React.FC = (): ReactElement => {
+  const navigate = useNavigate();
+
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
 
@@ -26,8 +31,8 @@ const LoginContainer: React.FC = (): ReactElement => {
           description: password,
         });
 
-        if (response.status === 200) {
-          window.location.href = "/dashboard";
+        if (response.status === SUCCESS_CODE) {
+          navigate("/dashboard");
         }
       } catch (error) {
         console.error(error);
