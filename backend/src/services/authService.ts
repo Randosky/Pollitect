@@ -1,35 +1,43 @@
+import { Response } from "express";
+
 import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
 
-const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET!;
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET!;
-
-export const hashPassword = async (password: string) => {
-  return bcrypt.hash(password, 10);
+/**
+ * Сохраняет refreshToken в куке
+ *
+ * @param {Response} res - объект ответа Express
+ * @param {string} refreshToken - токен для обновления
+ */
+export const saveRefreshTokenToCookie = (
+  res: Response,
+  refreshToken: string
+) => {
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true, // Доступен только на сервере
+    secure: process.env.NODE_ENV === "production", // Только по HTTPS, если продакшн
+    sameSite: "strict", // Защищаем куку от CSRF атак
+    maxAge: 24 * 60 * 60 * 1000, // Время жизни куки (1 день)
+  });
 };
 
-export const comparePasswords = async (password: string, hash: string) => {
-  return bcrypt.compare(password, hash);
-};
+type StringValue = `${number}${"d" | "m"}`;
 
-export const generateTokens = (user: { id: number; email: string }) => {
-  const accessToken = jwt.sign(
-    { userId: user.id, email: user.email },
-    JWT_ACCESS_SECRET,
-    { expiresIn: "15m" }
-  );
+/**
+ * Генерируем refreshToken и accessToken
+ *
+ * @param {{id: string}} payload - объект с id пользователя, по которому строим токены
+ * @returns {{ accessToken: string, refreshToken: string } } токен для обновления и токен для доступа
+ */
+export const generateTokens = (
+  payload: object
+): { accessToken: string; refreshToken: string } => {
+  const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET!, {
+    expiresIn: (process.env.JWT_ACCESS_EXPIRES as StringValue) || "15m",
+  });
 
-  const refreshToken = jwt.sign({ userId: user.id }, JWT_REFRESH_SECRET, {
-    expiresIn: "7d",
+  const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET!, {
+    expiresIn: (process.env.JWT_REFRESH_EXPIRES as StringValue) || "30d",
   });
 
   return { accessToken, refreshToken };
-};
-
-export const verifyAccessToken = (token: string) => {
-  return jwt.verify(token, JWT_ACCESS_SECRET);
-};
-
-export const verifyRefreshToken = (token: string) => {
-  return jwt.verify(token, JWT_REFRESH_SECRET);
 };

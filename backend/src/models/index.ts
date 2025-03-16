@@ -1,15 +1,14 @@
-import fs from 'fs';
-import path from 'path';
-import { Sequelize, DataTypes } from 'sequelize';
-import process from 'process';
-
-const basename = path.basename(__filename);
-const env = process.env.NODE_ENV || 'development';
+import fs from "fs";
+import path from "path";
+import { Sequelize, DataTypes } from "sequelize";
+import process from "process";
 
 // Импорт конфигурации Sequelize
 // @ts-ignore
-import configData from '../../config/config.cjs';
+import configData from "../../config/config.cjs";
 
+const basename = path.basename(__filename);
+const env = process.env.NODE_ENV || "development";
 const config = configData[env as keyof typeof configData] as any;
 
 const db: { [key: string]: any } = {};
@@ -23,10 +22,10 @@ const sequelize = config.use_env_variable
 fs.readdirSync(__dirname)
   .filter((file) => {
     return (
-      file.indexOf('.') !== 0 &&
-      file !== basename &&
-      file.slice(-3) === '.ts' && // Учитываем, что теперь файлы моделей - TypeScript
-      file.indexOf('.test.ts') === -1
+      file.indexOf(".") !== 0 && // исключаем скрытые файлы
+      file !== basename && // исключаем сам этот файл index.ts
+      file.slice(-3) === ".ts" && // только TypeScript-файлы
+      !file.endsWith(".test.ts") // игнорим тестовые файлы
     );
   })
   .forEach((file) => {

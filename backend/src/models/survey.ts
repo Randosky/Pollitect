@@ -1,4 +1,4 @@
-import { Model, DataTypes, Sequelize, Optional } from 'sequelize';
+import { Model, DataTypes, Sequelize, Optional } from "sequelize";
 
 // Интерфейс для описания структуры данных модели
 interface SurveyAttributes {
@@ -8,9 +8,15 @@ interface SurveyAttributes {
 }
 
 // Опциональные поля при создании записи (id генерируется автоматически)
-interface SurveyCreationAttributes extends Optional<SurveyAttributes, 'id'> {}
+interface SurveyCreationAttributes extends Optional<SurveyAttributes, "id"> {}
 
 class Survey extends Model<SurveyAttributes, SurveyCreationAttributes> {
+  /**
+   * Метод для установления ассоциаций модели
+   * с другими моделями
+   *
+   * @param {any} _models - объект с моделями
+   */
   static associate(_models: any) {
     // Здесь можно задать связи с другими моделями
   }
@@ -35,8 +41,8 @@ export default (sequelize: Sequelize) => {
     },
     {
       sequelize,
-      modelName: 'Survey',
-      tableName: 'Surveys',
+      modelName: "Survey",
+      tableName: "Surveys",
       timestamps: true, // Добавляет createdAt и updatedAt
     }
   );
