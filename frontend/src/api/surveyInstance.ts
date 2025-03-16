@@ -7,6 +7,7 @@ const baseURL = import.meta.env.VITE_API_URL;
 /** Создаем экземпляр Axios для авторизированных запросов на получение данных об опросе */
 const surveyAxiosInstance = axios.create({
   baseURL: `${baseURL}/survey`,
+  withCredentials: true,
 });
 
 /** Устанавливаем заголовки для каждого запроса */
@@ -36,7 +37,9 @@ surveyAxiosInstance.interceptors.response.use(
 
     if (originalRequest && refreshToken && error.response?.status === AUTH_ERROR) {
       try {
-        const { data: responseData } = await axios.post(`${baseURL}/auth/refresh`);
+        const { data: responseData } = await axios.post(`${baseURL}/auth/refresh`, null, {
+          withCredentials: true,
+        });
 
         // Сохраняем новый accessToken
         sessionStorage.setItem("accessToken", JSON.stringify(responseData.access_token));
