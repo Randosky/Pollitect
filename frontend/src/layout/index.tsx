@@ -2,6 +2,7 @@ import { StrictMode, useEffect, useState } from "react";
 
 import { store } from "@store/store";
 import { Provider } from "react-redux";
+import { BrowserRouter } from "react-router-dom";
 
 import styles from "./Layout.module.scss";
 
@@ -31,18 +32,20 @@ const Layout = () => {
 
   return (
     <StrictMode>
-      <ErrorBoundary>
+      <BrowserRouter>
         <Provider store={store}>
-          <LayoutHeader />
+          <ErrorBoundary>
+            <LayoutHeader />
 
-          <LayoutContainer>
-            <AppRouter />
+            <LayoutContainer>
+              <AppRouter />
 
-            <Modal />
-            <Toaster />
-          </LayoutContainer>
+              <Modal />
+              <Toaster />
+            </LayoutContainer>
+          </ErrorBoundary>
         </Provider>
-      </ErrorBoundary>
+      </BrowserRouter>
     </StrictMode>
   );
 };

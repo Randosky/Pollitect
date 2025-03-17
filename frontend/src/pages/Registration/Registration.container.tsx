@@ -4,6 +4,7 @@ import authAxiosInstance from "@api/authInstance";
 import { useError } from "@hooks/useError";
 import { useAppDispatch } from "@store/hooks";
 import { openToaster } from "@store/slices/layout";
+import { type TUserWithAccessToken, updateUserState } from "@store/slices/user";
 import { validateEmptyFields } from "@utils/validateEmptyFields";
 import { useNavigate } from "react-router-dom";
 
@@ -30,13 +31,14 @@ const RegistrationContainer: React.FC = () => {
       }
 
       try {
-        await authAxiosInstance.post("/register", {
+        const { data } = await authAxiosInstance.post<TUserWithAccessToken>("/register", {
           name,
           email,
           password,
         });
 
-        navigate("/dashboard");
+        dispatch(updateUserState(data.user));
+        navigate(`/dashboard/${data.user.id}`);
       } catch (error) {
         proccessError(error);
       }

@@ -41,12 +41,10 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     // Сохраняем refreshToken в куку
     saveRefreshTokenToCookie(res, refreshToken);
 
-    res.status(201).json({
-      user: {
-        id: newUser.id,
-        name: newUser.name,
-        email: newUser.email,
-      },
+    const { password: _password, ...userWithoutPassword } = newUser;
+
+    res.status(200).json({
+      user: userWithoutPassword,
       accessToken,
     });
 
@@ -102,12 +100,10 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     // Сохраняем refreshToken в куку
     saveRefreshTokenToCookie(res, refreshToken);
 
+    const { password: _password, ...userWithoutPassword } = user;
+
     res.status(200).json({
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-      },
+      user: userWithoutPassword,
       accessToken,
     });
 

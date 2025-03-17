@@ -1,6 +1,5 @@
 import { ReactElement } from "react";
 
-import useAuth from "@hooks/useAuth";
 import Dashboard from "@pages/Dashboard";
 import HomePage from "@pages/Home";
 import Login from "@pages/Login";
@@ -9,7 +8,8 @@ import Constructor from "@pages/Quiz/Constructor";
 import Design from "@pages/Quiz/Design";
 import Settings from "@pages/Quiz/Settings";
 import Registration from "@pages/Registration";
-import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
+import { useAppSelector } from "@store/hooks";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 
 /**
  * Компонент UnAuthorizedRoute, который защищает доступ
@@ -20,10 +20,10 @@ import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom
  * @returns {ReactElement} - компонент Navigate или Outlet
  */
 const UnAuthorizedRoute = (): ReactElement => {
-  const isAuthenticated = false;
+  const { id } = useAppSelector(state => state.user);
 
-  if (isAuthenticated) {
-    return <Navigate to="/" />;
+  if (id !== -1) {
+    return <Navigate to={`/dashboard/${id}`} />;
   }
 
   return <Outlet />;
@@ -37,9 +37,9 @@ const UnAuthorizedRoute = (): ReactElement => {
  */
 
 const PrivateRoute = (): ReactElement => {
-  const isAuthenticated = useAuth();
+  const { id } = useAppSelector(state => state.user);
 
-  if (!isAuthenticated) {
+  if (id === -1) {
     return <Navigate to="/" />;
   }
 
@@ -54,10 +54,9 @@ const PrivateRoute = (): ReactElement => {
  * @returns {ReactElement} - компонент Navigate или Outlet
  */
 const AdminRoute = (): ReactElement => {
-  const isAdmin = true;
-  const isAuthenticated = useAuth();
+  const { id, role } = useAppSelector(state => state.user);
 
-  if (!isAuthenticated || !isAdmin) {
+  if (id === -1 || role !== "admin") {
     return <Navigate to="/" />;
   }
 
@@ -77,8 +76,10 @@ const NotFound = () => <h2>Not found</h2>;
  * @returns {ReactElement} - компонент BrowserRouter со всеми маршрутами
  */
 const AppRouter = (): ReactElement => {
+  const user = useAppSelector(state => state.user);
+
   return (
-    <BrowserRouter>
+    <>
       <Routes>
         {/* Открытые страницы */}
         <Route
@@ -113,7 +114,7 @@ const AppRouter = (): ReactElement => {
         {/* Приватные маршруты с проверкой аутентификации */}
         <Route element={<PrivateRoute />}>
           <Route
-            path="dashboard"
+            path="dashboard/:userId"
             element={<Dashboard />}
           />
 
@@ -126,7 +127,7 @@ const AppRouter = (): ReactElement => {
               index
               element={
                 <Navigate
-                  to="/dashboard"
+                  to={user.id < 0 ? "/" : `/dashboard/${user.id}`}
                   replace
                 />
               }
@@ -157,7 +158,7 @@ const AppRouter = (): ReactElement => {
           />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </>
   );
 };
 

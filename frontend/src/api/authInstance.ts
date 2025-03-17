@@ -6,6 +6,7 @@ const baseURL = import.meta.env.VITE_API_URL;
 /** Создаем экземпляр Axios для авторизации */
 const authAxiosInstance = axios.create({
   baseURL: `${baseURL}/auth`,
+  withCredentials: true,
 });
 
 /** Устанавливаем заголовки для каждого запроса */

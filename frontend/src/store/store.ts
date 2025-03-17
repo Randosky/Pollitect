@@ -1,16 +1,15 @@
 import { Action, ThunkAction, configureStore } from "@reduxjs/toolkit";
 
 import layout from "./slices/layout";
+import user from "./slices/user";
 
-export function makeStore() {
-  return configureStore({
-    reducer: {
-      layout,
-    },
-  });
-}
-
-export const store = makeStore();
+/** Стор с сохраненными редюсерами */
+export const store = configureStore({
+  reducer: {
+    user,
+    layout,
+  },
+});
 
 export type AppState = ReturnType<typeof store.getState>;
 
