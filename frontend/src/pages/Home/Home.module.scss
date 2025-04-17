@@ -1,0 +1,113 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--bg-light);
+  color: var(--text-light);
+  height: 100%;
+  text-align: center;
+
+  .hero {
+    max-width: 640px;
+    margin-bottom: 32px;
+  }
+
+  .title {
+    font-size: 36px;
+    margin-bottom: 16px;
+  }
+
+  .subtitle {
+    font-size: 18px;
+    color: var(--text-secondary-light);
+    margin-bottom: 24px;
+  }
+
+  .ctaButtons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .buttonPrimary {
+    background: var(--bg-contrast);
+    color: var(--text-dark);
+    border: none;
+    border-radius: 4px;
+    padding: 12px 24px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-decoration: none;
+
+    &:hover {
+      background: var(--bg-contrast-hover);
+    }
+  }
+
+  .buttonSecondary {
+    background: transparent;
+    color: var(--bg-contrast);
+    border: 2px solid var(--bg-contrast);
+    border-radius: 4px;
+    padding: 12px 24px;
+    font-size: 16px;
+    cursor: pointer;
+    transition:
+      background 0.2s,
+      color 0.2s;
+    text-decoration: none;
+
+    &:hover {
+      background: var(--bg-contrast);
+      color: var(--text-dark);
+    }
+  }
+
+  .features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+    width: 100%;
+    max-width: 960px;
+  }
+
+  .featureCard {
+    background: var(--bg-dark);
+    color: var(--text-dark);
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    transition:
+      transform 0.3s,
+      box-shadow 0.3s;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .featureIcon {
+      font-size: 32px;
+      margin-bottom: 16px;
+      color: var(--bg-contrast);
+    }
+
+    .featureTitle {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .featureDescription {
+      font-size: 14px;
+      color: var(--text-secondary-dark);
+    }
+  }
+}

@@ -8,7 +8,11 @@ import { useNavigate } from "react-router-dom";
 
 import styles from "./Header.module.scss";
 
-const LayoutHeader: React.FC = () => {
+export type TLayoutHeaderProps = {
+  ref: React.RefObject<HTMLElement | null>;
+};
+
+const LayoutHeader: React.FC<TLayoutHeaderProps> = ({ ref }) => {
   const navigate = useNavigate();
   const proccessError = useError();
   const dispatch = useAppDispatch();
@@ -29,7 +33,10 @@ const LayoutHeader: React.FC = () => {
   }, []);
 
   return (
-    <header className={styles.header}>
+    <header
+      ref={ref}
+      className={styles.header}
+    >
       <span className={styles.header__logo}>Pollitect</span>
 
       {user.id !== -1 && (

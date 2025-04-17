@@ -2,34 +2,36 @@ import React from "react";
 
 import { Link } from "react-router-dom";
 
-import { MOCK_DATA_SURVEYS } from "@/config";
-
 import type { TDashboardViewProps } from "./Dashboard.types";
 
-const DashboardView: React.FC<TDashboardViewProps> = () => {
-  return (
-    <div>
-      <div>
-        <h1>Мои опросы</h1>
+import styles from "./Dashboard.module.scss";
 
-        <button type="button">Создать опрос</button>
-      </div>
+import SurveyCard from "./SurveyCard";
 
-      <div>
-        {MOCK_DATA_SURVEYS.map(survey => (
-          <Link
-            key={survey.id}
-            to={`/quiz/edit/${survey.id}`}
-          >
-            <article>
-              <div>{survey.title}</div>
-              <h2>{survey.description}</h2>
-            </article>
-          </Link>
-        ))}
-      </div>
+const DashboardView: React.FC<TDashboardViewProps> = ({ surveyCards }) => (
+  <section className={styles.dashboard}>
+    <div className={styles.headerRow}>
+      <h1 className={styles.title}>Мои опросы</h1>
+
+      <Link to="/quiz/edit/new">
+        <button
+          className={styles.createBtn}
+          type="button"
+        >
+          + Создать опрос
+        </button>
+      </Link>
     </div>
-  );
-};
+
+    <div className={styles.cardsGrid}>
+      {surveyCards.map(surveyCard => (
+        <SurveyCard
+          key={surveyCard.id}
+          surveyCard={surveyCard}
+        />
+      ))}
+    </div>
+  </section>
+);
 
 export default DashboardView;

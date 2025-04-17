@@ -1,57 +1,75 @@
-/** Медиа стили экранов */
-:root {
-  --lg: 1440px;
-  --md: 1200px;
-  --sm: 992px;
-  --xs: 480px;
-}
-
 :root[data-theme="light"] {
-  --bg-light: #ffffff;
-  --bg-dark: #000000;
-  --bg-contrast: #00bcd4;
+  --header-height: 0px;
 
-  --text-light: #000000;
+  /* Background colors */
+  --bg-light: #ffffff;
+  --bg-dark: #222222;
+  --bg-contrast: #00bcd4;
+  --bg-contrast-hover: #00acc1;
+
+  /* Text colors */
+  --text-light: #222222;
   --text-dark: #ffffff;
   --text-contrast: #00bcd4;
+  --text-contrast-hover: #008ba3;
 
+  /* Secondary text */
   --text-secondary-light: #777777;
   --text-secondary-dark: #aaaaaa;
   --text-secondary-contrast: #00bcd4;
+  --text-secondary-contrast-hover: #008ba3;
 
+  /* Borders */
   --border-light: #cccccc;
   --border-dark: #444444;
   --border-contrast: #00bcd4;
+  --border-contrast-hover: #008ba3;
 
+  /* Status colors */
   --bg-error: #f44336;
+  --bg-error-hover: #d32f2f;
   --text-error: #ffffff;
 
   --bg-success: #4caf50;
+  --bg-success-hover: #388e3c;
   --text-success: #ffffff;
 }
 
 :root[data-theme="dark"] {
-  --bg-light: #000000;
+  --header-height: 0px;
+
+  /* Background colors */
+  --bg-light: #222222;
   --bg-dark: #ffffff;
   --bg-contrast: #00bcd4;
+  --bg-contrast-hover: #00acc1;
 
+  /* Text colors */
   --text-light: #ffffff;
-  --text-dark: #000000;
+  --text-dark: #222222;
   --text-contrast: #00bcd4;
+  --text-contrast-hover: #008ba3;
 
+  /* Secondary text */
   --text-secondary-light: #aaaaaa;
   --text-secondary-dark: #777777;
   --text-secondary-contrast: #00bcd4;
+  --text-secondary-contrast-hover: #008ba3;
 
+  /* Borders */
   --border-light: #444444;
   --border-dark: #cccccc;
   --border-contrast: #00bcd4;
+  --border-contrast-hover: #008ba3;
 
+  /* Status colors */
   --bg-error: #e57373;
-  --text-error: #000000;
+  --bg-error-hover: #d32f2f;
+  --text-error: #222222;
 
   --bg-success: #81c784;
-  --text-success: #000000;
+  --bg-success-hover: #388e3c;
+  --text-success: #222222;
 }
 
 html,

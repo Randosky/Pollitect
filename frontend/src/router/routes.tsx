@@ -1,7 +1,7 @@
 import { ReactElement } from "react";
 
 import Dashboard from "@pages/Dashboard";
-import HomePage from "@pages/Home";
+import Home from "@pages/Home";
 import Login from "@pages/Login";
 import Quiz from "@pages/Quiz";
 import Constructor from "@pages/Quiz/Constructor";
@@ -94,7 +94,7 @@ const AppRouter = (): ReactElement => {
         {/* Открытые страницы */}
         <Route
           path="/"
-          element={<HomePage />}
+          element={<Home />}
         />
 
         <Route

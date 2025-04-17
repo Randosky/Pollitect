@@ -1,0 +1,32 @@
+@import "@styles/breakpoints";
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.mainContainer {
+  flex: 1;
+  padding: 16px 8px 8px;
+  background: var(--bg-light);
+}
+
+@media (min-width: $sm) {
+  .mainContainer {
+    padding: 16px;
+  }
+}
+
+@media (min-width: $md) {
+  .mainContainer {
+    padding: 32px;
+  }
+}
+
+@media (min-width: $lg) {
+  .mainContainer {
+    padding: 48px;
+  }
+}

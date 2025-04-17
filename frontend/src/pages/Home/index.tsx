@@ -2,19 +2,64 @@ import React from "react";
 
 import { Link } from "react-router-dom";
 
-const HomePage: React.FC = () => {
+import styles from "./Home.module.scss";
+
+const Home: React.FC = () => {
   return (
-    <React.Fragment>
-      <h1>Это начальная страница</h1>
+    <div className={styles.container}>
+      <section className={styles.hero}>
+        <h1 className={styles.title}>Добро пожаловать в конструктор опросов</h1>
+        <p className={styles.subtitle}>
+          Создавайте интерактивные опросы, собирайте обратную связь и анализируйте результаты в одном месте.
+        </p>
+        <div className={styles.ctaButtons}>
+          <Link
+            to="/login"
+            className={styles.buttonPrimary}
+          >
+            Войти
+          </Link>
+          <Link
+            to="/registration"
+            className={styles.buttonSecondary}
+          >
+            Зарегистрироваться
+          </Link>
+        </div>
+      </section>
 
-      <article>
-        <h2>Зарегистрируйтесь или войдите в свой аккаунт</h2>
-
-        <Link to="login">Войти</Link>
-        <Link to="registration">Зарегистрироваться</Link>
-      </article>
-    </React.Fragment>
+      <section className={styles.features}>
+        <div className={styles.featureCard}>
+          <div className={styles.featureIcon}>📝</div>
+          <h3 className={styles.featureTitle}>Удобный редактор</h3>
+          <p className={styles.featureDescription}>
+            Добавляйте различные типы вопросов: одиночный выбор, текстовые поля, даты и многое другое.
+          </p>
+        </div>
+        <div className={styles.featureCard}>
+          <div className={styles.featureIcon}>🎨</div>
+          <h3 className={styles.featureTitle}>Гибкий дизайн</h3>
+          <p className={styles.featureDescription}>
+            Настраивайте внешний вид вашего опроса: цвета, шрифты, отступы и размещение виджета.
+          </p>
+        </div>
+        <div className={styles.featureCard}>
+          <div className={styles.featureIcon}>📊</div>
+          <h3 className={styles.featureTitle}>Аналитика</h3>
+          <p className={styles.featureDescription}>
+            Просматривайте статистику ответов: завершенности, среднее время прохождения и индивидуальные ответы.
+          </p>
+        </div>
+        <div className={styles.featureCard}>
+          <div className={styles.featureIcon}>🔒</div>
+          <h3 className={styles.featureTitle}>Безопасность</h3>
+          <p className={styles.featureDescription}>
+            Защищайте данные респондентов с помощью JWT, шифрования и согласий на обработку данных.
+          </p>
+        </div>
+      </section>
+    </div>
   );
 };
 
-export default HomePage;
+export default Home;

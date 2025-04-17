@@ -27,8 +27,8 @@ const initialState: TUserState = {
 };
 
 /** Слайл для лейаута */
-export const layoutSlice = createSlice({
-  name: "layout",
+export const userSlice = createSlice({
+  name: "userSlice",
   initialState,
   reducers: {
     updateUserState(state, action: PayloadAction<Partial<TUserState>>) {
@@ -44,6 +44,6 @@ export const layoutSlice = createSlice({
   },
 });
 
-export const { updateUserState, clearUserState } = layoutSlice.actions;
+export const { updateUserState, clearUserState } = userSlice.actions;
 
-export default layoutSlice.reducer;
+export default userSlice.reducer;

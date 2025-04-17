@@ -1,4 +1,4 @@
-import { StrictMode, useEffect, useState } from "react";
+import { StrictMode, useEffect, useRef, useState } from "react";
 
 import { store } from "@store/store";
 import { Provider } from "react-redux";
@@ -16,12 +16,20 @@ import Toaster from "./Toaster";
 
 /** Лейаут для проекта в кабинете */
 const Layout = () => {
+  const headerRef = useRef<HTMLElement | null>(null);
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const html = document.querySelector("html");
+    const html = document.documentElement;
 
-    html?.setAttribute("translate", "no");
+    html.setAttribute("translate", "no");
+
+    if (headerRef.current) {
+      const h = headerRef.current.offsetHeight;
+
+      html.style.setProperty("--header-height", `${h}px`);
+    }
 
     setLoading(false);
   }, []);
@@ -35,14 +43,16 @@ const Layout = () => {
       <BrowserRouter>
         <Provider store={store}>
           <ErrorBoundary>
-            <LayoutHeader />
+            <div className={styles.wrapper}>
+              <LayoutHeader ref={headerRef} />
 
-            <LayoutContainer>
-              <AppRouter />
+              <LayoutContainer>
+                <AppRouter />
 
-              <Modal />
-              <Toaster />
-            </LayoutContainer>
+                <Modal />
+                <Toaster />
+              </LayoutContainer>
+            </div>
           </ErrorBoundary>
         </Provider>
       </BrowserRouter>
