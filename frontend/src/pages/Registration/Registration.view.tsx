@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 
 import type { TRegistrationViewProps } from "./Registration.types";
 
+import styles from "./Registration.module.scss";
+
 const RegistrationView: React.FC<TRegistrationViewProps> = ({
   name,
   email,
@@ -13,61 +15,76 @@ const RegistrationView: React.FC<TRegistrationViewProps> = ({
   handleNameChange,
   handleEmailChange,
   handlePasswordChange,
-}) => {
-  return (
-    <div>
-      <h1>Регистрация</h1>
+}) => (
+  <div className={styles.authContainer}>
+    <div className={styles.card}>
+      <h1 className={styles.title}>Регистрация</h1>
 
-      <span>
+      <span className={styles.switch}>
         Уже есть аккаунт?{" "}
         <Link
           to="/login"
           replace
+          className={styles.link}
         >
           Войти
         </Link>
       </span>
 
-      <form onSubmit={handleSubmit}>
-        <TextField
-          config={{
-            inputProps: {
-              value: name,
-              type: "text",
-              autoComplete: "name",
-              placeholder: "Имя",
-              onChange: handleNameChange,
-            },
-          }}
-        />
-        <TextField
-          config={{
-            inputProps: {
-              value: email,
-              type: "email",
-              autoComplete: "email",
-              placeholder: "Эл. почта",
-              onChange: handleEmailChange,
-            },
-          }}
-        />
-        <TextField
-          showPassword
-          config={{
-            inputProps: {
-              type: "text",
-              value: password,
-              placeholder: "Пароль",
-              autoComplete: "current-password",
-              onChange: handlePasswordChange,
-            },
-          }}
-        />
+      <form
+        onSubmit={handleSubmit}
+        className={styles.form}
+      >
+        <div className={styles.inputWrapper}>
+          <TextField
+            config={{
+              inputProps: {
+                value: name,
+                type: "text",
+                autoComplete: "name",
+                placeholder: "Имя",
+                onChange: handleNameChange,
+              },
+            }}
+          />
+        </div>
 
-        <button type="submit">Войти</button>
+        <div className={styles.inputWrapper}>
+          <TextField
+            config={{
+              inputProps: {
+                value: email,
+                type: "email",
+                autoComplete: "email",
+                placeholder: "Эл. почта",
+                onChange: handleEmailChange,
+              },
+            }}
+          />
+        </div>
+
+        <div className={styles.inputWrapper}>
+          <TextField
+            config={{
+              inputProps: {
+                value: password,
+                type: "password",
+                autoComplete: "current-password",
+                placeholder: "Пароль",
+                onChange: handlePasswordChange,
+              },
+            }}
+          />
+        </div>
+        <button
+          type="submit"
+          className={styles.submitBtn}
+        >
+          Зарегистрироваться
+        </button>
       </form>
     </div>
-  );
-};
+  </div>
+);
 
 export default RegistrationView;

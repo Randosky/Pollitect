@@ -8,7 +8,7 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "dev": "vite --host localhost --port 7124",
+    "dev": "vite --host 0.0.0.0 --port 7124",
     "build": "vite build",
     "pre-prod": "NODE_ENV=production yarn set-next-version && yarn generate-build-version",
     "set-next-version": "yarn version --patch --no-git-tag-version",

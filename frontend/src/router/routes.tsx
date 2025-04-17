@@ -23,7 +23,12 @@ const UnAuthorizedRoute = (): ReactElement => {
   const { id } = useAppSelector(state => state.user);
 
   if (id !== -1) {
-    return <Navigate to={`/dashboard/${id}`} />;
+    return (
+      <Navigate
+        to={`/dashboard/${id}`}
+        replace
+      />
+    );
   }
 
   return <Outlet />;
@@ -40,7 +45,12 @@ const PrivateRoute = (): ReactElement => {
   const { id } = useAppSelector(state => state.user);
 
   if (id === -1) {
-    return <Navigate to="/" />;
+    return (
+      <Navigate
+        to="/"
+        replace
+      />
+    );
   }
 
   return <Outlet />;
@@ -113,6 +123,17 @@ const AppRouter = (): ReactElement => {
 
         {/* Приватные маршруты с проверкой аутентификации */}
         <Route element={<PrivateRoute />}>
+          {/* Если просто зашли на /dashboard без саб-роутов */}
+          <Route
+            path="dashboard"
+            element={
+              <Navigate
+                to={user.id < 0 ? "/" : `/dashboard/${user.id}`}
+                replace
+              />
+            }
+          />
+
           <Route
             path="dashboard/:userId"
             element={<Dashboard />}

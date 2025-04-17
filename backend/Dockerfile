@@ -13,6 +13,9 @@ COPY package*.json ./
 # Устанавливаем зависимости
 RUN npm install
 
+# Глобально ставим nodemon
+RUN npm install -g nodemon
+
 # Копируем весь исходный код в контейнер
 COPY . .
 
@@ -24,4 +27,4 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 ENTRYPOINT ["docker-entrypoint.sh"]
 
 # Команда по умолчанию – запуск сервера (ts-node для TypeScript)
-CMD ["npx", "ts-node", "src/server.ts"]
+CMD ["npm", "run", "dev"]

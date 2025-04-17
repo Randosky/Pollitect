@@ -15,7 +15,6 @@ import styles from "./TextField.module.scss";
  * @prop {string | undefined} size - размер поля ввода (desktop, mobile)
  * @prop {boolean | undefined} isError - флаг ошибки поля ввода
  * @prop {boolean | undefined} isDisabled - флаг блокировки поля ввода
- * @prop {boolean | undefined} showPassword - флаг показа пароля
  * @prop {React.ReactElement | undefined} customInputComponent - кастомный компонент поля ввода
  */
 const TextField: React.FC<TTextFieldProps> = props => {
@@ -26,7 +25,6 @@ const TextField: React.FC<TTextFieldProps> = props => {
     size = "desktop",
     isError = false,
     isDisabled = false,
-    showPassword = false,
     customInputComponent,
   } = props;
 
@@ -37,6 +35,8 @@ const TextField: React.FC<TTextFieldProps> = props => {
     wrapperProps,
     containerProps,
   } = config || {};
+
+  const showPassword = inputType === "password";
 
   const [showPasswordLocal, changeShowPasswordLocal] = React.useReducer((state: boolean) => !state, false);
 
@@ -72,7 +72,7 @@ const TextField: React.FC<TTextFieldProps> = props => {
             />
           ) : (
             <input
-              type={showPassword && !showPasswordLocal ? "password" : inputType}
+              type={showPassword && showPasswordLocal ? "text" : inputType}
               className={styles.field}
               {...inputProps}
             />

@@ -5,65 +5,71 @@ import { Link } from "react-router-dom";
 
 import type { TLoginViewProps } from "./Login.types";
 
-/**
- * Компонент страницы входа
- *
- * @prop {string} email - эл. почта, введенная пользователем
- * @prop {string} password - пароль, введенный пользователем
- * @prop {(event: React.FormEvent<HTMLFormElement>) => void} handleSubmit - обработчик отправки формы
- * @prop {(event: React.ChangeEvent<HTMLInputElement>) => void} handleEmailChange - обработчик изменения эл. почты
- * @prop {(event: React.ChangeEvent<HTMLInputElement>) => void} handlePasswordChange - обработчик изменения пароля
- */
+import styles from "./Login.module.scss";
+
 const LoginView: React.FC<TLoginViewProps> = ({
   email,
   password,
   handleSubmit,
   handleEmailChange,
   handlePasswordChange,
-}) => {
-  return (
-    <div>
-      <h1>Вход</h1>
+}) => (
+  <div className={styles.authContainer}>
+    <div className={styles.card}>
+      <h1 className={styles.title}>Вход</h1>
 
-      <span>
+      <span className={styles.switch}>
         Нет аккаунта?{" "}
         <Link
           to="/registration"
           replace
+          className={styles.link}
         >
           Регистрация
         </Link>
       </span>
 
-      <form onSubmit={handleSubmit}>
-        <TextField
-          config={{
-            inputProps: {
-              value: email,
-              type: "email",
-              autoComplete: "email",
-              placeholder: "Эл. почта",
-              onChange: handleEmailChange,
-            },
-          }}
-        />
-        <TextField
-          showPassword
-          config={{
-            inputProps: {
-              type: "text",
-              value: password,
-              placeholder: "Пароль",
-              autoComplete: "current-password",
-              onChange: handlePasswordChange,
-            },
-          }}
-        />
+      <form
+        onSubmit={handleSubmit}
+        className={styles.form}
+      >
+        <div className={styles.inputWrapper}>
+          <TextField
+            config={{
+              inputProps: {
+                value: email,
+                type: "email",
+                autoComplete: "email",
+                placeholder: "Эл. почта",
+                onChange: handleEmailChange,
+              },
+            }}
+          />
+        </div>
 
-        <button type="submit">Войти</button>
+        <div className={styles.inputWrapper}>
+          <TextField
+            config={{
+              inputProps: {
+                value: password,
+                type: "password",
+                autoComplete: "current-password",
+                placeholder: "Пароль",
+                onChange: handlePasswordChange,
+              },
+            }}
+          />
+        </div>
+
+        <button
+          type="submit"
+          className={styles.submitBtn}
+        >
+          Войти
+        </button>
       </form>
     </div>
-  );
-};
+  </div>
+);
 
 export default LoginView;

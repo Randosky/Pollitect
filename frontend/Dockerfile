@@ -1,8 +1,8 @@
 # Используем официальный образ Node.js для сборки
-FROM node:20 AS build
+FROM node:23-slim
 
 # Устанавливаем рабочую директорию в контейнере
-WORKDIR /src
+WORKDIR /app
 
 # Копируем файлы package.json и package-lock.json (если есть)
 COPY package*.json ./

@@ -36,7 +36,7 @@ services:
     ports:
       - "7124:7124"
     volumes:
-      - ./frontend:/app
+      - ./frontend:/app # Монтируем локальную директорию для горячей перезагрузки кода
       - /app/node_modules
     depends_on:
       - server

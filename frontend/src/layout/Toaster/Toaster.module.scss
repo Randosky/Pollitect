@@ -2,7 +2,7 @@
   position: fixed;
   z-index: 100000;
   right: 50%;
-  transform: translate(50%, 0%);
+  transform: translate(50%, 0);
   top: 80px;
   width: fit-content;
   max-width: 50vw;
@@ -12,16 +12,15 @@
   &__container {
     padding: 8px 16px;
     display: flex;
-    flex-direction: row;
     align-items: center;
-    transition: 0.3s all ease;
     font-size: 14px;
     font-weight: 600;
     line-height: 140%;
-    border-radius: 2rem;
+    border-radius: 32px;
     text-align: center;
-    background-color: rgb(242, 242, 53);
-    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
+    background-color: var(--bg-error);
+    color: var(--text-error);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 
     &:not(:first-child) {
       margin-top: 16px;
@@ -29,7 +28,8 @@
   }
 
   &__text {
-    color: var(--grayscale-1000);
+    flex: 1;
+    color: inherit;
   }
 }
 

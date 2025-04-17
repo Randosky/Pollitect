@@ -12,8 +12,6 @@ export type TTextFieldProps = {
   icon?: ReactElement;
   /** Тип поля ввода */
   type?: TTextFieldType;
-  /** Показывать ли пароль */
-  showPassword?: boolean;
 
   /** Конфигурация для подкомпонентов TextField */
   config?: {

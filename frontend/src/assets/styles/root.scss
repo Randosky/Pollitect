@@ -6,16 +6,52 @@
   --xs: 480px;
 }
 
-/* Светлая тема */
 :root[data-theme="light"] {
-  --grayscale-0: #ffffff;
-  --grayscale-1000: #222222;
+  --bg-light: #ffffff;
+  --bg-dark: #000000;
+  --bg-contrast: #00bcd4;
+
+  --text-light: #000000;
+  --text-dark: #ffffff;
+  --text-contrast: #00bcd4;
+
+  --text-secondary-light: #777777;
+  --text-secondary-dark: #aaaaaa;
+  --text-secondary-contrast: #00bcd4;
+
+  --border-light: #cccccc;
+  --border-dark: #444444;
+  --border-contrast: #00bcd4;
+
+  --bg-error: #f44336;
+  --text-error: #ffffff;
+
+  --bg-success: #4caf50;
+  --text-success: #ffffff;
 }
 
-/* Темная тема */
 :root[data-theme="dark"] {
-  --grayscale-0: #222222;
-  --grayscale-1000: #ffffff;
+  --bg-light: #000000;
+  --bg-dark: #ffffff;
+  --bg-contrast: #00bcd4;
+
+  --text-light: #ffffff;
+  --text-dark: #000000;
+  --text-contrast: #00bcd4;
+
+  --text-secondary-light: #aaaaaa;
+  --text-secondary-dark: #777777;
+  --text-secondary-contrast: #00bcd4;
+
+  --border-light: #444444;
+  --border-dark: #cccccc;
+  --border-contrast: #00bcd4;
+
+  --bg-error: #e57373;
+  --text-error: #000000;
+
+  --bg-success: #81c784;
+  --text-success: #000000;
 }
 
 html,
