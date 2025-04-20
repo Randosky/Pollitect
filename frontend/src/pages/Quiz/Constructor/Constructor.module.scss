@@ -1,0 +1,31 @@
+@import "@styles/breakpoints";
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+    button {
+      padding: 4px 8px;
+    }
+  }
+  .save {
+    margin-left: auto;
+    background: var(--bg-contrast);
+  }
+  .item {
+    position: relative;
+    border: 1px solid var(--border);
+    padding: 16px;
+    border-radius: 4px;
+    .remove {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+    }
+  }
+}

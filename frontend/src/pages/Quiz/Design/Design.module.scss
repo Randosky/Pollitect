@@ -1,0 +1,52 @@
+@import "@styles/breakpoints";
+
+.design {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+
+  .group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    label {
+      font-size: 14px;
+    }
+    select,
+    input[type="number"],
+    input[type="color"] {
+      padding: 4px 8px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+  }
+
+  .row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .saveBtn {
+    align-self: flex-start;
+    padding: 8px 16px;
+    background: var(--bg-contrast);
+    color: var(--text-contrast);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--bg-contrast-hover);
+    }
+  }
+}
+
+@media (min-width: $sm) {
+  .design {
+    padding: 24px;
+    gap: 24px;
+  }
+}
