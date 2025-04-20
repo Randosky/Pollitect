@@ -1,29 +1,28 @@
 :root[data-theme="light"] {
   --header-height: 0px;
 
+  --white: rgb(254, 254, 254);
+  --black: #222222;
+
   /* Background colors */
-  --bg-light: #ffffff;
-  --bg-dark: #222222;
-  --bg-contrast: #00bcd4;
-  --bg-contrast-hover: #00acc1;
+  --bg: #f2f0f0;
+  --bg-hover: #d4c2ad;
+  --bg-contrast: #97cc9f;
+  --bg-contrast-hover: #5fa66b;
+  --bg-secondary-contrast: #aed2d7;
+  --bg-secondary-contrast-hover: #97c5cc;
 
   /* Text colors */
-  --text-light: #222222;
-  --text-dark: #ffffff;
-  --text-contrast: #00bcd4;
-  --text-contrast-hover: #008ba3;
+  --text: #222222;
+  --text-hover: #0d0d0d;
 
   /* Secondary text */
-  --text-secondary-light: #777777;
-  --text-secondary-dark: #aaaaaa;
-  --text-secondary-contrast: #00bcd4;
-  --text-secondary-contrast-hover: #008ba3;
+  --text-secondary: #2b2b2b;
+  --text-secondary-hover: #1f1f1f;
 
   /* Borders */
-  --border-light: #cccccc;
-  --border-dark: #444444;
-  --border-contrast: #00bcd4;
-  --border-contrast-hover: #008ba3;
+  --border: #97cc9f;
+  --border-hover: #5fa66b;
 
   /* Status colors */
   --bg-error: #f44336;
@@ -38,29 +37,28 @@
 :root[data-theme="dark"] {
   --header-height: 0px;
 
+  --white: white;
+  --black: #222222;
+
   /* Background colors */
-  --bg-light: #222222;
-  --bg-dark: #ffffff;
-  --bg-contrast: #00bcd4;
-  --bg-contrast-hover: #00acc1;
+  --bg: #f2f0f0;
+  --bg-hover: #d4c2ad;
+  --bg-contrast: #97cc9f;
+  --bg-contrast-hover: #5fa66b;
+  --bg-secondary-contrast: #aed2d7;
+  --bg-secondary-contrast-hover: #97c5cc;
 
   /* Text colors */
-  --text-light: #ffffff;
-  --text-dark: #222222;
-  --text-contrast: #00bcd4;
-  --text-contrast-hover: #008ba3;
+  --text: #222222;
+  --text-hover: #0d0d0d;
 
   /* Secondary text */
-  --text-secondary-light: #aaaaaa;
-  --text-secondary-dark: #777777;
-  --text-secondary-contrast: #00bcd4;
-  --text-secondary-contrast-hover: #008ba3;
+  --text-secondary: #2b2b2b;
+  --text-secondary-hover: #1f1f1f;
 
   /* Borders */
-  --border-light: #444444;
-  --border-dark: #cccccc;
-  --border-contrast: #00bcd4;
-  --border-contrast-hover: #008ba3;
+  --border: #97cc9f;
+  --border-hover: #5fa66b;
 
   /* Status colors */
   --bg-error: #e57373;
@@ -158,6 +156,9 @@ button {
   padding: 0;
   border: 0;
   font-size: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
   vertical-align: baseline;
   box-sizing: border-box;
 }

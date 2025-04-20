@@ -11,6 +11,7 @@ import AppRouter from "../router/routes";
 import LayoutContainer from "./Container";
 import ErrorBoundary from "./ErrorBoundary";
 import LayoutHeader from "./Header";
+import LayoutProvider from "./LayoutContext";
 import Modal from "./Modal";
 import Toaster from "./Toaster";
 
@@ -43,16 +44,18 @@ const Layout = () => {
       <BrowserRouter>
         <Provider store={store}>
           <ErrorBoundary>
-            <div className={styles.wrapper}>
-              <LayoutHeader ref={headerRef} />
+            <LayoutProvider>
+              <div className={styles.wrapper}>
+                <LayoutHeader ref={headerRef} />
 
-              <LayoutContainer>
-                <AppRouter />
+                <LayoutContainer>
+                  <AppRouter />
 
-                <Modal />
-                <Toaster />
-              </LayoutContainer>
-            </div>
+                  <Modal />
+                  <Toaster />
+                </LayoutContainer>
+              </div>
+            </LayoutProvider>
           </ErrorBoundary>
         </Provider>
       </BrowserRouter>

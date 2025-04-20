@@ -1,101 +1,83 @@
+@import "@styles/breakpoints";
+
 .container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  background: var(--bg-light);
-  color: var(--text-light);
-  height: 100%;
-  text-align: center;
+  background: var(--bg);
+  color: var(--text);
+  gap: 32px;
+  min-height: calc(100vh - var(--header-height));
 
   .hero {
-    max-width: 640px;
-    margin-bottom: 32px;
-  }
-
-  .title {
-    font-size: 36px;
-    margin-bottom: 16px;
-  }
-
-  .subtitle {
-    font-size: 18px;
-    color: var(--text-secondary-light);
-    margin-bottom: 24px;
-  }
-
-  .ctaButtons {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 16px;
-    margin-bottom: 48px;
-  }
+    text-align: center;
+    gap: 32px;
+    padding: 0 16px;
 
-  .buttonPrimary {
-    background: var(--bg-contrast);
-    color: var(--text-dark);
-    border: none;
-    border-radius: 4px;
-    padding: 12px 24px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background 0.2s;
-    text-decoration: none;
-
-    &:hover {
-      background: var(--bg-contrast-hover);
+    .title {
+      font-size: 28px;
+      margin-bottom: 16px;
     }
-  }
 
-  .buttonSecondary {
-    background: transparent;
-    color: var(--bg-contrast);
-    border: 2px solid var(--bg-contrast);
-    border-radius: 4px;
-    padding: 12px 24px;
-    font-size: 16px;
-    cursor: pointer;
-    transition:
-      background 0.2s,
-      color 0.2s;
-    text-decoration: none;
+    .subtitle {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
 
-    &:hover {
+    .buttonPrimary {
+      display: inline-block;
       background: var(--bg-contrast);
-      color: var(--text-dark);
+      color: var(--text-contrast);
+      border-radius: 4px;
+      padding: 12px 24px;
+      font-size: 16px;
+      text-decoration: none;
+      transition:
+        background 0.2s,
+        color 0.2s;
+
+      &:hover {
+        background: var(--bg-contrast-hover);
+        color: var(--text-contrast-hover);
+      }
+    }
+
+    .heroImage {
+      display: none;
     }
   }
 
   .features {
+    background: var(--bg-secondary-contrast);
+    padding: 32px 16px;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    border-radius: 4px;
+    grid-template-columns: 1fr;
     gap: 24px;
-    width: 100%;
-    max-width: 960px;
   }
 
   .featureCard {
-    background: var(--bg-dark);
-    color: var(--text-dark);
+    background: var(--bg);
+    color: var(--text);
     border-radius: 8px;
     padding: 24px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    text-align: left;
     transition:
       transform 0.3s,
-      box-shadow 0.3s;
+      box-shadow 0.3s,
+      border-color 0.2s;
 
     &:hover {
       transform: translateY(-4px);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
     }
 
     .featureIcon {
-      font-size: 32px;
-      margin-bottom: 16px;
+      font-size: 36px;
+      margin-bottom: 12px;
       color: var(--bg-contrast);
     }
 
@@ -107,7 +89,70 @@
 
     .featureDescription {
       font-size: 14px;
-      color: var(--text-secondary-dark);
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+  }
+}
+
+@media (min-width: $sm) {
+  .container {
+    gap: 64px;
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      text-align: left;
+      align-items: center;
+      gap: 24px;
+      padding: 0 32px;
+
+      .title {
+        font-size: 36px;
+      }
+
+      .subtitle {
+        font-size: 18px;
+      }
+
+      .buttonPrimary {
+        padding: 12px 32px;
+      }
+
+      .heroImage {
+        display: block;
+        width: 100%;
+        max-width: 400px;
+
+        img {
+          width: 100%;
+          height: auto;
+          display: block;
+        }
+      }
+    }
+
+    .features {
+      padding: 48px 32px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 32px;
+    }
+
+    .featureCard {
+      padding: 32px;
+
+      .featureIcon {
+        font-size: 40px;
+        margin-bottom: 16px;
+      }
+
+      .featureTitle {
+        font-size: 22px;
+      }
+
+      .featureDescription {
+        font-size: 16px;
+      }
     }
   }
 }

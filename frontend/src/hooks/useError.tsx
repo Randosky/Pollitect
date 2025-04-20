@@ -23,17 +23,15 @@ export const useError = (): ((error: unknown) => void) => {
     if (axios.isAxiosError(error)) {
       // Проверяем, является ли ошибка ошибкой Axios
       const errorMessage =
-        typeof error.response?.data?.message === "string"
-          ? error.response.data.message
-          : "Произошла непредвиденная ошибка";
+        typeof error.response?.data?.message === "string" ? error.response.data.message : "Произошла ошибка";
 
       // Отправляем уведомление-тостер с сообщением об ошибке
       dispatch(openToaster({ content: errorMessage }));
     } else if (error instanceof Error) {
       dispatch(openToaster({ content: error.message }));
     } else {
-      console.error("Неожиданная ошибка:", error);
-      dispatch(openToaster({ content: "Произошла непредвиденная ошибка" }));
+      console.error("Ошибка:", error);
+      dispatch(openToaster({ content: "Произошла ошибка" }));
     }
   };
 };

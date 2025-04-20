@@ -19,7 +19,7 @@
   flex-direction: row;
 
   border-radius: 5px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border);
 
   position: relative;
   background: #ffffff;
@@ -54,7 +54,7 @@
 
   &:not(:disabled):hover,
   &:focus-within {
-    border-color: #1976d2;
+    border-color: var(--border-hover);
     box-shadow: 0px 0px 4px 0px rgba(26, 26, 26, 0.2);
   }
 }
@@ -110,7 +110,7 @@
 
 .mobile {
   .inner {
-    padding: 6px;
+    padding: 6px 6px 6px 10px;
   }
 
   .field {
@@ -121,7 +121,7 @@
 
 .desktop {
   .inner {
-    padding: 8px;
+    padding: 8px 8px 8px 12px;
   }
 
   .field {
