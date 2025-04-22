@@ -3,7 +3,7 @@ import React from "react";
 import classNames from "classnames";
 import { Link } from "react-router-dom";
 
-import type { TSurveyCardProps } from "./SurveyCard.types";
+import type { TSurveyCardProps } from "../Dashboard.types";
 
 import styles from "./SurveyCard.module.scss";
 
@@ -13,7 +13,7 @@ const SurveyCard: React.FC<TSurveyCardProps> = ({ surveyCard }) => {
   return (
     <div className={styles.card}>
       <Link
-        to={`/quiz/edit/${id}`}
+        to={`/survey/edit/${id}`}
         className={styles.cardHeader}
       >
         {title}
@@ -28,11 +28,11 @@ const SurveyCard: React.FC<TSurveyCardProps> = ({ surveyCard }) => {
       </div>
 
       <div className={styles.actions}>
-        <Link to={`/quiz/edit/${id}`}>
+        <Link to={`/survey/edit/${id}`}>
           <span className={classNames("icon-edit", styles.actionBtn)} />
         </Link>
 
-        <Link to={`/quiz/results/${id}`}>
+        <Link to={`/survey/results/${id}`}>
           <span className={classNames("icon-chart", styles.actionBtn)} />
         </Link>
 

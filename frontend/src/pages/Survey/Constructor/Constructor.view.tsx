@@ -13,7 +13,6 @@ import Text from "./Question/Text";
 import Textarea from "./Question/Textarea";
 import Completion from "./Screen/Completion";
 import Personal from "./Screen/Personal";
-import ThankYou from "./Screen/ThankYou";
 import Welcome from "./Screen/Welcome";
 
 const mapComp: Record<string, React.FC<{ item: QuestionItem; onChange: (f: Partial<QuestionItem>) => void }>> = {
@@ -27,7 +26,6 @@ const mapComp: Record<string, React.FC<{ item: QuestionItem; onChange: (f: Parti
   welcome: Welcome,
   personal: Personal,
   completion: Completion,
-  thankyou: ThankYou,
 };
 
 type Props = {
@@ -64,26 +62,16 @@ const ConstructorView: React.FC<Props> = ({ items, setItems, onSave }) => {
   return (
     <div className={styles.root}>
       <div className={styles.toolbar}>
-        {[
-          "welcome",
-          "personal",
-          "single",
-          "multi",
-          "binary",
-          "dropdown",
-          "text",
-          "textarea",
-          "date",
-          "completion",
-          "thankyou",
-        ].map(t => (
-          <button
-            key={t}
-            onClick={() => addItem(t as QuestionType)}
-          >
-            {t}
-          </button>
-        ))}
+        {["welcome", "personal", "single", "multi", "binary", "dropdown", "text", "textarea", "date", "completion"].map(
+          t => (
+            <button
+              key={t}
+              onClick={() => addItem(t as QuestionType)}
+            >
+              {t}
+            </button>
+          )
+        )}
         <button
           onClick={onSave}
           className={styles.save}

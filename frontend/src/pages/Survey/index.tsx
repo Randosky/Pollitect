@@ -2,18 +2,18 @@ import React, { ReactElement } from "react";
 
 import { NavLink, Outlet, useParams } from "react-router-dom";
 
-import styles from "./Quiz.module.scss";
+import styles from "./Survey.module.scss";
 
-const Quiz: React.FC = (): ReactElement => {
-  const { quizId } = useParams<{ quizId: string }>();
+const Survey: React.FC = (): ReactElement => {
+  const { surveyId } = useParams<{ surveyId: string }>();
 
   return (
-    <div className={styles.quiz}>
+    <div className={styles.survey}>
       <nav className={styles.tabs}>
         {["edit", "design", "settings"].map(tab => (
           <NavLink
             key={tab}
-            to={`${tab}/${quizId}`}
+            to={`${tab}/${surveyId}`}
             className={({ isActive }) => (isActive ? `${styles.tab} ${styles.active}` : styles.tab)}
           >
             {
@@ -33,4 +33,4 @@ const Quiz: React.FC = (): ReactElement => {
   );
 };
 
-export default Quiz;
+export default Survey;

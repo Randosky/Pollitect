@@ -7,11 +7,11 @@ import ConstructorView from "./Constructor.view";
 import type { QuestionItem } from "./Constructor.types";
 
 const ConstructorContainer: React.FC = () => {
-  const { quizId } = useParams<{ quizId: string }>();
+  const { surveyId } = useParams<{ surveyId: string }>();
 
   const [items, setItems] = useState<QuestionItem[]>([]);
 
-  useEffect(() => {}, [quizId]);
+  useEffect(() => {}, [surveyId]);
 
   const save = async () => {
     alert("Сохранено");

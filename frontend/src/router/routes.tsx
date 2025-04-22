@@ -3,11 +3,11 @@ import { ReactElement } from "react";
 import Dashboard from "@pages/Dashboard";
 import Home from "@pages/Home";
 import Login from "@pages/Login";
-import Quiz from "@pages/Quiz";
-import Constructor from "@pages/Quiz/Constructor";
-import Design from "@pages/Quiz/Design";
-import Settings from "@pages/Quiz/Settings";
 import Registration from "@pages/Registration";
+import Survey from "@pages/Survey";
+import Constructor from "@pages/Survey/Constructor";
+import Design from "@pages/Survey/Design";
+import Settings from "@pages/Survey/Settings";
 import { useAppSelector } from "@store/hooks";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 
@@ -140,10 +140,10 @@ const AppRouter = (): ReactElement => {
           />
 
           <Route
-            path="quiz"
-            element={<Quiz />}
+            path="survey"
+            element={<Survey />}
           >
-            {/* Если просто зашли на /quiz без саб-роутов */}
+            {/* Если просто зашли на /survey без саб-роутов */}
             <Route
               index
               element={
@@ -155,17 +155,17 @@ const AppRouter = (): ReactElement => {
             />
 
             <Route
-              path="edit/:quizId"
+              path="edit/:surveyId"
               element={<Constructor />}
             />
 
             <Route
-              path="design/:quizId"
+              path="design/:surveyId"
               element={<Design />}
             />
 
             <Route
-              path="settings/:quizId"
+              path="settings/:surveyId"
               element={<Settings />}
             />
           </Route>

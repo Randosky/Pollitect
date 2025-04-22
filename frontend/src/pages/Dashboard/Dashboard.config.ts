@@ -1,4 +1,4 @@
-import type { SurveyCard } from "@store/slices/survey";
+import { SurveyCard } from "./Dashboard.types";
 
 export const mockSurveys: SurveyCard[] = [
   {

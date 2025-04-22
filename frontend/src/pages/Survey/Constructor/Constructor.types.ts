@@ -8,8 +8,7 @@ export type QuestionType =
   | "date"
   | "welcome"
   | "personal"
-  | "completion"
-  | "thankyou";
+  | "completion";
 
 export interface BaseItem {
   type: QuestionType;

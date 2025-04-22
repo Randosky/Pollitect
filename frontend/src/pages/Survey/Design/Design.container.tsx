@@ -21,10 +21,10 @@ const defaultSettings: DesignSettings = {
 };
 
 const DesignContainer: React.FC = () => {
-  const { quizId } = useParams<{ quizId: string }>();
+  const { surveyId } = useParams<{ surveyId: string }>();
   const [settings, setSettings] = useState<DesignSettings>(defaultSettings);
 
-  useEffect(() => {}, [quizId]);
+  useEffect(() => {}, [surveyId]);
 
   const save = async () => {
     alert("Дизайн сохранён");

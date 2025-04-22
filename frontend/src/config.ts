@@ -83,12 +83,6 @@ export const MOCK_DATA_SURVEYS = [
         title: "Оставьте ваш email",
         description: "Чтобы мы могли связаться с вами",
       },
-      {
-        id: 811,
-        type: "thankyou",
-        title: "Спасибо!",
-        description: "Ваши ответы сохранены",
-      },
     ],
     created_at: "2024-03-01T12:00:00Z",
     updated_at: "2024-03-15T16:30:00Z",
@@ -134,12 +128,6 @@ export const MOCK_DATA_SURVEYS = [
         type: "input",
         title: "Ваши предложения",
         description: "Как мы можем улучшить сайт?",
-      },
-      {
-        id: 903,
-        type: "thankyou",
-        title: "Спасибо за отзыв!",
-        description: "Нам важно ваше мнение",
       },
     ],
     created_at: "2024-03-05T08:00:00Z",
@@ -191,12 +179,6 @@ export const MOCK_COMPLETED_ANSWERS = [
         question_type: "email",
         answer: "user@example.com",
       },
-      {
-        question_id: 811,
-        question_text: "Спасибо!",
-        question_type: "thankyou",
-        answer: "Спасибо за участие!",
-      },
     ],
     metadata: {
       country: "Russia",
@@ -222,12 +204,6 @@ export const MOCK_COMPLETED_ANSWERS = [
         question_text: "Ваши предложения",
         question_type: "input",
         answer: "Добавьте поиск по сайту",
-      },
-      {
-        question_id: 903,
-        question_text: "Спасибо за отзыв!",
-        question_type: "thankyou",
-        answer: "Отлично, спасибо!",
       },
     ],
     metadata: {

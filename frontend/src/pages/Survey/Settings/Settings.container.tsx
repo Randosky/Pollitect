@@ -16,16 +16,16 @@ const defaultSettings: Settings = {
 };
 
 const SettingsContainer: React.FC = () => {
-  const { quizId } = useParams<{ quizId: string }>();
+  const { surveyId } = useParams<{ surveyId: string }>();
   const [settings, setSettings] = useState<Settings>(defaultSettings);
   const [embed, setEmbed] = useState("");
 
-  useEffect(() => {}, [quizId]);
+  useEffect(() => {}, [surveyId]);
 
   const save = async () => {
     setEmbed(
       `<script src="https://your.cdn/widget.js"
- data-id="${quizId}"
+ data-id="${surveyId}"
  data-target="${settings.htmlTargetId}"
  data-blockscroll="${settings.blockScroll}"
  data-preventrepeat="${settings.preventRepeat}"
