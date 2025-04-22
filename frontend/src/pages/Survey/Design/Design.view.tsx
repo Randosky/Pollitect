@@ -1,129 +1,129 @@
+/* eslint-disable camelcase */
 import React from "react";
 
+import type { TFontFamily, TPlacement } from "../Survey.types";
 import type { TDesignViewProps } from "./Design.types";
 
 import styles from "./Design.module.scss";
 
-const FONT_FAMILIES = ["Open Sans", "Arial", "Times New Roman", "Roboto", "Montserrat"];
+const FONTS = ["Open Sans", "Arial", "Times New Roman", "Roboto", "Montserrat"];
 
-const DesignView: React.FC<TDesignViewProps> = ({ settings, onChange, onSave }) => {
-  return (
-    <div className={styles.design}>
+const DesignView: React.FC<TDesignViewProps> = ({ settings, onChange, onSave }) => (
+  <div className={styles.design}>
+    <div className={styles.group}>
+      <label>Размещение виджета</label>
+      <select
+        value={settings.placement}
+        onChange={e => onChange({ ...settings, placement: e.target.value as TPlacement })}
+      >
+        <option value="inbuilt">Встроенный</option>
+        <option value="before">До элемента</option>
+        <option value="after">После элемента</option>
+      </select>
+    </div>
+
+    <div className={styles.row}>
       <div className={styles.group}>
-        <label>Размещение виджета</label>
+        <label>Ширина</label>
+        <input
+          type="number"
+          value={settings.width}
+          onChange={e => onChange({ ...settings, width: +e.target.value })}
+        />
         <select
-          value={settings.widgetPlacement}
-          onChange={e => onChange({ ...settings, widgetPlacement: e.target.value as any })}
+          value={settings.width_unit}
+          onChange={e => onChange({ ...settings, width_unit: e.target.value as any })}
         >
-          <option value="embedded">Встроенный</option>
-          <option value="left">Слева</option>
-          <option value="right">Справа</option>
+          <option value="%">%</option>
+          <option value="px">px</option>
         </select>
       </div>
-
-      <div className={styles.row}>
-        <div className={styles.group}>
-          <label>Ширина</label>
-          <input
-            type="number"
-            value={settings.width}
-            onChange={e => onChange({ ...settings, width: +e.target.value })}
-          />
-          <select
-            value={settings.widthUnit}
-            onChange={e => onChange({ ...settings, widthUnit: e.target.value as any })}
-          >
-            <option value="%">%</option>
-            <option value="px">px</option>
-          </select>
-        </div>
-        <div className={styles.group}>
-          <label>Высота</label>
-          <input
-            type="number"
-            value={settings.height}
-            onChange={e => onChange({ ...settings, height: +e.target.value })}
-          />
-          <select
-            value={settings.heightUnit}
-            onChange={e => onChange({ ...settings, heightUnit: e.target.value as any })}
-          >
-            <option value="px">px</option>
-            <option value="%">%</option>
-          </select>
-        </div>
+      <div className={styles.group}>
+        <label>Высота</label>
+        <input
+          type="number"
+          value={settings.height}
+          onChange={e => onChange({ ...settings, height: +e.target.value })}
+        />
+        <select
+          value={settings.height_unit}
+          onChange={e => onChange({ ...settings, height_unit: e.target.value as any })}
+        >
+          <option value="px">px</option>
+          <option value="%">%</option>
+        </select>
       </div>
-
-      <div className={styles.row}>
-        <div className={styles.group}>
-          <label>Фон виджета</label>
-          <input
-            type="color"
-            value={settings.bgColor}
-            onChange={e => onChange({ ...settings, bgColor: e.target.value })}
-          />
-        </div>
-        <div className={styles.group}>
-          <label>Цвет текста</label>
-          <input
-            type="color"
-            value={settings.textColor}
-            onChange={e => onChange({ ...settings, textColor: e.target.value })}
-          />
-        </div>
-        <div className={styles.group}>
-          <label>Цвет кнопок</label>
-          <input
-            type="color"
-            value={settings.buttonColor}
-            onChange={e => onChange({ ...settings, buttonColor: e.target.value })}
-          />
-        </div>
-      </div>
-
-      <div className={styles.row}>
-        <div className={styles.group}>
-          <label>Шрифт</label>
-          <select
-            value={settings.fontFamily}
-            onChange={e => onChange({ ...settings, fontFamily: e.target.value })}
-          >
-            {FONT_FAMILIES.map(f => (
-              <option
-                key={f}
-                value={f}
-              >
-                {f}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className={styles.group}>
-          <label>Отступ (px)</label>
-          <input
-            type="number"
-            value={settings.padding}
-            onChange={e => onChange({ ...settings, padding: +e.target.value })}
-          />
-        </div>
-        <div className={styles.group}>
-          <label>Внешний отступ (px)</label>
-          <input
-            type="number"
-            value={settings.margin}
-            onChange={e => onChange({ ...settings, margin: +e.target.value })}
-          />
-        </div>
-      </div>
-
-      <button
-        className={styles.saveBtn}
-        onClick={onSave}
-      >
-        Сохранить дизайн
-      </button>
     </div>
-  );
-};
+
+    <div className={styles.row}>
+      <div className={styles.group}>
+        <label>Цвет фона</label>
+        <input
+          type="color"
+          value={settings.background_color}
+          onChange={e => onChange({ ...settings, background_color: e.target.value })}
+        />
+      </div>
+      <div className={styles.group}>
+        <label>Цвет текста</label>
+        <input
+          type="color"
+          value={settings.text_color}
+          onChange={e => onChange({ ...settings, text_color: e.target.value })}
+        />
+      </div>
+      <div className={styles.group}>
+        <label>Цвет кнопок</label>
+        <input
+          type="color"
+          value={settings.button_color}
+          onChange={e => onChange({ ...settings, button_color: e.target.value })}
+        />
+      </div>
+    </div>
+
+    <div className={styles.group}>
+      <label>Шрифт</label>
+      <select
+        value={settings.font_family}
+        onChange={e => onChange({ ...settings, font_family: e.target.value as TFontFamily })}
+      >
+        {FONTS.map(f => (
+          <option key={f}>{f}</option>
+        ))}
+      </select>
+    </div>
+
+    <div className={styles.row}>
+      <div className={styles.group}>
+        <label>Отступ (px)</label>
+        <input
+          type="number"
+          value={settings.padding[0]}
+          onChange={e =>
+            onChange({ ...settings, padding: [+e.target.value, +e.target.value, +e.target.value, +e.target.value] })
+          }
+        />
+      </div>
+      <div className={styles.group}>
+        <label>Внешний отступ (px)</label>
+        <input
+          type="number"
+          value={settings.margin[0]}
+          onChange={e =>
+            onChange({ ...settings, margin: [+e.target.value, +e.target.value, +e.target.value, +e.target.value] })
+          }
+        />
+      </div>
+    </div>
+
+    <button
+      className={styles.saveBtn}
+      onClick={onSave}
+    >
+      Сохранить дизайн
+    </button>
+  </div>
+);
 
 export default DesignView;

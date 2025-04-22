@@ -1,106 +1,195 @@
-import React from "react";
+/* eslint-disable no-magic-numbers */
+// src/pages/Constructor/ConstructorView.tsx
+import React, { useRef } from "react";
 
-import type { QuestionItem, QuestionType } from "./Constructor.types";
+import type { TCompletionScreen, TPersonalScreen, TQuestion, TWelcomeScreen } from "../Survey.types";
 
 import styles from "./Constructor.module.scss";
 
-import Binary from "./Question/Binary";
-import Date from "./Question/Date";
-import Dropdown from "./Question/Dropdown";
-import Multi from "./Question/Multi";
-import Single from "./Question/Single";
-import Text from "./Question/Text";
-import Textarea from "./Question/Textarea";
+import { Binary } from "./Question/Binary";
+import { DateQuestion } from "./Question/Date";
+import { Dropdown } from "./Question/Dropdown";
+import { Multi } from "./Question/Multi";
+import { Single } from "./Question/Single";
+import { Text } from "./Question/Text";
+import { Textarea } from "./Question/Textarea";
 import Completion from "./Screen/Completion";
 import Personal from "./Screen/Personal";
 import Welcome from "./Screen/Welcome";
 
-const mapComp: Record<string, React.FC<{ item: QuestionItem; onChange: (f: Partial<QuestionItem>) => void }>> = {
+type QuestionOnly = "single" | "multi" | "binary" | "dropdown" | "text" | "textarea" | "date";
+
+const QUESTION_COMPONENTS: Record<
+  QuestionOnly,
+  React.FC<{ item: TQuestion; onChange: (upd: Partial<TQuestion>) => void }>
+> = {
   single: Single,
   multi: Multi,
   binary: Binary,
   dropdown: Dropdown,
   text: Text,
   textarea: Textarea,
-  date: Date,
-  welcome: Welcome,
-  personal: Personal,
-  completion: Completion,
+  date: DateQuestion,
 };
 
 type Props = {
-  items: QuestionItem[];
-  setItems: React.Dispatch<React.SetStateAction<QuestionItem[]>>;
+  welcome: TWelcomeScreen;
+  questions: TQuestion[];
+  personal: TPersonalScreen;
+  completion: TCompletionScreen;
+  setQuestions: React.Dispatch<React.SetStateAction<TQuestion[]>>;
+  updateWelcome: (upd: Partial<TWelcomeScreen>) => void;
+  updatePersonal: (upd: Partial<TPersonalScreen>) => void;
+  updateCompletion: (upd: Partial<TCompletionScreen>) => void;
   onSave: () => void;
 };
 
-const ConstructorView: React.FC<Props> = ({ items, setItems, onSave }) => {
-  const addItem = (type: QuestionItem["type"]) => {
-    setItems([
-      ...items,
+const ConstructorView: React.FC<Props> = ({
+  welcome,
+  questions,
+  personal,
+  completion,
+  setQuestions,
+  updateWelcome,
+  updatePersonal,
+  updateCompletion,
+  onSave,
+}) => {
+  const sectionRefs = useRef<Array<HTMLDivElement | null>>([]);
+
+  const scrollTo = (idx: number) => {
+    sectionRefs.current[idx]?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const addQuestion = (type: QuestionOnly) => {
+    setQuestions(prev => [
+      ...prev,
       {
         type,
+        order: prev.length + 1,
+        required: false,
         title: "",
         description: "",
-        options: type === "single" || type === "multi" || type === "dropdown" ? [""] : undefined,
-      },
+        options: ["single", "multi", "dropdown"].includes(type) ? [""] : undefined,
+      } as TQuestion,
     ]);
   };
-  const updateItem = (idx: number, field: Partial<QuestionItem>) => {
-    const arr = [...items];
 
-    arr[idx] = { ...arr[idx], ...field };
-    setItems(arr);
+  const updateQuestion = (idx: number, upd: Partial<TQuestion>) => {
+    setQuestions(prev => {
+      const next = [...prev];
+
+      next[idx] = { ...next[idx], ...upd };
+
+      return next;
+    });
   };
-  const removeItem = (idx: number) => {
-    const arr = [...items];
 
-    arr.splice(idx, 1);
-    setItems(arr);
+  const removeQuestion = (idx: number) => {
+    setQuestions(prev => prev.filter((_, i) => i !== idx));
   };
 
   return (
-    <div className={styles.root}>
-      <div className={styles.toolbar}>
-        {["welcome", "personal", "single", "multi", "binary", "dropdown", "text", "textarea", "date", "completion"].map(
-          t => (
+    <>
+      <nav className={styles.nav}>
+        <button onClick={() => scrollTo(0)}>Приветствие</button>
+        <button onClick={() => scrollTo(1)}>Вопросы</button>
+        <button onClick={() => scrollTo(2)}>Сбор данных</button>
+        <button onClick={() => scrollTo(3)}>Завершение</button>
+      </nav>
+
+      <div className={styles.root}>
+        <div className={styles.toolbar}>
+          {(Object.keys(QUESTION_COMPONENTS) as QuestionOnly[]).map(t => (
             <button
               key={t}
-              onClick={() => addItem(t as QuestionType)}
+              onClick={() => addQuestion(t)}
             >
-              {t}
+              + {t}
             </button>
-          )
-        )}
-        <button
-          onClick={onSave}
-          className={styles.save}
-        >
-          Сохранить
-        </button>
-      </div>
-      {items.map((it, idx) => {
-        const Comp = mapComp[it.type];
-
-        return (
-          <div
-            key={idx}
-            className={styles.item}
+          ))}
+          <button
+            className={styles.save}
+            onClick={onSave}
           >
-            <button
-              className={styles.remove}
-              onClick={() => removeItem(idx)}
-            >
-              ×
-            </button>
-            <Comp
-              item={it}
-              onChange={(f: Partial<QuestionItem>) => updateItem(idx, f)}
-            />
-          </div>
-        );
-      })}
-    </div>
+            Сохранить
+          </button>
+        </div>
+
+        {/* Welcome */}
+        <div
+          ref={el => {
+            sectionRefs.current[0] = el;
+          }}
+          className={styles.item}
+        >
+          <h3 className={styles.sectionTitle}>Экран приветствия</h3>
+          <Welcome
+            data={welcome}
+            onChange={updateWelcome}
+          />
+        </div>
+
+        {/* Questions */}
+        <div
+          ref={el => {
+            sectionRefs.current[1] = el;
+          }}
+          className={styles.item}
+        >
+          <h3 className={styles.sectionTitle}>Вопросы</h3>
+          {questions.map((q, i) => {
+            const Comp = QUESTION_COMPONENTS[q.type as QuestionOnly];
+
+            return (
+              <div
+                key={i}
+                className={styles.questionBlock}
+              >
+                <button
+                  className={styles.remove}
+                  onClick={() => removeQuestion(i)}
+                >
+                  ×
+                </button>
+                <Comp
+                  item={q}
+                  onChange={upd => updateQuestion(i, upd)}
+                />
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Personal */}
+        <div
+          ref={el => {
+            sectionRefs.current[2] = el;
+          }}
+          className={styles.item}
+        >
+          <h3 className={styles.sectionTitle}>Экран сбора данных</h3>
+          <Personal
+            data={personal}
+            onChange={updatePersonal}
+          />
+        </div>
+
+        {/* Completion */}
+        <div
+          ref={el => {
+            sectionRefs.current[3] = el;
+          }}
+          className={styles.item}
+        >
+          <h3 className={styles.sectionTitle}>Экран завершения</h3>
+          <Completion
+            data={completion}
+            onChange={updateCompletion}
+          />
+        </div>
+      </div>
+    </>
   );
 };
 

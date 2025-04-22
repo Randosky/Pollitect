@@ -1,15 +1,8 @@
-export interface Settings {
-  htmlTargetId: string;
-  blockScroll: boolean;
-  preventRepeat: boolean;
-  timerSec: number;
-  urlMatchMode: "contains" | "equals";
-  urlPattern: string;
-}
+import type { TDisplaySettings } from "../Survey.types";
 
 export interface TSettingsViewProps {
-  settings: Settings;
-  onChange: (s: Settings) => void;
-  onSave: () => void;
+  settings: TDisplaySettings;
   embedCode: string;
+  onChange: (settings: TDisplaySettings) => void;
+  onSave: () => void;
 }

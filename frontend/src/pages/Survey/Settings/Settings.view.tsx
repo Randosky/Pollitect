@@ -1,34 +1,27 @@
+/* eslint-disable camelcase */
 import React from "react";
 
 import type { TSettingsViewProps } from "./Settings.types";
 
 import styles from "./Settings.module.scss";
 
-const SettingsView: React.FC<TSettingsViewProps> = ({ settings, onChange, onSave, embedCode }) => (
+const SettingsView: React.FC<TSettingsViewProps> = ({ settings, embedCode, onChange, onSave }) => (
   <div className={styles.settings}>
-    <div className={styles.group}>
-      <label>ID контейнера</label>
-      <input
-        value={settings.htmlTargetId}
-        onChange={e => onChange({ ...settings, htmlTargetId: e.target.value })}
-      />
-    </div>
-
     <label className={styles.checkbox}>
       <input
         type="checkbox"
-        checked={settings.blockScroll}
-        onChange={e => onChange({ ...settings, blockScroll: e.target.checked })}
-      />{" "}
+        checked={settings.block_scroll}
+        onChange={e => onChange({ ...settings, block_scroll: e.target.checked })}
+      />
       Блокировать прокрутку
     </label>
 
     <label className={styles.checkbox}>
       <input
         type="checkbox"
-        checked={settings.preventRepeat}
-        onChange={e => onChange({ ...settings, preventRepeat: e.target.checked })}
-      />{" "}
+        checked={settings.prevent_repeat}
+        onChange={e => onChange({ ...settings, prevent_repeat: e.target.checked })}
+      />
       Предотвращать повтор
     </label>
 
@@ -37,8 +30,8 @@ const SettingsView: React.FC<TSettingsViewProps> = ({ settings, onChange, onSave
       <input
         type="number"
         min={0}
-        value={settings.timerSec}
-        onChange={e => onChange({ ...settings, timerSec: +e.target.value })}
+        value={settings.timer_sec}
+        onChange={e => onChange({ ...settings, timer_sec: +e.target.value })}
       />
     </div>
 
@@ -49,26 +42,25 @@ const SettingsView: React.FC<TSettingsViewProps> = ({ settings, onChange, onSave
           <input
             type="radio"
             name="urlmode"
-            value="contains"
-            checked={settings.urlMatchMode === "contains"}
-            onChange={() => onChange({ ...settings, urlMatchMode: "contains" })}
-          />{" "}
+            checked={settings.url_match_mode === "contains"}
+            onChange={() => onChange({ ...settings, url_match_mode: "contains" })}
+          />
           содержит URL
         </label>
         <label>
           <input
             type="radio"
             name="urlmode"
-            value="equals"
-            checked={settings.urlMatchMode === "equals"}
-            onChange={() => onChange({ ...settings, urlMatchMode: "equals" })}
-          />{" "}
+            checked={settings.url_match_mode === "equals"}
+            onChange={() => onChange({ ...settings, url_match_mode: "equals" })}
+          />
           точное совпадение
         </label>
       </div>
       <input
-        value={settings.urlPattern}
-        onChange={e => onChange({ ...settings, urlPattern: e.target.value })}
+        type="text"
+        value={settings.url_pattern}
+        onChange={e => onChange({ ...settings, url_pattern: [e.target.value] })}
       />
     </div>
 

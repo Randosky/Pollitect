@@ -1,41 +1,32 @@
 import React from "react";
 
-import type { QuestionItem } from "../Constructor.types";
+import type { TQuestion } from "@pages/Survey/Survey.types";
 
-import styles from "../Constructor.module.scss";
+import styles from "../Question.module.scss";
 
-interface Props {
-  item: QuestionItem;
-  onChange: (f: Partial<QuestionItem>) => void;
-}
+import { BaseQuestion } from "../Base";
 
-const Dropdown: React.FC<Props> = ({ item, onChange }) => (
-  <div className={styles.questionBlock}>
-    <input
-      className={styles.titleInput}
-      value={item.title}
-      placeholder="Заголовок вопроса"
-      onChange={e => onChange({ title: e.target.value })}
-      required
-    />
-    <textarea
-      className={styles.descInput}
-      value={item.description}
-      placeholder="Описание (опционально)"
-      onChange={e => onChange({ description: e.target.value })}
-    />
+export const Dropdown: React.FC<{
+  item: TQuestion;
+  onChange: (upd: Partial<TQuestion>) => void;
+}> = ({ item, onChange }) => (
+  <BaseQuestion
+    item={item}
+    onChange={onChange}
+  >
     <select
+      className={styles.selectInput}
       disabled
-      className={styles.dropdownSample}
     >
       <option>Выберите вариант</option>
     </select>
-    {item.options?.map((opt, i) => (
+    {(item.options || []).map((opt, i) => (
       <div
         key={i}
         className={styles.optionRow}
       >
         <input
+          className={styles.optionInput}
           value={opt}
           placeholder={`Вариант ${i + 1}`}
           onChange={e => {
@@ -65,7 +56,5 @@ const Dropdown: React.FC<Props> = ({ item, onChange }) => (
     >
       + Добавить вариант
     </button>
-  </div>
+  </BaseQuestion>
 );
-
-export default Dropdown;

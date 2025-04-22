@@ -1,47 +1,52 @@
 import React, { useEffect, useState } from "react";
 
-import { useParams } from "react-router-dom";
+import { updateDisplaySettings } from "@store/slices/survey";
+
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 
 import SettingsView from "./Settings.view";
 
-import type { Settings } from "./Settings.types";
-
-const defaultSettings: Settings = {
-  htmlTargetId: "survey-widget",
-  blockScroll: false,
-  preventRepeat: false,
-  timerSec: 0,
-  urlMatchMode: "contains",
-  urlPattern: window.location.origin,
-};
+import { TDisplaySettings } from "../Survey.types";
 
 const SettingsContainer: React.FC = () => {
-  const { surveyId } = useParams<{ surveyId: string }>();
-  const [settings, setSettings] = useState<Settings>(defaultSettings);
-  const [embed, setEmbed] = useState("");
+  const dispatch = useAppDispatch();
+  const stored = useAppSelector(s => s.survey.surveyForm.display_settings);
+  const [settings, setSettings] = useState<TDisplaySettings>(stored);
+  const [embedCode, setEmbedCode] = useState<string>("");
 
-  useEffect(() => {}, [surveyId]);
+  useEffect(() => {
+    setSettings(stored);
+  }, [stored]);
 
-  const save = async () => {
-    setEmbed(
-      `<script src="https://your.cdn/widget.js"
- data-id="${surveyId}"
- data-target="${settings.htmlTargetId}"
- data-blockscroll="${settings.blockScroll}"
- data-preventrepeat="${settings.preventRepeat}"
- data-timer="${settings.timerSec}"
- data-urlmode="${settings.urlMatchMode}"
- data-url="${settings.urlPattern}"></script>`
-    );
-    alert("Настройки сохранены");
+  useEffect(() => {
+    const id = setTimeout(() => {
+      dispatch(updateDisplaySettings(settings));
+    }, 300);
+
+    return () => clearTimeout(id);
+  }, [settings, dispatch]);
+
+  const handleChange = (newSettings: TDisplaySettings) => {
+    setSettings(newSettings);
+  };
+
+  const handleSave = () => {
+    dispatch(updateDisplaySettings(settings));
+    const code = `<script src="https://your.cdn/widget.js"
+  data-blockscroll="${settings.block_scroll}"
+  data-preventrepeat="${settings.prevent_repeat}"
+  data-timersec="${settings.timer_sec}"
+  data-urlmode="${settings.url_match_mode}"></script>`;
+
+    setEmbedCode(code);
   };
 
   return (
     <SettingsView
       settings={settings}
-      onChange={setSettings}
-      onSave={save}
-      embedCode={embed}
+      embedCode={embedCode}
+      onChange={handleChange}
+      onSave={handleSave}
     />
   );
 };
