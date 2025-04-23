@@ -7,6 +7,7 @@
   padding: 8px 16px;
   background: var(--bg);
   border-bottom: 1px solid var(--border);
+
   button {
     background: transparent;
     border: none;
@@ -19,6 +20,10 @@
       color: var(--text-hover);
     }
   }
+
+  .activeTab {
+    border-bottom: 2px solid var(--bg-contrast);
+  }
 }
 
 .root {
@@ -26,6 +31,26 @@
   flex-direction: column;
   gap: 24px;
   padding: 16px;
+
+  .tabContent {
+    position: relative;
+  }
+
+  // переходы для react-transition-group
+  .fadeEnter {
+    opacity: 0;
+  }
+  .fadeEnterActive {
+    opacity: 1;
+    transition: opacity 300ms ease-in;
+  }
+  .fadeExit {
+    opacity: 1;
+  }
+  .fadeExitActive {
+    opacity: 0;
+    transition: opacity 300ms ease-out;
+  }
 
   .toolbar {
     display: flex;

@@ -1,19 +1,11 @@
 import React from "react";
 
-import type { TQuestion } from "@pages/Survey/Survey.types";
+import type { IQuestionProps } from "../Questions.types";
 
 import styles from "../Question.module.scss";
 
-import { BaseQuestion } from "../Base";
-
-export const Dropdown: React.FC<{
-  item: TQuestion;
-  onChange: (upd: Partial<TQuestion>) => void;
-}> = ({ item, onChange }) => (
-  <BaseQuestion
-    item={item}
-    onChange={onChange}
-  >
+export const Dropdown: React.FC<IQuestionProps> = ({ item, onChange }) => (
+  <>
     <select
       className={styles.selectInput}
       disabled
@@ -56,5 +48,5 @@ export const Dropdown: React.FC<{
     >
       + Добавить вариант
     </button>
-  </BaseQuestion>
+  </>
 );

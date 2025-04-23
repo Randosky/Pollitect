@@ -1,132 +1,152 @@
-// src/pages/Constructor/Screen/Completion.tsx
 /* eslint-disable camelcase */
-import React, { useEffect, useState } from "react";
+import React, { useCallback } from "react";
 
-import type { TAlignment, TCompletionScreen, TLayout } from "@pages/Survey/Survey.types";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
+import { updateCompletionScreen } from "@store/slices/survey";
 
 import styles from "./Completion.module.scss";
 
-type Props = {
-  data: TCompletionScreen;
-  onChange: (upd: Partial<TCompletionScreen>) => void;
-};
+/** Компонент экрана завершения опроса */
+const CompletionScreen: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const completion = useAppSelector(s => s.survey.surveyForm.completionScreen);
 
-// simple deep-equality check
-function deepEqual(a: any, b: any): boolean {
-  return JSON.stringify(a) === JSON.stringify(b);
-}
+  /**
+   * Обновляет простые поля экрана (active, title, description, button_text, button_url)
+   */
+  const updateInput = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const { name, value, type } = e.target;
 
-const CompletionScreen: React.FC<Props> = ({ data, onChange }) => {
-  const [local, setLocal] = useState<TCompletionScreen>(data);
+      dispatch(
+        updateCompletionScreen({
+          ...completion,
+          [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+        })
+      );
+    },
+    [dispatch, completion]
+  );
 
-  // sync incoming prop → local only if different
-  useEffect(() => {
-    if (!deepEqual(data, local)) {
-      setLocal(data);
-    }
-  }, [data]);
+  /**
+   * Обновляет дизайн-опции экрана
+   */
+  const updateDesign = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      const { name, value } = e.currentTarget;
 
-  // propagate local → parent only if genuinely changed
-  useEffect(() => {
-    if (!deepEqual(local, data)) {
-      onChange(local);
-    }
-  }, [local]);
-
-  const update = <K extends keyof TCompletionScreen>(key: K, value: TCompletionScreen[K]) => {
-    setLocal({ ...local, [key]: value });
-  };
-
-  const updateDesign = <K extends keyof TCompletionScreen["design_settings"]>(
-    key: K,
-    value: TCompletionScreen["design_settings"][K]
-  ) => {
-    setLocal({
-      ...local,
-      design_settings: { ...local.design_settings, [key]: value },
-    });
-  };
+      dispatch(
+        updateCompletionScreen({
+          ...completion,
+          design_settings: {
+            ...completion.design_settings,
+            [name]: value,
+          },
+        })
+      );
+    },
+    [dispatch, completion]
+  );
 
   return (
-    <div className={styles.screen}>
-      <label className={styles.checkbox}>
-        <input
-          type="checkbox"
-          checked={local.active}
-          onChange={e => update("active", e.target.checked)}
-        />{" "}
-        Активировать экран завершения
-      </label>
+    <div className={styles.item}>
+      <h3 className={styles.sectionTitle}>Экран завершения</h3>
 
-      <div className={styles.field}>
-        <label>Заголовок</label>
-        <input
-          type="text"
-          value={local.title || ""}
-          onChange={e => update("title", e.target.value)}
-        />
-      </div>
-
-      <div className={styles.field}>
-        <label>Описание</label>
-        <textarea
-          value={local.description || ""}
-          onChange={e => update("description", e.target.value)}
-        />
-      </div>
-
-      <div className={styles.field}>
-        <label>Текст кнопки</label>
-        <input
-          type="text"
-          value={local.button_text || ""}
-          onChange={e => update("button_text", e.target.value)}
-        />
-      </div>
-
-      <div className={styles.field}>
-        <label>URL кнопки</label>
-        <input
-          type="text"
-          value={local.button_url || ""}
-          onChange={e => update("button_url", e.target.value)}
-        />
-      </div>
-
-      <div className={styles.design}>
-        <h4>Дизайн экрана</h4>
-
-        <div className={styles.field}>
-          <label>Схема</label>
-          <select
-            value={local.design_settings.layout}
-            onChange={e => updateDesign("layout", e.target.value as TLayout)}
-          >
-            <option value="without_image">Без картинки</option>
-            <option value="with_image">С картинкой</option>
-            <option value="image_background">Картинка фоном</option>
-          </select>
-        </div>
-
-        <div className={styles.field}>
-          <label>Выравнивание</label>
-          <select
-            value={local.design_settings.alignment}
-            onChange={e => updateDesign("alignment", e.target.value as TAlignment)}
-          >
-            <option value="center">По центру</option>
-            <option value="left">Слева</option>
-            <option value="right">Справа</option>
-          </select>
-        </div>
-
-        <div className={styles.field}>
-          <label>URL картинки</label>
+      <div className={styles.screen}>
+        <label className={styles.checkbox}>
           <input
-            type="text"
-            value={local.design_settings.image_url || ""}
-            onChange={e => updateDesign("image_url", e.target.value)}
+            name="active"
+            type="checkbox"
+            checked={completion.active}
+            onChange={updateInput}
           />
+          Активировать экран завершения
+        </label>
+
+        <div className={styles.field}>
+          <label htmlFor="completion-title">Заголовок</label>
+          <input
+            id="completion-title"
+            name="title"
+            type="text"
+            value={completion.title || ""}
+            onChange={updateInput}
+          />
+        </div>
+
+        <div className={styles.field}>
+          <label htmlFor="completion-description">Описание</label>
+          <textarea
+            id="completion-description"
+            name="description"
+            value={completion.description || ""}
+            onChange={updateInput}
+          />
+        </div>
+
+        <div className={styles.field}>
+          <label htmlFor="completion-button_text">Текст кнопки</label>
+          <input
+            id="completion-button_text"
+            name="button_text"
+            type="text"
+            value={completion.button_text || ""}
+            onChange={updateInput}
+          />
+        </div>
+
+        <div className={styles.field}>
+          <label htmlFor="completion-button_url">URL кнопки</label>
+          <input
+            id="completion-button_url"
+            name="button_url"
+            type="text"
+            value={completion.button_url || ""}
+            onChange={updateInput}
+          />
+        </div>
+
+        <div className={styles.design}>
+          <h4>Дизайн экрана</h4>
+
+          <div className={styles.field}>
+            <label htmlFor="layout-select">Схема</label>
+            <select
+              id="layout-select"
+              name="layout"
+              value={completion.design_settings.layout}
+              onChange={updateDesign}
+            >
+              <option value="without_image">Без картинки</option>
+              <option value="with_image">С картинкой</option>
+              <option value="image_background">Картинка фоном</option>
+            </select>
+          </div>
+
+          <div className={styles.field}>
+            <label htmlFor="alignment-select">Выравнивание</label>
+            <select
+              id="alignment-select"
+              name="alignment"
+              value={completion.design_settings.alignment}
+              onChange={updateDesign}
+            >
+              <option value="center">По центру</option>
+              <option value="left">Слева</option>
+              <option value="right">Справа</option>
+            </select>
+          </div>
+
+          <div className={styles.field}>
+            <label htmlFor="image-url">URL картинки</label>
+            <input
+              id="image-url"
+              name="image_url"
+              type="text"
+              value={completion.design_settings.image_url || ""}
+              onChange={updateDesign}
+            />
+          </div>
         </div>
       </div>
     </div>

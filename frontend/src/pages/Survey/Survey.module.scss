@@ -1,22 +1,44 @@
 .survey {
-  nav.tabs {
-    display: flex;
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-  .tab {
-    padding: 8px 16px;
-    cursor: pointer;
-    background: var(--bg);
-    border-radius: 4px;
-    &.active {
-      background: var(--bg-contrast);
-      color: var(--text-contrast);
-    }
-  }
   .content {
     background: var(--bg);
     padding: 16px;
     border-radius: 4px;
+  }
+}
+
+.header {
+  gap: 16px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .back_button {
+    cursor: pointer;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 16px;
+  }
+
+  .tab {
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    background: var(--bg-contrast);
+
+    &:hover {
+      background: var(--bg-contrast-hover);
+    }
+
+    &.active {
+      color: var(--text);
+      background: var(--bg-secondary-contrast);
+
+      &:hover {
+        background: var(--bg-secondary-contrast-hover);
+      }
+    }
   }
 }

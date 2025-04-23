@@ -1,16 +1,10 @@
-import React from "react";
+import React, { PropsWithChildren } from "react";
 
-import type { TQuestion } from "@pages/Survey/Survey.types";
+import { IQuestionProps } from "./Questions.types";
 
 import styles from "./Question.module.scss";
 
-interface Props {
-  item: TQuestion;
-  onChange: (upd: Partial<TQuestion>) => void;
-  children: React.ReactNode;
-}
-
-export const BaseQuestion: React.FC<Props> = ({ item, onChange, children }) => (
+const Question: React.FC<PropsWithChildren<IQuestionProps>> = ({ item, onChange, children }) => (
   <div className={styles.questionBlock}>
     <div className={styles.row}>
       <input
@@ -38,3 +32,5 @@ export const BaseQuestion: React.FC<Props> = ({ item, onChange, children }) => (
     {children}
   </div>
 );
+
+export default Question;

@@ -1,6 +1,14 @@
 /* eslint-disable no-magic-numbers */
 /* eslint-disable camelcase */
-import type { ISurvey } from "./Survey.types";
+import type { ISurvey, TSurveyTabs } from "./Survey.types";
+
+export const SURVEY_TABS: TSurveyTabs[] = ["edit", "design", "settings"];
+
+export const SURVEY_TABS_MAP: Record<TSurveyTabs, string> = {
+  edit: "Конструктор",
+  design: "Дизайн",
+  settings: "Настройки",
+};
 
 /** Начальные (пустые) данные опроса при создании */
 export const INITIAL_SURVEY: ISurvey = {

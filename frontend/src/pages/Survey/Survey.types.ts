@@ -1,3 +1,6 @@
+/** Типы вкладок при создании опроса */
+export type TSurveyTabs = "edit" | "design" | "settings";
+
 /** Интерфейс настроек опроса */
 export interface ISurvey {
   /** Идентификатор опроса */
@@ -16,18 +19,11 @@ export interface ISurvey {
   display_settings: TDisplaySettings;
 }
 
-/** Все возможные типы элементов опроса */
-export type TQuestionType =
-  | "single"
-  | "multi"
-  | "binary"
-  | "dropdown"
-  | "text"
-  | "textarea"
-  | "date"
-  | "welcome"
-  | "personal"
-  | "completion";
+/** Все возможные типы вопросов */
+export type TQuestionType = "single" | "multi" | "binary" | "dropdown" | "text" | "textarea" | "date";
+
+/** Все возможные типы экранов */
+export type TScreenType = "welcome" | "personal" | "completion";
 
 /** Типы полей для экрана сбора персональных данных */
 export type TPersonalFieldType = "name" | "email" | "phone" | "address";
