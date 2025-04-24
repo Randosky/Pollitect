@@ -1,6 +1,6 @@
 import React from "react";
 
-import type { IQuestionProps } from "../Questions.types";
+import type { IQuestionProps } from "../Question.types";
 
 import styles from "../Question.module.scss";
 

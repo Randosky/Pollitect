@@ -1,0 +1,11 @@
+.footer {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+
+  bottom: 0;
+  padding: 32px;
+  position: sticky;
+  background: var(--bg);
+}

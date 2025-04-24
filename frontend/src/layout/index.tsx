@@ -10,14 +10,17 @@ import AppRouter from "../router/routes";
 
 import LayoutContainer from "./Container";
 import ErrorBoundary from "./ErrorBoundary";
+import LayoutFooter from "./Footer";
 import LayoutHeader from "./Header";
-import LayoutProvider from "./LayoutContext";
 import Modal from "./Modal";
+import LayoutProvider from "./Provider/LayoutContext";
+import LayoutFooterProvider from "./Provider/LayoutFooter";
 import Toaster from "./Toaster";
 
 /** Лейаут для проекта в кабинете */
 const Layout = () => {
   const headerRef = useRef<HTMLElement | null>(null);
+  const footerRef = useRef<HTMLElement | null>(null);
 
   const [loading, setLoading] = useState(true);
 
@@ -27,9 +30,15 @@ const Layout = () => {
     html.setAttribute("translate", "no");
 
     if (headerRef.current) {
-      const h = headerRef.current.offsetHeight;
+      const headerHeight = headerRef.current.offsetHeight;
 
-      html.style.setProperty("--header-height", `${h}px`);
+      html.style.setProperty("--header-height", `${headerHeight}px`);
+    }
+
+    if (footerRef.current) {
+      const footerHeight = footerRef.current.offsetHeight;
+
+      html.style.setProperty("--footer-height", `${footerHeight}px`);
     }
 
     setLoading(false);
@@ -43,20 +52,24 @@ const Layout = () => {
     <StrictMode>
       <BrowserRouter>
         <Provider store={store}>
-          <ErrorBoundary>
-            <LayoutProvider>
-              <div className={styles.wrapper}>
-                <LayoutHeader ref={headerRef} />
+          <LayoutProvider>
+            <LayoutFooterProvider>
+              <ErrorBoundary>
+                <div className={styles.wrapper}>
+                  <LayoutHeader ref={headerRef} />
 
-                <LayoutContainer>
-                  <AppRouter />
+                  <LayoutContainer>
+                    <AppRouter />
 
-                  <Modal />
-                  <Toaster />
-                </LayoutContainer>
-              </div>
-            </LayoutProvider>
-          </ErrorBoundary>
+                    <Modal />
+                    <Toaster />
+                  </LayoutContainer>
+
+                  <LayoutFooter ref={footerRef} />
+                </div>
+              </ErrorBoundary>
+            </LayoutFooterProvider>
+          </LayoutProvider>
         </Provider>
       </BrowserRouter>
     </StrictMode>

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import authAxiosInstance from "@api/authInstance";
 import { useError } from "@hooks/useError";
 import Logout from "@layout/Header/Logout";
-import { useLayout } from "@layout/LayoutContext";
+import { useLayout } from "@layout/Provider/LayoutContext";
 
 import DashboardView from "./Dashboard.view";
 

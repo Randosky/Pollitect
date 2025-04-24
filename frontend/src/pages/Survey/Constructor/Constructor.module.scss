@@ -1,5 +1,11 @@
 @import "@styles/breakpoints";
 
+.root {
+  gap: 32px;
+  display: flex;
+  flex-direction: column;
+}
+
 .nav {
   display: flex;
   flex-wrap: wrap;
@@ -12,9 +18,12 @@
     background: transparent;
     border: none;
     padding: 4px 8px;
+    border-radius: 4px;
     cursor: pointer;
     font-weight: 600;
     color: var(--text);
+    transition: all 0.3s ease;
+
     &:hover {
       background: var(--bg-hover);
       color: var(--text-hover);
@@ -22,99 +31,32 @@
   }
 
   .activeTab {
+    border-radius: 0;
     border-bottom: 2px solid var(--bg-contrast);
-  }
-}
 
-.root {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  padding: 16px;
-
-  .tabContent {
-    position: relative;
-  }
-
-  // переходы для react-transition-group
-  .fadeEnter {
-    opacity: 0;
-  }
-  .fadeEnterActive {
-    opacity: 1;
-    transition: opacity 300ms ease-in;
-  }
-  .fadeExit {
-    opacity: 1;
-  }
-  .fadeExitActive {
-    opacity: 0;
-    transition: opacity 300ms ease-out;
-  }
-
-  .toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 16px;
-    button {
-      padding: 4px 12px;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      background: var(--bg-secondary-contrast);
-      color: var(--text);
-      cursor: pointer;
-      &:hover {
-        background: var(--bg-contrast-hover);
-      }
-    }
-    .save {
-      margin-left: auto;
-      background: var(--bg-contrast);
-      color: var(--text-contrast);
-    }
-  }
-
-  .item {
-    position: relative;
-    padding: 16px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--bg);
-    .remove {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: none;
-      border: none;
-      font-size: 18px;
-      cursor: pointer;
-      color: var(--text-secondary);
-      &:hover {
-        color: var(--text);
-      }
-    }
-    .sectionTitle {
-      margin-bottom: 12px;
-      font-size: 18px;
-      font-weight: 600;
+    &:hover {
+      background: var(--bg);
       color: var(--text);
     }
   }
 }
 
-@media (min-width: $sm) {
-  .root {
-    padding: 32px;
-    gap: 32px;
-    .item {
-      padding: 24px;
-      .sectionTitle {
-        font-size: 20px;
-      }
-    }
-    .toolbar button {
-      padding: 6px 16px;
-    }
-  }
+// переходы для react-transition-group
+.fadeEnter {
+  opacity: 0;
+}
+.fadeEnterActive {
+  opacity: 1;
+  transition: opacity 300ms ease-in;
+}
+.fadeExit {
+  opacity: 1;
+}
+.fadeExitActive {
+  opacity: 0;
+  transition: opacity 300ms ease-out;
+}
+
+.tabContent {
+  position: relative;
 }

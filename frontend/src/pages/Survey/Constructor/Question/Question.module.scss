@@ -1,16 +1,62 @@
 @import "@styles/breakpoints";
 
-.questionBlock {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 16px;
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  button {
+    padding: 4px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg-secondary-contrast);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: var(--bg-secondary-contrast-hover);
+    }
+  }
+
+  .save {
+    margin-left: auto;
+    background: var(--bg-contrast);
+    color: var(--text-contrast);
+  }
+}
+
+.questionList {
+  gap: 16px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+}
 
-  @media (min-width: 768px) {
-    padding: 24px;
+.questionBlock {
+  display: flex;
+  flex-direction: column;
+
+  .remove {
+    background: none;
+    border: none;
+    font-size: 18px;
+    align-self: flex-end;
+    justify-self: center;
+    cursor: pointer;
+    color: var(--text-secondary);
+    &:hover {
+      color: var(--text);
+    }
+  }
+
+  .question {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    gap: 12px;
+    display: flex;
+    flex-direction: column;
   }
 }
 
@@ -83,5 +129,11 @@
   transition: background 0.2s;
   &:hover {
     background: var(--bg-contrast-hover);
+  }
+}
+
+@media (min-width: $sm) {
+  .toolbar button {
+    padding: 6px 16px;
   }
 }

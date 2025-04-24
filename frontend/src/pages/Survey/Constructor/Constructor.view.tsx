@@ -25,7 +25,7 @@ const ConstructorView: React.FC<TConstuctorViewProps> = ({ currentTab, setCurren
   const ActiveComponent = TAB_COMPONENTS[currentTab];
 
   return (
-    <>
+    <div className={styles.root}>
       <nav className={styles.nav}>
         {(["welcome", "questions", "personal", "completion"] as TConstuctorTabs[]).map(tab => (
           <button
@@ -45,32 +45,30 @@ const ConstructorView: React.FC<TConstuctorViewProps> = ({ currentTab, setCurren
         ))}
       </nav>
 
-      <div className={styles.root}>
-        <SwitchTransition>
-          <CSSTransition
-            key={currentTab}
-            nodeRef={nodeRef}
-            timeout={300}
-            classNames={{
-              enter: styles.fadeEnter,
-              enterActive: styles.fadeEnterActive,
-              exit: styles.fadeExit,
-              exitActive: styles.fadeExitActive,
-            }}
-            unmountOnExit
+      <SwitchTransition>
+        <CSSTransition
+          key={currentTab}
+          nodeRef={nodeRef}
+          timeout={300}
+          classNames={{
+            enter: styles.fadeEnter,
+            enterActive: styles.fadeEnterActive,
+            exit: styles.fadeExit,
+            exitActive: styles.fadeExitActive,
+          }}
+          unmountOnExit
+        >
+          <div
+            ref={nodeRef}
+            className={styles.tabContent}
           >
-            <div
-              ref={nodeRef}
-              className={styles.tabContent}
-            >
-              <Suspense fallback={<div>Загрузка...</div>}>
-                <ActiveComponent />
-              </Suspense>
-            </div>
-          </CSSTransition>
-        </SwitchTransition>
-      </div>
-    </>
+            <Suspense fallback={<div>Загрузка...</div>}>
+              <ActiveComponent />
+            </Suspense>
+          </div>
+        </CSSTransition>
+      </SwitchTransition>
+    </div>
   );
 };
 

@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect } from "react";
 
 import Logout from "@layout/Header/Logout";
-import { useLayout } from "@layout/LayoutContext";
+import { useLayout } from "@layout/Provider/LayoutContext";
 import { useAppSelector } from "@store/hooks";
 import classNames from "classnames";
 import { NavLink, Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
@@ -25,9 +25,7 @@ const Survey: React.FC = (): ReactElement => {
 
   return (
     <div className={styles.survey}>
-      <div className={styles.content}>
-        <Outlet />
-      </div>
+      <Outlet />
     </div>
   );
 };
@@ -61,7 +59,7 @@ const SurveyNavigation: React.FC<{ surveyId?: string }> = ({ surveyId }) => {
         ))}
       </nav>
 
-      <Logout />
+      <Logout className={styles.logout} />
     </div>
   );
 };

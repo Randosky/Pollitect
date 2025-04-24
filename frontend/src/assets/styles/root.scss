@@ -1,12 +1,13 @@
 :root[data-theme="light"] {
   --header-height: 0px;
+  --footer-height: 0px;
 
   --white: rgb(254, 254, 254);
   --black: #222222;
 
   /* Background colors */
   --bg: #f2f0f0;
-  --bg-hover: #d4c2ad;
+  --bg-hover: #b5d6b9cd;
   --bg-contrast: #97cc9f;
   --bg-contrast-hover: #5fa66b;
   --bg-secondary-contrast: #aed2d7;
@@ -36,6 +37,7 @@
 
 :root[data-theme="dark"] {
   --header-height: 0px;
+  --footer-height: 0px;
 
   --white: white;
   --black: #222222;

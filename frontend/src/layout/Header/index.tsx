@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useLayout } from "@layout/LayoutContext";
+import { useLayout } from "@layout/Provider/LayoutContext";
 
 import styles from "./Header.module.scss";
 

@@ -1,0 +1,33 @@
+.actionButtons {
+  gap: 16px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.save,
+.cancel {
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 400;
+  border-radius: 4px;
+}
+
+.save {
+  background-color: var(--bg-contrast);
+
+  &:hover {
+    background-color: var(--bg-contrast-hover);
+  }
+}
+
+.cancel {
+  border: 1px solid var(--bg-contrast);
+
+  &:hover {
+    border: 1px solid var(--bg-contrast-hover);
+    background-color: var(--bg-contrast-hover);
+  }
+}

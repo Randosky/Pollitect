@@ -34,7 +34,14 @@ const LayoutProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   }, []);
 
   return (
-    <LayoutContext.Provider value={{ showHeader, headerContent, handleShowHeader, handleCloseHeader }}>
+    <LayoutContext.Provider
+      value={{
+        showHeader,
+        headerContent,
+        handleShowHeader,
+        handleCloseHeader,
+      }}
+    >
       {children}
     </LayoutContext.Provider>
   );
