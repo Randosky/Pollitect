@@ -5,17 +5,9 @@ import {
   generateTokens,
   saveRefreshTokenToCookie,
 } from "../services/authService";
+import { IUser } from "../models/user";
 
 const { User } = db;
-
-/** Форма публичного объекта пользователя */
-interface IUser {
-  id: number;
-  email: string;
-  role: "user" | "admin";
-  name?: string;
-  phone?: string;
-}
 
 /**
  * Регистрация пользователя

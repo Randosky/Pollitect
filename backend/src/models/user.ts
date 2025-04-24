@@ -1,6 +1,15 @@
 import { Model, DataTypes, Sequelize, Optional } from "sequelize";
 import bcrypt from "bcryptjs";
 
+/** Форма публичного объекта пользователя */
+export interface IUser {
+  id: number;
+  email: string;
+  role: "user" | "admin";
+  name?: string;
+  phone?: string;
+}
+
 // Интерфейс полей пользователя
 export interface UserAttributes {
   id: number;

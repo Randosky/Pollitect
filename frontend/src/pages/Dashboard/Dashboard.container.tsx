@@ -5,6 +5,7 @@ import authAxiosInstance from "@api/authInstance";
 import { useError } from "@hooks/useError";
 import Logout from "@layout/Header/Logout";
 import { useLayout } from "@layout/Provider/LayoutContext";
+import { useNavigate } from "react-router-dom";
 
 import DashboardView from "./Dashboard.view";
 
@@ -13,12 +14,23 @@ import { mockSurveys } from "./Dashboard.config";
 import type { SurveyCard } from "./Dashboard.types";
 
 const DashboardContainer: React.FC = () => {
+  const navigate = useNavigate();
   const proccessError = useError();
 
   const { handleShowHeader, handleCloseHeader } = useLayout();
 
   useEffect(() => {
-    handleShowHeader(<Logout />);
+    handleShowHeader(
+      <div style={{ width: "100%", display: "flex", justifyContent: "space-between" }}>
+        <button
+          type="button"
+          onClick={() => navigate("/")}
+        >
+          На главную
+        </button>
+        <Logout />
+      </div>
+    );
 
     return handleCloseHeader;
   }, []);

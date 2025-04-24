@@ -23,6 +23,8 @@ const Logout: React.FC<{ className?: string }> = ({ className }) => {
       await authAxiosInstance.post("/logout");
 
       dispatch(clearUserState());
+      sessionStorage.removeItem("accessToken");
+
       navigate("/");
     } catch (error) {
       proccessError(error);

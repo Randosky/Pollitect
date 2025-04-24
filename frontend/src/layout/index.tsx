@@ -1,6 +1,7 @@
 import { StrictMode, useEffect, useRef, useState } from "react";
 
 import { store } from "@store/store";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 
@@ -16,6 +17,7 @@ import Modal from "./Modal";
 import LayoutProvider from "./Provider/LayoutContext";
 import LayoutFooterProvider from "./Provider/LayoutFooter";
 import Toaster from "./Toaster";
+import LayoutWrapper from "./Wrapper";
 
 /** Лейаут для проекта в кабинете */
 const Layout = () => {
@@ -23,6 +25,8 @@ const Layout = () => {
   const footerRef = useRef<HTMLElement | null>(null);
 
   const [loading, setLoading] = useState(true);
+
+  const queryClient = new QueryClient();
 
   useEffect(() => {
     const html = document.documentElement;
@@ -51,26 +55,28 @@ const Layout = () => {
   return (
     <StrictMode>
       <BrowserRouter>
-        <Provider store={store}>
-          <LayoutProvider>
-            <LayoutFooterProvider>
-              <ErrorBoundary>
-                <div className={styles.wrapper}>
-                  <LayoutHeader ref={headerRef} />
+        <QueryClientProvider client={queryClient}>
+          <Provider store={store}>
+            <LayoutProvider>
+              <LayoutFooterProvider>
+                <ErrorBoundary>
+                  <LayoutWrapper>
+                    <LayoutHeader ref={headerRef} />
 
-                  <LayoutContainer>
-                    <AppRouter />
+                    <LayoutContainer>
+                      <AppRouter />
 
-                    <Modal />
-                    <Toaster />
-                  </LayoutContainer>
+                      <Modal />
+                      <Toaster />
+                    </LayoutContainer>
 
-                  <LayoutFooter ref={footerRef} />
-                </div>
-              </ErrorBoundary>
-            </LayoutFooterProvider>
-          </LayoutProvider>
-        </Provider>
+                    <LayoutFooter ref={footerRef} />
+                  </LayoutWrapper>
+                </ErrorBoundary>
+              </LayoutFooterProvider>
+            </LayoutProvider>
+          </Provider>
+        </QueryClientProvider>
       </BrowserRouter>
     </StrictMode>
   );

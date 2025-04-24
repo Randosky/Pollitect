@@ -5,13 +5,13 @@ const AUTH_ERROR = 401;
 const baseURL = import.meta.env.VITE_API_URL;
 
 /** Создаем экземпляр Axios для авторизированных запросов на получение данных об опросе */
-const surveyAxiosInstance = axios.create({
-  baseURL: `${baseURL}/survey`,
+const userAxiosInstance = axios.create({
+  baseURL: `${baseURL}/user`,
   withCredentials: true,
 });
 
 /** Устанавливаем заголовки для каждого запроса */
-const surveyInterceptor = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+const userInterceptor = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
   config.headers["Content-Type"] = "application/json";
   config.headers.Accept = "application/json";
 
@@ -24,10 +24,23 @@ const surveyInterceptor = (config: InternalAxiosRequestConfig): InternalAxiosReq
   return config;
 };
 
-surveyAxiosInstance.interceptors.request.use(surveyInterceptor);
+/** Устанавливаем accessToken в sessionStorage после запроса */
+userAxiosInstance.interceptors.response.use(response => {
+  const {
+    data: { accessToken },
+  } = response;
+
+  if (typeof accessToken === "string") {
+    sessionStorage.setItem("accessToken", accessToken);
+  }
+
+  return response;
+});
+
+userAxiosInstance.interceptors.request.use(userInterceptor);
 
 /** Интерсептор для обработки ответов и ошибок */
-surveyAxiosInstance.interceptors.response.use(
+userAxiosInstance.interceptors.response.use(
   response => response,
   async (error: AxiosError) => {
     const originalRequest = error.config;
@@ -45,7 +58,7 @@ surveyAxiosInstance.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${responseData.access_token}`;
 
         // Повторно отправляем оригинальный запрос с обновленным токеном
-        return await surveyAxiosInstance(originalRequest);
+        return await userAxiosInstance(originalRequest);
       } catch (refreshError) {
         console.error("Token refresh failed:", refreshError);
         // Здесь можно добавить логику для обработки ошибки обновления токена
@@ -57,4 +70,4 @@ surveyAxiosInstance.interceptors.response.use(
   }
 );
 
-export default surveyAxiosInstance;
+export default userAxiosInstance;

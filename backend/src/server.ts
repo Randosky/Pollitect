@@ -5,6 +5,7 @@ import path from "path";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/authRoutes";
+import userRoutes from "./routes/userRoutes";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(express.static(path.join(__dirname, "../public")));
 
 // Роуты API
 app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
 
 // Корневой маршрут для проверки
 app.get("/", (_req: Request, res: Response) => {
