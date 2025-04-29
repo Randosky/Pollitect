@@ -1,64 +1,107 @@
 /* eslint-disable camelcase */
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
+import ActionButtons from "@layout/Footer/ActionButtons";
+import { useLayoutFooter } from "@layout/Provider/LayoutFooter";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { updateCompletionScreen } from "@store/slices/survey";
+import checkDeepEquals from "@utils/checkDeepEquals";
+
+import type { TCompletionScreen, TScreenDesignSettings } from "@pages/Survey/Survey.types";
 
 import styles from "./Completion.module.scss";
 
-/** Компонент экрана завершения опроса */
-const CompletionScreen: React.FC = () => {
+/**
+ * Экран завершения с локальным состоянием и кнопками «Сохранить»/«Отменить».
+ *
+ * Данные берутся из Redux → клонируются в form и initialForm.
+ * При изменении form показываются кнопки управления, при сохранении — диспатч в Redux.
+ *
+ * @returns {React.ReactElement}
+ */
+const CompletionScreen: React.FC = (): React.ReactElement => {
   const dispatch = useAppDispatch();
-  const completion = useAppSelector(s => s.survey.surveyForm.completionScreen);
+  const completionScreen = useAppSelector(s => s.survey.surveyForm.completionScreen);
+
+  const [form, setForm] = useState<TCompletionScreen>(completionScreen);
+  const [initialForm, setInitialForm] = useState<TCompletionScreen>(completionScreen);
+
+  const { handleShowFooter, handleCloseFooter } = useLayoutFooter();
+
+  /** Синхронизируем стор → локальный стейт */
+  useEffect(() => {
+    setForm(completionScreen);
+    setInitialForm(completionScreen);
+  }, [completionScreen]);
+
+  /** Флаг доступности сохранения */
+  const canSave = useMemo(() => !checkDeepEquals(form, initialForm), [form, initialForm]);
 
   /**
-   * Обновляет простые поля экрана (active, title, description, button_text, button_url)
+   * Сохраняет локальные изменения в Redux
    */
-  const updateInput = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const { name, value, type } = e.target;
-
-      dispatch(
-        updateCompletionScreen({
-          ...completion,
-          [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
-        })
-      );
-    },
-    [dispatch, completion]
-  );
+  const handleSave = useCallback((): void => {
+    dispatch(updateCompletionScreen(form));
+  }, [dispatch, form]);
 
   /**
-   * Обновляет дизайн-опции экрана
+   * Отменяет локальные изменения, восстанавливая начальное состояние
    */
-  const updateDesign = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-      const { name, value } = e.currentTarget;
+  const handleCancel = useCallback((): void => {
+    setForm(initialForm);
+  }, [initialForm]);
 
-      dispatch(
-        updateCompletionScreen({
-          ...completion,
-          design_settings: {
-            ...completion.design_settings,
-            [name]: value,
-          },
-        })
+  /** Показ кнопок футера при наличии изменений */
+  useEffect(() => {
+    if (canSave) {
+      handleShowFooter(
+        <ActionButtons
+          handleSave={handleSave}
+          handleCancel={handleCancel}
+        />
       );
-    },
-    [dispatch, completion]
-  );
+    }
+
+    return handleCloseFooter;
+  }, [canSave, handleSave, handleCancel, handleShowFooter, handleCloseFooter]);
+
+  /**
+   * Обработчик изменения простых полей
+   */
+  const handleFieldChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+    const target = e.currentTarget as HTMLInputElement;
+    const { name, type, value, checked } = target;
+
+    setForm(prev => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  }, []);
+
+  /**
+   * Обработчик изменения дизайна экрана
+   */
+  const handleDesignChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
+    const { name, value } = e.currentTarget;
+
+    setForm(prev => ({
+      ...prev,
+      design_settings: {
+        ...prev.design_settings,
+        [name as keyof TScreenDesignSettings]: value,
+      },
+    }));
+  }, []);
 
   return (
     <div className={styles.item}>
-      <h3 className={styles.sectionTitle}>Экран завершения</h3>
-
       <div className={styles.screen}>
         <label className={styles.checkbox}>
           <input
             name="active"
             type="checkbox"
-            checked={completion.active}
-            onChange={updateInput}
+            checked={form.active}
+            onChange={handleFieldChange}
           />
           Активировать экран завершения
         </label>
@@ -69,8 +112,8 @@ const CompletionScreen: React.FC = () => {
             id="completion-title"
             name="title"
             type="text"
-            value={completion.title || ""}
-            onChange={updateInput}
+            value={form.title || ""}
+            onChange={handleFieldChange}
           />
         </div>
 
@@ -79,8 +122,8 @@ const CompletionScreen: React.FC = () => {
           <textarea
             id="completion-description"
             name="description"
-            value={completion.description || ""}
-            onChange={updateInput}
+            value={form.description || ""}
+            onChange={handleFieldChange}
           />
         </div>
 
@@ -90,8 +133,8 @@ const CompletionScreen: React.FC = () => {
             id="completion-button_text"
             name="button_text"
             type="text"
-            value={completion.button_text || ""}
-            onChange={updateInput}
+            value={form.button_text || ""}
+            onChange={handleFieldChange}
           />
         </div>
 
@@ -101,50 +144,47 @@ const CompletionScreen: React.FC = () => {
             id="completion-button_url"
             name="button_url"
             type="text"
-            value={completion.button_url || ""}
-            onChange={updateInput}
+            value={form.button_url || ""}
+            onChange={handleFieldChange}
           />
         </div>
 
         <div className={styles.design}>
           <h4>Дизайн экрана</h4>
-
           <div className={styles.field}>
-            <label htmlFor="layout-select">Схема</label>
+            <label htmlFor="completion-layout">Схема</label>
             <select
-              id="layout-select"
+              id="completion-layout"
               name="layout"
-              value={completion.design_settings.layout}
-              onChange={updateDesign}
+              value={form.design_settings.layout}
+              onChange={handleDesignChange}
             >
               <option value="without_image">Без картинки</option>
               <option value="with_image">С картинкой</option>
               <option value="image_background">Картинка фоном</option>
             </select>
           </div>
-
           <div className={styles.field}>
-            <label htmlFor="alignment-select">Выравнивание</label>
+            <label htmlFor="completion-alignment">Выравнивание</label>
             <select
-              id="alignment-select"
+              id="completion-alignment"
               name="alignment"
-              value={completion.design_settings.alignment}
-              onChange={updateDesign}
+              value={form.design_settings.alignment}
+              onChange={handleDesignChange}
             >
               <option value="center">По центру</option>
               <option value="left">Слева</option>
               <option value="right">Справа</option>
             </select>
           </div>
-
           <div className={styles.field}>
-            <label htmlFor="image-url">URL картинки</label>
+            <label htmlFor="completion-image_url">URL картинки</label>
             <input
-              id="image-url"
+              id="completion-image_url"
               name="image_url"
               type="text"
-              value={completion.design_settings.image_url || ""}
-              onChange={updateDesign}
+              value={form.design_settings.image_url || ""}
+              onChange={handleDesignChange}
             />
           </div>
         </div>

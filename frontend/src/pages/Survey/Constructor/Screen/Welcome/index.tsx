@@ -1,83 +1,124 @@
 /* eslint-disable camelcase */
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
+import ActionButtons from "@layout/Footer/ActionButtons";
+import { useLayoutFooter } from "@layout/Provider/LayoutFooter";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { updateWelcomeScreen } from "@store/slices/survey";
+import checkDeepEquals from "@utils/checkDeepEquals";
 
-import type { TScreenDesignSettings } from "@pages/Survey/Survey.types";
+import type { TScreenDesignSettings, TWelcomeScreen } from "@pages/Survey/Survey.types";
 
 import styles from "./Welcome.module.scss";
 
 /**
- * Компонент экрана приветствия
+ * Экран приветствия с локальным состоянием и кнопками «Сохранить»/«Отменить».
+ *
+ * Из стора берётся объект welcomeScreen, затем локально клонируется в form и initialForm.
+ * При изменении form показываются кнопки управления, при сохранении — диспатч в Redux.
+ *
+ * @returns {React.ReactElement}
  */
-const WelcomeScreen = () => {
+const WelcomeScreen: React.FC = (): React.ReactElement => {
   const dispatch = useAppDispatch();
+  const welcomeScreen = useAppSelector(s => s.survey.surveyForm.welcomeScreen);
 
-  const welcomeScreen = useAppSelector(state => state.survey.surveyForm.welcomeScreen);
+  const [form, setForm] = useState<TWelcomeScreen>(welcomeScreen);
+  const [initialForm, setInitialForm] = useState<TWelcomeScreen>(welcomeScreen);
 
-  /**
-   * Обработчик изменений в инпутах
-   * @param {React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>} event - событие изменения инпута
-   * @returns {void}
-   */
-  const updateInput = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const { name, value, type } = event.currentTarget;
+  const { handleShowFooter, handleCloseFooter } = useLayoutFooter();
 
-      dispatch(
-        updateWelcomeScreen({
-          ...welcomeScreen,
-          [name]: type === "checkbox" ? (event.target as HTMLInputElement).checked : value,
-        })
-      );
-    },
-    [dispatch, welcomeScreen]
-  );
+  /** Синхронизируем стор → локальный стейт */
+  useEffect(() => {
+    setForm(welcomeScreen);
+    setInitialForm(welcomeScreen);
+  }, [welcomeScreen]);
+
+  /** Флаг доступности сохранения */
+  const canSave = useMemo(() => !checkDeepEquals(form, initialForm), [form, initialForm]);
 
   /**
-   * Обработчик изменений в инпутах дизайна
-   * @param {React.ChangeEvent<HTMLInputElement | HTMLSelectElement>} event - событие изменения инпута
+   * Сохраняет локальные изменения в Redux
    * @returns {void}
    */
-  const updateDesign = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-      const { name, value } = event.currentTarget;
+  const handleSave = useCallback((): void => {
+    dispatch(updateWelcomeScreen(form));
+  }, [dispatch, form]);
 
-      dispatch(
-        updateWelcomeScreen({
-          ...welcomeScreen,
-          design_settings: { ...welcomeScreen.design_settings, [name as keyof TScreenDesignSettings]: value },
-        })
+  /**
+   * Отменяет локальные изменения, восстанавливая начальное состояние
+   * @returns {void}
+   */
+  const handleCancel = useCallback((): void => {
+    setForm(initialForm);
+  }, [initialForm]);
+
+  /** Показ кнопок футера при наличии изменений */
+  useEffect(() => {
+    if (canSave) {
+      handleShowFooter(
+        <ActionButtons
+          handleSave={handleSave}
+          handleCancel={handleCancel}
+        />
       );
-    },
-    [dispatch, welcomeScreen]
-  );
+    }
+
+    return handleCloseFooter;
+  }, [canSave, handleSave, handleCancel, handleShowFooter, handleCloseFooter]);
+
+  /**
+   * Обработчик изменения полей экрана
+   *
+   * @param e Событие изменения поля
+   */
+  const handleFieldChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+    const { name, type, value, checked } = e.currentTarget as HTMLInputElement;
+
+    setForm(prev => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  }, []);
+
+  /**
+   * Обработчик изменения настроек дизайна экрана
+   *
+   * @param e Событие изменения поля дизайна
+   */
+  const handleDesignChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
+    const { name, value } = e.currentTarget;
+
+    setForm(prev => ({
+      ...prev,
+      design_settings: {
+        ...prev.design_settings,
+        [name as keyof TScreenDesignSettings]: value,
+      },
+    }));
+  }, []);
 
   return (
     <div className={styles.item}>
-      <h3 className={styles.sectionTitle}>Экран приветствия</h3>
-
       <div className={styles.screen}>
         <label className={styles.checkbox}>
           <input
             name="active"
             type="checkbox"
-            checked={welcomeScreen.active}
-            onChange={updateInput}
+            checked={form.active}
+            onChange={handleFieldChange}
           />
           Активировать экран
         </label>
 
         <div className={styles.field}>
           <label htmlFor="welcome-screen-hint">Подсказка</label>
-
           <input
             id="welcome-screen-hint"
             type="text"
             name="hint"
-            value={welcomeScreen.hint || ""}
-            onChange={updateInput}
+            value={form.hint || ""}
+            onChange={handleFieldChange}
           />
         </div>
 
@@ -85,11 +126,11 @@ const WelcomeScreen = () => {
           <label htmlFor="welcome-screen-title">Заголовок</label>
           <input
             id="welcome-screen-title"
-            required
-            type="text"
             name="title"
-            value={welcomeScreen.title || ""}
-            onChange={updateInput}
+            type="text"
+            required
+            value={form.title || ""}
+            onChange={handleFieldChange}
           />
         </div>
 
@@ -98,8 +139,8 @@ const WelcomeScreen = () => {
           <textarea
             id="welcome-screen-description"
             name="description"
-            value={welcomeScreen.description || ""}
-            onChange={updateInput}
+            value={form.description || ""}
+            onChange={handleFieldChange}
           />
         </div>
 
@@ -107,11 +148,11 @@ const WelcomeScreen = () => {
           <label htmlFor="welcome-screen-button_text">Текст кнопки</label>
           <input
             id="welcome-screen-button_text"
-            type="text"
             name="button_text"
-            value={welcomeScreen.button_text}
-            onChange={updateInput}
+            type="text"
             required
+            value={form.button_text}
+            onChange={handleFieldChange}
           />
         </div>
 
@@ -120,8 +161,8 @@ const WelcomeScreen = () => {
           <textarea
             id="welcome-screen-legal_info"
             name="legal_info"
-            value={welcomeScreen.legal_info || ""}
-            onChange={updateInput}
+            value={form.legal_info || ""}
+            onChange={handleFieldChange}
           />
         </div>
 
@@ -133,8 +174,8 @@ const WelcomeScreen = () => {
             <select
               id="welcome-screen-layout"
               name="layout"
-              value={welcomeScreen.design_settings.layout}
-              onChange={updateDesign}
+              value={form.design_settings.layout}
+              onChange={handleDesignChange}
             >
               <option value="without_image">Без картинки</option>
               <option value="with_image">С картинкой</option>
@@ -147,8 +188,8 @@ const WelcomeScreen = () => {
             <select
               id="welcome-screen-alignment"
               name="alignment"
-              value={welcomeScreen.design_settings.alignment}
-              onChange={updateDesign}
+              value={form.design_settings.alignment}
+              onChange={handleDesignChange}
             >
               <option value="center">По центру</option>
               <option value="left">Слева</option>
@@ -160,10 +201,10 @@ const WelcomeScreen = () => {
             <label htmlFor="welcome-screen-image_url">URL картинки</label>
             <input
               id="welcome-screen-image_url"
-              type="text"
               name="image_url"
-              value={welcomeScreen.design_settings.image_url || ""}
-              onChange={updateDesign}
+              type="text"
+              value={form.design_settings.image_url || ""}
+              onChange={handleDesignChange}
             />
           </div>
         </div>

@@ -23,12 +23,7 @@ const Home: React.FC = () => (
         </Link>
       </div>
 
-      <div className={styles.heroImage}>
-        <img
-          src="/assets/illustration.png"
-          alt="Иллюстрация опроса"
-        />
-      </div>
+      <div className={styles.heroImage}></div>
     </section>
 
     <section className={styles.features}>

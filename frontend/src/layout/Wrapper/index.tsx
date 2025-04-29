@@ -5,12 +5,13 @@ import { useError } from "@hooks/useError";
 import { useAppDispatch } from "@store/hooks";
 import { TUserWithAccessToken, updateUserState } from "@store/slices/user";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 
 import styles from "../Layout.module.scss";
 
-const LayoutWrapper: React.FC<PropsWithChildren> = ({ children }) => {
-  const navigate = useNavigate();
+const LayoutWrapper: React.FC<PropsWithChildren<{ ref: React.RefObject<HTMLDivElement | null> }>> = ({
+  ref,
+  children,
+}) => {
   const dispatch = useAppDispatch();
   const processError = useError();
 
@@ -25,8 +26,6 @@ const LayoutWrapper: React.FC<PropsWithChildren> = ({ children }) => {
 
         dispatch(updateUserState(data.user));
 
-        navigate(`/dashboard/${data.user.id}`);
-
         return data;
       } catch (error) {
         processError(error);
@@ -39,7 +38,15 @@ const LayoutWrapper: React.FC<PropsWithChildren> = ({ children }) => {
     refetchOnWindowFocus: true,
   });
 
-  return <div className={styles.wrapper}>{children}</div>;
+  return (
+    <div
+      id="layout-wrapper"
+      ref={ref}
+      className={styles.wrapper}
+    >
+      {children}
+    </div>
+  );
 };
 
 export default LayoutWrapper;

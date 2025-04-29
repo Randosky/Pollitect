@@ -103,7 +103,7 @@
 
     .hero {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 55% 1fr;
       text-align: left;
       align-items: center;
       gap: 24px;
@@ -123,8 +123,15 @@
 
       .heroImage {
         display: block;
+        align-self: center;
+        justify-self: center;
         width: 100%;
-        max-width: 400px;
+        aspect-ratio: 1/1;
+        max-width: 450px;
+        background-image: url("/images/main_page_image.png");
+        background-position: center;
+        background-size: contain;
+        background-repeat: no-repeat;
 
         img {
           width: 100%;

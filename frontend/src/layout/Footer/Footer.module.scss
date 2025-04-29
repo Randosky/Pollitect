@@ -8,4 +8,8 @@
   padding: 32px;
   position: sticky;
   background: var(--bg);
+
+  &.shadow {
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
+  }
 }

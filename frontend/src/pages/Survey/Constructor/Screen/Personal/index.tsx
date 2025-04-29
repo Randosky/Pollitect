@@ -1,100 +1,143 @@
 /* eslint-disable camelcase */
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
+import ActionButtons from "@layout/Footer/ActionButtons";
+import { useLayoutFooter } from "@layout/Provider/LayoutFooter";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { updatePersonalScreen } from "@store/slices/survey";
+import checkDeepEquals from "@utils/checkDeepEquals";
 
 import { PERSONAL_SCREEN_FIELDS } from "../../Constuctor.config";
 
-import type { TPersonalFieldType, TScreenPersonalField } from "@pages/Survey/Survey.types";
+import type {
+  TPersonalFieldType,
+  TPersonalScreen,
+  TScreenDesignSettings,
+  TScreenPersonalField,
+} from "@pages/Survey/Survey.types";
 
 import styles from "./Personal.module.scss";
 
 /**
- * Компонент экрана сбора персональных данных
+ * Экран сбора персональных данных с локальным состоянием и кнопками «Сохранить»/«Отменить».
+ *
+ * Данные берутся из Redux → клонируются в form и initialForm.
+ * При изменении form показываются кнопки управления, при сохранении — диспатч в Redux.
+ *
+ * @returns {React.ReactElement}
  */
-const PersonalScreen: React.FC = () => {
+const PersonalScreen: React.FC = (): React.ReactElement => {
   const dispatch = useAppDispatch();
-  const personal = useAppSelector(s => s.survey.surveyForm.personalScreen);
+  const personalScreen = useAppSelector(s => s.survey.surveyForm.personalScreen);
+
+  const [form, setForm] = useState<TPersonalScreen>(personalScreen);
+  const [initialForm, setInitialForm] = useState<TPersonalScreen>(personalScreen);
+
+  const { handleShowFooter, handleCloseFooter } = useLayoutFooter();
+
+  /** Синхронизируем стор → локальный стейт */
+  useEffect(() => {
+    setForm(personalScreen);
+    setInitialForm(personalScreen);
+  }, [personalScreen]);
+
+  /** Флаг доступности сохранения */
+  const canSave = useMemo(() => !checkDeepEquals(form, initialForm), [form, initialForm]);
 
   /**
-   * Обновляет простые поля экрана (active, title, description, button_text)
+   * Сохраняет локальные изменения в Redux
    */
-  const updateInput = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const { name, value, type } = e.target;
+  const handleSave = useCallback((): void => {
+    dispatch(updatePersonalScreen(form));
+  }, [dispatch, form]);
 
-      dispatch(
-        updatePersonalScreen({
-          ...personal,
-          [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
-        })
+  /**
+   * Отменяет локальные изменения, восстанавливая начальное состояние
+   */
+  const handleCancel = useCallback((): void => {
+    setForm(initialForm);
+  }, [initialForm]);
+
+  /** Показ кнопок футера при наличии изменений */
+  useEffect(() => {
+    if (canSave) {
+      handleShowFooter(
+        <ActionButtons
+          handleSave={handleSave}
+          handleCancel={handleCancel}
+        />
       );
-    },
-    [dispatch, personal]
-  );
+    }
+
+    return handleCloseFooter;
+  }, [canSave, handleSave, handleCancel, handleShowFooter, handleCloseFooter]);
+
+  /**
+   * Обработчик изменения простых полей (active, title, description, button_text)
+   */
+  const handleFieldChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+    const target = e.currentTarget as HTMLInputElement;
+    const { name, type, value, checked } = target;
+
+    setForm(prev => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  }, []);
 
   /**
    * Переключает включение/выключение поля сбора (name, email, phone, address)
    */
-  const toggleField = useCallback(
-    (type: TPersonalFieldType) => {
-      const fields = personal.personal_fields ?? [];
-      const exists = fields.some(f => f.type === type);
+  const handleToggleField = useCallback((fieldType: TPersonalFieldType): void => {
+    setForm(prev => {
+      const fields = prev.personal_fields ?? [];
+      const exists = fields.some(f => f.type === fieldType);
       const next = exists
-        ? fields.filter(f => f.type !== type)
-        : [...fields, { type, required: false, label: type, placeholder: "" } as TScreenPersonalField];
+        ? fields.filter(f => f.type !== fieldType)
+        : [...fields, { type: fieldType, required: false, label: fieldType, placeholder: "" } as TScreenPersonalField];
 
-      dispatch(updatePersonalScreen({ ...personal, personal_fields: next }));
-    },
-    [dispatch, personal]
-  );
+      return { ...prev, personal_fields: next };
+    });
+  }, []);
 
   /**
    * Обновляет настройки одного поля персональных данных
    */
-  const updateField = useCallback(
-    (idx: number, upd: Partial<TScreenPersonalField>) => {
-      const fields = [...(personal.personal_fields ?? [])];
+  const handleSubFieldChange = useCallback((idx: number, upd: Partial<TScreenPersonalField>): void => {
+    setForm(prev => {
+      const fields = [...(prev.personal_fields ?? [])];
 
       fields[idx] = { ...fields[idx], ...upd };
-      dispatch(updatePersonalScreen({ ...personal, personal_fields: fields }));
-    },
-    [dispatch, personal]
-  );
+
+      return { ...prev, personal_fields: fields };
+    });
+  }, []);
 
   /**
-   * Обновляет дизайн-опции экрана
+   * Обработчик изменения дизайна экрана
    */
-  const updateDesign = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-      const { name, value } = e.currentTarget;
+  const handleDesignChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
+    const { name, value } = e.currentTarget;
 
-      dispatch(
-        updatePersonalScreen({
-          ...personal,
-          design_settings: {
-            ...personal.design_settings,
-            [name]: value,
-          },
-        })
-      );
-    },
-    [dispatch, personal]
-  );
+    setForm(prev => ({
+      ...prev,
+      design_settings: {
+        ...prev.design_settings,
+        [name as keyof TScreenDesignSettings]: value,
+      },
+    }));
+  }, []);
 
   return (
     <div className={styles.item}>
-      <h3 className={styles.sectionTitle}>Экран сбора данных</h3>
-
       <div className={styles.screen}>
         <label className={styles.checkbox}>
           <input
             name="active"
             type="checkbox"
-            checked={personal.active}
-            onChange={updateInput}
-          />{" "}
+            checked={form.active}
+            onChange={handleFieldChange}
+          />
           Активировать сбор персональных данных
         </label>
 
@@ -104,8 +147,8 @@ const PersonalScreen: React.FC = () => {
             id="personal-title"
             name="title"
             type="text"
-            value={personal.title || ""}
-            onChange={updateInput}
+            value={form.title || ""}
+            onChange={handleFieldChange}
           />
         </div>
 
@@ -114,8 +157,8 @@ const PersonalScreen: React.FC = () => {
           <textarea
             id="personal-description"
             name="description"
-            value={personal.description || ""}
-            onChange={updateInput}
+            value={form.description || ""}
+            onChange={handleFieldChange}
           />
         </div>
 
@@ -125,8 +168,8 @@ const PersonalScreen: React.FC = () => {
             id="personal-button_text"
             name="button_text"
             type="text"
-            value={personal.button_text}
-            onChange={updateInput}
+            value={form.button_text}
+            onChange={handleFieldChange}
           />
         </div>
 
@@ -139,15 +182,15 @@ const PersonalScreen: React.FC = () => {
             >
               <input
                 type="checkbox"
-                checked={personal.personal_fields?.some(p => p.type === f) || false}
-                onChange={() => toggleField(f)}
-              />{" "}
+                checked={form.personal_fields?.some(p => p.type === f) || false}
+                onChange={() => handleToggleField(f)}
+              />
               {f}
             </label>
           ))}
         </fieldset>
 
-        {personal.personal_fields?.map((field, idx) => (
+        {form.personal_fields?.map((field, idx) => (
           <div
             key={idx}
             className={styles.field}
@@ -157,8 +200,8 @@ const PersonalScreen: React.FC = () => {
               <input
                 type="checkbox"
                 checked={field.required}
-                onChange={e => updateField(idx, { required: e.target.checked })}
-              />{" "}
+                onChange={e => handleSubFieldChange(idx, { required: e.currentTarget.checked })}
+              />
               Обязательное
             </label>
             <label htmlFor={`label-${idx}`}>Метка</label>
@@ -166,57 +209,54 @@ const PersonalScreen: React.FC = () => {
               id={`label-${idx}`}
               type="text"
               value={field.label}
-              onChange={e => updateField(idx, { label: e.target.value })}
+              onChange={e => handleSubFieldChange(idx, { label: e.currentTarget.value })}
             />
             <label htmlFor={`placeholder-${idx}`}>Placeholder</label>
             <input
               id={`placeholder-${idx}`}
               type="text"
               value={field.placeholder}
-              onChange={e => updateField(idx, { placeholder: e.target.value })}
+              onChange={e => handleSubFieldChange(idx, { placeholder: e.currentTarget.value })}
             />
           </div>
         ))}
 
         <div className={styles.design}>
           <h4>Дизайн экрана</h4>
-
           <div className={styles.field}>
-            <label htmlFor="layout-select">Схема</label>
+            <label htmlFor="personal-layout">Схема</label>
             <select
-              id="layout-select"
+              id="personal-layout"
               name="layout"
-              value={personal.design_settings.layout}
-              onChange={updateDesign}
+              value={form.design_settings.layout}
+              onChange={handleDesignChange}
             >
               <option value="without_image">Без картинки</option>
               <option value="with_image">С картинкой</option>
               <option value="image_background">Картинка фоном</option>
             </select>
           </div>
-
           <div className={styles.field}>
-            <label htmlFor="alignment-select">Выравнивание</label>
+            <label htmlFor="personal-alignment">Выравнивание</label>
             <select
-              id="alignment-select"
+              id="personal-alignment"
               name="alignment"
-              value={personal.design_settings.alignment}
-              onChange={updateDesign}
+              value={form.design_settings.alignment}
+              onChange={handleDesignChange}
             >
               <option value="center">По центру</option>
               <option value="left">Слева</option>
               <option value="right">Справа</option>
             </select>
           </div>
-
           <div className={styles.field}>
-            <label htmlFor="image-url">URL картинки</label>
+            <label htmlFor="personal-image_url">URL картинки</label>
             <input
-              id="image-url"
+              id="personal-image_url"
               name="image_url"
               type="text"
-              value={personal.design_settings.image_url || ""}
-              onChange={updateDesign}
+              value={form.design_settings.image_url || ""}
+              onChange={handleDesignChange}
             />
           </div>
         </div>

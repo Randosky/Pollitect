@@ -1,5 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
+const STORAGE_KEY = "user";
+
 /** Интерфейсы состояний */
 export interface IUser {
   id: number;
@@ -17,33 +19,52 @@ export type TUserWithAccessToken = {
   user: IUser;
 } & TAccessToken;
 
-export type TUserState = IUser;
+/** Возвращает initial state: из sessionStorage или дефолт */
+const getInitialState = (): IUser => {
+  try {
+    const stored = sessionStorage.getItem(STORAGE_KEY);
 
-/** Начальное состояние */
-const initialState: TUserState = {
-  id: -1,
-  email: "",
-  role: "user",
+    if (stored) {
+      return JSON.parse(stored) as IUser;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+
+  return {
+    id: -1,
+    email: "",
+    role: "user",
+  };
 };
 
-/** Слайл для лейаута */
+/** Слайс пользователя */
 export const userSlice = createSlice({
-  name: "userSlice",
-  initialState,
+  name: "user",
+  initialState: getInitialState(),
   reducers: {
-    updateUserState(state, action: PayloadAction<Partial<TUserState>>) {
-      return { ...state, ...action.payload };
+    /**
+     * Обновляет часть состояния пользователя и сохраняет в sessionStorage
+     */
+    updateUserState(state, action: PayloadAction<Partial<IUser>>) {
+      const next = { ...state, ...action.payload };
+
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+
+      return next;
     },
+    /**
+     * Очищает состояние пользователя (логаут) и удаляет из sessionStorage
+     */
     clearUserState() {
-      return {
-        id: -1,
-        email: "",
-        role: "user",
-      };
+      const next: IUser = { id: -1, email: "", role: "user" };
+
+      sessionStorage.removeItem(STORAGE_KEY);
+
+      return next;
     },
   },
 });
 
 export const { updateUserState, clearUserState } = userSlice.actions;
-
 export default userSlice.reducer;

@@ -22,6 +22,7 @@ import LayoutWrapper from "./Wrapper";
 /** Лейаут для проекта в кабинете */
 const Layout = () => {
   const headerRef = useRef<HTMLElement | null>(null);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
   const footerRef = useRef<HTMLElement | null>(null);
 
   const [loading, setLoading] = useState(true);
@@ -60,7 +61,7 @@ const Layout = () => {
             <LayoutProvider>
               <LayoutFooterProvider>
                 <ErrorBoundary>
-                  <LayoutWrapper>
+                  <LayoutWrapper ref={wrapperRef}>
                     <LayoutHeader ref={headerRef} />
 
                     <LayoutContainer>
@@ -70,7 +71,10 @@ const Layout = () => {
                       <Toaster />
                     </LayoutContainer>
 
-                    <LayoutFooter ref={footerRef} />
+                    <LayoutFooter
+                      ref={footerRef}
+                      wrapperRef={wrapperRef}
+                    />
                   </LayoutWrapper>
                 </ErrorBoundary>
               </LayoutFooterProvider>
