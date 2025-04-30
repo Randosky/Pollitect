@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { updateDesignSettings } from "@store/slices/survey";
+import checkDeepEquals from "@utils/checkDeepEquals";
 
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 
@@ -10,36 +11,52 @@ import { TDesignSettings } from "../Survey.types";
 
 const DesignContainer: React.FC = () => {
   const dispatch = useAppDispatch();
-  const stored = useAppSelector(s => s.survey.surveyForm.design_settings);
-  const [settings, setSettings] = useState<TDesignSettings>(stored);
 
+  const designSettings = useAppSelector(s => s.survey.surveyForm.design_settings);
+
+  const [form, setForm] = useState<TDesignSettings>(designSettings);
+  const [initialForm, setInitialForm] = useState<TDesignSettings>(designSettings);
+
+  /** Синхронизируем стор → локальный стейт */
   useEffect(() => {
-    setSettings(stored);
-  }, [stored]);
+    setForm(designSettings);
+    setInitialForm(designSettings);
+  }, [designSettings]);
 
-  useEffect(() => {
-    const id = setTimeout(() => {
-      dispatch(updateDesignSettings(settings));
-    }, 300);
+  /** Флаг доступности сохранения */
+  const canSave = useMemo(() => !checkDeepEquals(form, initialForm), [form, initialForm]);
 
-    return () => clearTimeout(id);
-  }, [settings, dispatch]);
+  /**
+   * Сохраняет локальные изменения в Redux
+   * @returns {void}
+   */
+  const handleSave = useCallback((): void => {
+    dispatch(updateDesignSettings(form));
+  }, [dispatch, form]);
 
-  const handleChange = (newSettings: TDesignSettings) => {
-    setSettings(newSettings);
-  };
+  /**
+   * Отменяет локальные изменения, восстанавливая начальное состояние
+   * @returns {void}
+   */
+  const handleCancel = useCallback((): void => {
+    setForm(initialForm);
+  }, [initialForm]);
 
-  const handleSave = () => {
-    dispatch(updateDesignSettings(settings));
-
-    alert("Дизайн сохранён");
-  };
+  /**
+   * Обработчик изменений настроек
+   * @param {Partial<TDesignSettings>} upd — новые поля
+   */
+  const handleChange = useCallback((upd: Partial<TDesignSettings>): void => {
+    setForm(prev => ({ ...prev, ...upd }));
+  }, []);
 
   return (
     <DesignView
-      settings={settings}
+      settings={form}
+      canSave={canSave}
       onChange={handleChange}
-      onSave={handleSave}
+      handleSave={handleSave}
+      handleCancel={handleCancel}
     />
   );
 };

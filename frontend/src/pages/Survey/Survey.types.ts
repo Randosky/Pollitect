@@ -40,6 +40,12 @@ export type TPlacement = "inbuilt" | "before" | "after";
 /** Доступные семейства шрифтов для текста опроса */
 export type TFontFamily = "Open Sans" | "Arial" | "Times New Roman" | "Roboto" | "Montserrat";
 
+/** Возможные вид единиц измерения */
+export type TUnit = "%" | "px";
+
+/** Тип для отступов */
+export type TIndents = [number, number, number, number];
+
 /** Описание одного вопроса или экрана (до сохранения в БД может не иметь id) */
 export type TQuestion = {
   /** Уникальный идентификатор вопроса (назначается сервером) */
@@ -149,11 +155,11 @@ export type TDesignSettings = {
   /** Ширина виджета */
   width: number;
   /** Единица измерения ширины */
-  width_unit: "%" | "px";
+  width_unit: TUnit;
   /** Высота виджета */
   height: number;
   /** Единица измерения высоты */
-  height_unit: "%" | "px";
+  height_unit: TUnit;
   /** Цвет фона виджета */
   background_color: string;
   /** Цвет текста виджета */
@@ -163,9 +169,9 @@ export type TDesignSettings = {
   /** Выбранное семейство шрифта */
   font_family: TFontFamily;
   /** Отступы внутри виджета [top, right, bottom, left] */
-  margin: [number, number, number, number];
+  margin: TIndents;
   /** Поля внутри виджета [top, right, bottom, left] */
-  padding: [number, number, number, number];
+  padding: TIndents;
 };
 
 /** Настройки поведения отображения опроса */

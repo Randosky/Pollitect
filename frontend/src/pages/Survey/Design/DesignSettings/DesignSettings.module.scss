@@ -1,0 +1,30 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+}
+
+.legend {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.input,
+.select {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background-color: var(--white);
+  color: var(--text);
+  font-size: 14px;
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+}

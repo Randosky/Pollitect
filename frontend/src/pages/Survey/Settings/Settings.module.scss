@@ -1,74 +1,125 @@
 @import "@styles/breakpoints";
 
-.settings {
+.container {
+  background-color: var(--bg);
+  color: var(--text);
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 16px;
+  height: 100%;
+  padding: 24px;
+}
 
-  .group {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-
-    label {
-      font-size: 14px;
-    }
-    input[type="text"],
-    input[type="number"],
-    textarea {
-      padding: 4px 8px;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-    }
-  }
-
-  .checkbox {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-
-    input {
-      width: 16px;
-      height: 16px;
-    }
-  }
-
-  .row {
-    display: flex;
-    gap: 16px;
-    margin-bottom: 4px;
-  }
-
-  .saveBtn {
-    align-self: flex-start;
-    padding: 8px 16px;
-    background: var(--bg-contrast);
-    color: var(--text-contrast);
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-
-    &:hover {
-      background: var(--bg-contrast-hover);
-    }
-  }
-
-  .embed {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-
-    textarea {
-      font-family: monospace;
-    }
+@media (max-width: $sm) {
+  .container {
+    padding: 16px;
   }
 }
 
-@media (min-width: $sm) {
-  .settings {
-    padding: 24px;
-    gap: 24px;
+.header {
+  margin-bottom: 24px;
+  h1 {
+    font-size: 24px;
+    color: var(--text-secondary);
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.fieldset {
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.legend {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.checkboxGroup,
+.radioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  input {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.input {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background-color: var(--white);
+  color: var(--text);
+  font-size: 14px;
+}
+
+.urlList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.urlItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.addBtn,
+.removeBtn {
+  padding: 6px 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: var(--bg-secondary-contrast);
+  color: var(--text);
+  &:hover {
+    background-color: var(--bg-secondary-contrast-hover);
+  }
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.embedSection {
+  margin-top: 24px;
+  .legend {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+  .textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background-color: var(--white);
+    color: var(--text);
+    font-family: monospace;
+    font-size: 14px;
   }
 }

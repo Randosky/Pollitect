@@ -1,59 +1,41 @@
 @import "@styles/breakpoints";
 
-.design {
+.root {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 24px;
-  background: var(--white);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-
-  .group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-
-    label {
-      font-weight: 600;
-    }
-
-    input,
-    select {
-      padding: 8px;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      font-size: 14px;
-    }
-  }
-
-  .row {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-
-  .saveBtn {
-    align-self: flex-start;
-    padding: 8px 16px;
-    background: var(--bg-contrast);
-    color: var(--text-contrast);
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.2s;
-
-    &:hover {
-      background: var(--bg-contrast-hover);
-    }
-  }
+  height: 100vh;
+  width: 100vw;
+  background-color: var(--bg);
 }
 
-@media (min-width: $sm) {
-  .design {
-    padding: 24px;
-    gap: 24px;
+.sidebar {
+  width: 320px;
+  padding: 24px;
+  background-color: var(--bg-contrast);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+}
+
+.header {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.previewArea {
+  flex-grow: 1;
+  padding: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: $sm) {
+  .root {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
   }
 }
