@@ -29,7 +29,7 @@ export interface UserCreationAttributes
     "id" | "phone" | "avatar_url" | "refreshToken"
   > {}
 
-class User
+export class User
   extends Model<UserAttributes, UserCreationAttributes>
   implements UserAttributes
 {

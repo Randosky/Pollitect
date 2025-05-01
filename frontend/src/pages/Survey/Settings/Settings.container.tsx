@@ -75,4 +75,4 @@ const SettingsContainer: React.FC = () => {
   );
 };
 
-export default SettingsContainer;
+export { SettingsContainer };

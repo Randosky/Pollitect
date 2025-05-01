@@ -1,24 +1,55 @@
 import { Model, DataTypes, Sequelize, Optional } from "sequelize";
 
-// Интерфейс для описания структуры данных модели
-interface SurveyAttributes {
+/** Интерфейс атрибутов Survey */
+export interface SurveyAttributes {
+  /** Идентификатор опроса */
   id: number;
-  title: string;
-  description?: string;
+  /** Идентификатор пользователя */
+  user_id: number;
+  /** Вопросы */
+  questions: object;
+  /** Экран приветствия */
+  welcomeScreen: object;
+  /** Экран сбора персональных данных */
+  personalScreen: object;
+  /** Экран завершения */
+  completionScreen: object;
+  /** Настройки дизайна */
+  design_settings: object;
+  /** Настройки отображения */
+  display_settings: object;
+  /** Дата создания */
+  createdAt?: Date;
+  /** Дата обновления */
+  updatedAt?: Date;
 }
 
-// Опциональные поля при создании записи (id генерируется автоматически)
-interface SurveyCreationAttributes extends Optional<SurveyAttributes, "id"> {}
+/** Опциональные поля при создании */
+export interface SurveyCreationAttributes
+  extends Optional<SurveyAttributes, "id" | "createdAt" | "updatedAt"> {}
 
-class Survey extends Model<SurveyAttributes, SurveyCreationAttributes> {
+export class Survey
+  extends Model<SurveyAttributes, SurveyCreationAttributes>
+  implements SurveyAttributes
+{
+  public id!: number;
+  public user_id!: number;
+  public questions!: object;
+  public welcomeScreen!: object;
+  public personalScreen!: object;
+  public completionScreen!: object;
+  public design_settings!: object;
+  public display_settings!: object;
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
+
   /**
-   * Метод для установления ассоциаций модели
-   * с другими моделями
+   * Установка ассоциаций модели
    *
-   * @param {any} _models - объект с моделями
+   * @param {any} models - объект с моделями
    */
-  static associate(_models: any) {
-    // Здесь можно задать связи с другими моделями
+  static associate(models: any) {
+    Survey.belongsTo(models.User, { foreignKey: "user_id", as: "author" });
   }
 }
 
@@ -30,20 +61,42 @@ export default (sequelize: Sequelize) => {
         autoIncrement: true,
         primaryKey: true,
       },
-      title: {
-        type: DataTypes.STRING,
+      user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: { model: "Users", key: "id" },
+        onDelete: "CASCADE",
+      },
+      questions: {
+        type: DataTypes.JSONB,
         allowNull: false,
       },
-      description: {
-        type: DataTypes.TEXT,
-        allowNull: true,
+      welcomeScreen: {
+        type: DataTypes.JSONB,
+        allowNull: false,
+      },
+      personalScreen: {
+        type: DataTypes.JSONB,
+        allowNull: false,
+      },
+      completionScreen: {
+        type: DataTypes.JSONB,
+        allowNull: false,
+      },
+      design_settings: {
+        type: DataTypes.JSONB,
+        allowNull: false,
+      },
+      display_settings: {
+        type: DataTypes.JSONB,
+        allowNull: false,
       },
     },
     {
       sequelize,
       modelName: "Survey",
       tableName: "Surveys",
-      timestamps: true, // Добавляет createdAt и updatedAt
+      timestamps: true,
     }
   );
 

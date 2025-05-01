@@ -8,11 +8,12 @@ import type { TSurveyCardProps } from "../Dashboard.types";
 import styles from "./SurveyCard.module.scss";
 
 const SurveyCard: React.FC<TSurveyCardProps> = ({ surveyCard }) => {
-  const { id, title, description, responsesCount, completionRate, updatedAt } = surveyCard;
+  const { id } = surveyCard;
 
   return (
     <div className={styles.card}>
-      <Link
+      daawd
+      {/* <Link
         to={`/survey/edit/${id}`}
         className={styles.cardHeader}
       >
@@ -39,7 +40,7 @@ const SurveyCard: React.FC<TSurveyCardProps> = ({ surveyCard }) => {
         <button type="button">
           <span className={classNames("icon-trash", styles.deleteBtn)} />
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

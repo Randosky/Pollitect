@@ -1,22 +1,34 @@
 import fs from "fs";
 import path from "path";
-import { Sequelize, DataTypes } from "sequelize";
+import { Sequelize, DataTypes, ModelCtor, Model } from "sequelize";
 import process from "process";
 
 // Импорт конфигурации Sequelize
 // @ts-ignore
 import configData from "../../config/config.cjs";
+import { Survey } from "./survey";
+import { User } from "./user";
+
+// Интерфейс типов для db
+interface DB {
+  sequelize: Sequelize;
+  Sequelize: typeof Sequelize;
+  [model: string]: any;
+  User: ModelCtor<Model<any, any>> & typeof User;
+  Survey: ModelCtor<Model<any, any>> & typeof Survey;
+}
 
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || "development";
 const config = configData[env as keyof typeof configData] as any;
 
-const db: { [key: string]: any } = {};
-
 // Создаем подключение к базе данных
 const sequelize = config.use_env_variable
   ? new Sequelize(process.env[config.use_env_variable] as string, config)
   : new Sequelize(config.database, config.username, config.password, config);
+
+// Объект для хранения моделей
+const db = {} as DB;
 
 // Динамический импорт моделей
 fs.readdirSync(__dirname)

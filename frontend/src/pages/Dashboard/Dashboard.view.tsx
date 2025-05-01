@@ -24,12 +24,14 @@ const DashboardView: React.FC<TDashboardViewProps> = ({ surveyCards }) => (
     </div>
 
     <div className={styles.cardsGrid}>
-      {surveyCards.map(surveyCard => (
-        <SurveyCard
-          key={surveyCard.id}
-          surveyCard={surveyCard}
-        />
-      ))}
+      {surveyCards?.length
+        ? surveyCards.map(surveyCard => (
+            <SurveyCard
+              key={surveyCard.id}
+              surveyCard={surveyCard}
+            />
+          ))
+        : "Нет опросов"}
     </div>
   </section>
 );

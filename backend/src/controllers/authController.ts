@@ -15,6 +15,7 @@ const { User } = db;
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     const { name, email, password } = req.body;
+
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       res
@@ -28,13 +29,14 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     newUser.refreshToken = refreshToken;
     await newUser.save();
+
     saveRefreshTokenToCookie(res, refreshToken);
 
     // Собираем только необходимые поля
     const user: IUser = {
       id: newUser.id,
       email: newUser.email,
-      role: newUser.role,
+      role: newUser.role as "user" | "admin",
       name: newUser.name || undefined,
       phone: newUser.phone || undefined,
     };
@@ -63,6 +65,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
+
     const userRecord = await User.findOne({ where: { email } });
     if (!userRecord) {
       res.status(404).json({ message: "Пользователь не найден" });
@@ -88,7 +91,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const user: IUser = {
       id: userRecord.id,
       email: userRecord.email,
-      role: userRecord.role,
+      role: userRecord.role as "user" | "admin",
       name: userRecord.name || undefined,
       phone: userRecord.phone || undefined,
     };
@@ -111,36 +114,38 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 export const refresh = async (req: Request, res: Response): Promise<void> => {
   try {
     // Извлекаем refreshToken из куки
-    const refreshToken = req.cookies.refreshToken;
-    if (!refreshToken) {
+    const oldToken = req.cookies.refreshToken;
+
+    if (!oldToken) {
       res.status(400).json({ message: "Токен отсутствует" });
       return;
     }
 
     // Находим пользователя по декодированию токена
-    const payload = jwt.verify(
-      refreshToken,
-      process.env.JWT_REFRESH_SECRET!
-    ) as { id: number };
+    const payload = jwt.verify(oldToken, process.env.JWT_REFRESH_SECRET!) as {
+      id: number;
+    };
 
     const userRecord = await User.findByPk(payload.id);
 
-    if (!userRecord || userRecord.refreshToken !== refreshToken) {
+    if (!userRecord || userRecord.refreshToken !== oldToken) {
       res.status(403).json({ message: "Неверный refresh токен" });
       return;
     }
 
     // Генерация новых токенов
-    const tokens = generateTokens({ id: userRecord.id });
+    const { accessToken, refreshToken: newRefresh } = generateTokens({
+      id: userRecord.id,
+    });
 
     // Обновляем refreshToken в БД
-    userRecord.refreshToken = tokens.refreshToken;
+    userRecord.refreshToken = newRefresh;
     await userRecord.save();
 
     // Сохраняем refreshToken в куку
-    saveRefreshTokenToCookie(res, refreshToken);
+    saveRefreshTokenToCookie(res, newRefresh);
 
-    res.status(200).json({ accessToken: tokens.accessToken });
+    res.status(200).json({ accessToken: accessToken });
   } catch (error) {
     console.error("Ошибка при обновлении токена:", error);
     res.status(403).json({ message: "Неверный refresh токен" });

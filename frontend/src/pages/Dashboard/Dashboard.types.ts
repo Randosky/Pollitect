@@ -1,3 +1,5 @@
+import { ISurvey } from "@pages/Survey/Survey.types";
+
 /** Интерфейсы карточки опроса */
 export interface SurveyCard {
   id: number;
@@ -9,9 +11,9 @@ export interface SurveyCard {
 }
 
 export type TDashboardViewProps = {
-  surveyCards: SurveyCard[];
+  surveyCards?: ISurvey[];
 };
 
 export type TSurveyCardProps = {
-  surveyCard: SurveyCard;
+  surveyCard: ISurvey;
 };

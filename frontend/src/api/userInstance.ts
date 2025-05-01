@@ -52,10 +52,10 @@ userAxiosInstance.interceptors.response.use(
         });
 
         // Сохраняем новый accessToken
-        sessionStorage.setItem("accessToken", responseData.access_token);
+        sessionStorage.setItem("accessToken", responseData.accessToken);
 
         // Обновляем заголовок авторизации оригинального запроса
-        originalRequest.headers.Authorization = `Bearer ${responseData.access_token}`;
+        originalRequest.headers.Authorization = `Bearer ${responseData.accessToken}`;
 
         // Повторно отправляем оригинальный запрос с обновленным токеном
         return await userAxiosInstance(originalRequest);
