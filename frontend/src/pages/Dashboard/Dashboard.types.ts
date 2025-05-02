@@ -11,7 +11,7 @@ export interface SurveyCard {
 }
 
 export type TDashboardViewProps = {
-  surveyCards?: ISurvey[];
+  surveyCards?: ISurvey[] | null;
 };
 
 export type TSurveyCardProps = {

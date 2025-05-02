@@ -29,6 +29,10 @@ export const surveySlice = createSlice({
     updateSurveyForm: (state, action: PayloadAction<Partial<ISurvey>>) => {
       state.surveyForm = { ...state.surveyForm, ...action.payload };
     },
+    /** Очистить поля опроса */
+    clearSurveyForm: state => {
+      state.surveyForm = INITIAL_SURVEY;
+    },
     /** Настройки экрана приветствия */
     updateWelcomeScreen: (state, action: PayloadAction<Partial<TWelcomeScreen>>) => {
       state.surveyForm.welcomeScreen = {
@@ -69,6 +73,7 @@ export const surveySlice = createSlice({
 
 export const {
   updateSurveyForm,
+  clearSurveyForm,
   updateWelcomeScreen,
   updatePersonalScreen,
   updateCompletionScreen,

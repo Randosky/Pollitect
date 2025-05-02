@@ -4,14 +4,17 @@ import { useError } from "@hooks/useError";
 import { useSurveyController } from "@hooks/useSurveyController";
 import Logout from "@layout/Header/Logout";
 import { useLayout } from "@layout/Provider/LayoutContext";
+import { useAppDispatch } from "@store/hooks";
+import { setLoaderData } from "@store/slices/layout";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
 import DashboardView from "./Dashboard.view";
 
-import { ISurvey } from "@pages/Survey/Survey.types";
+import type { ISurvey } from "@pages/Survey/Survey.types";
 
 const DashboardContainer: React.FC = () => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const proccessError = useError();
 
@@ -19,17 +22,23 @@ const DashboardContainer: React.FC = () => {
   const { handleShowHeader, handleCloseHeader } = useLayout();
 
   /** Получить все опросы */
-  const { data: surveyCards } = useQuery<ISurvey[] | undefined>({
+  const { data: surveyCards } = useQuery<ISurvey[] | null>({
     queryKey: ["getSurveys"],
     queryFn: async () => {
+      dispatch(setLoaderData(true));
+
       try {
         const data = await fetchSurveys();
 
-        if (!data?.length) return;
+        if (!data?.length) return null;
 
         return data;
       } catch (error) {
         proccessError(error);
+
+        return null;
+      } finally {
+        dispatch(setLoaderData(false));
       }
     },
     refetchOnMount: "always",

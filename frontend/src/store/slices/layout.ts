@@ -16,9 +16,14 @@ export interface ToasterState {
   onClose?: () => void;
 }
 
+export interface LoaderState {
+  show: boolean;
+}
+
 export interface LayoutState {
   modal: ModalState;
   toaster: ToasterState;
+  loader: LoaderState;
 }
 
 /** Начальное состояние */
@@ -33,6 +38,7 @@ const initialState: LayoutState = {
     content: undefined,
     onClose: undefined,
   },
+  loader: { show: false },
 };
 
 /** Слайл для лейаута */
@@ -66,9 +72,12 @@ export const layoutSlice = createSlice({
         onClose: undefined,
       };
     },
+    setLoaderData: (state, action: PayloadAction<boolean>) => {
+      state.loader.show = action.payload;
+    },
   },
 });
 
-export const { openModal, closeModal, openToaster, closeToaster } = layoutSlice.actions;
+export const { openModal, closeModal, openToaster, closeToaster, setLoaderData } = layoutSlice.actions;
 
 export default layoutSlice.reducer;

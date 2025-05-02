@@ -1,5 +1,9 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 import React from "react";
 
+import { useError } from "@hooks/useError";
+import { useSurveyController } from "@hooks/useSurveyController";
+import { useQueryClient } from "@tanstack/react-query";
 import classNames from "classnames";
 import { Link } from "react-router-dom";
 
@@ -8,40 +12,111 @@ import type { TSurveyCardProps } from "../Dashboard.types";
 import styles from "./SurveyCard.module.scss";
 
 const SurveyCard: React.FC<TSurveyCardProps> = ({ surveyCard }) => {
-  const { id } = surveyCard;
+  const { id, title, active, statistics: { responsesCount, completionRate, averageTimeSec } = {} } = surveyCard;
+
+  const processError = useError();
+  const queryClient = useQueryClient();
+
+  const { updateSurvey, deleteSurvey } = useSurveyController();
+
+  /**
+   * Функция для удаления опроса
+   * @returns {void}
+   */
+  const handleDelete = async (): Promise<void> => {
+    if (!id) return;
+
+    try {
+      await deleteSurvey(id);
+
+      queryClient.invalidateQueries({ queryKey: ["getSurveys"] });
+    } catch (error) {
+      processError(error);
+    }
+  };
+
+  /**
+   * Функция изменения активности опроса
+   * @param {React.ChangeEvent<HTMLInputElement>} event - событие изменения активности
+   * @returns {void}
+   */
+  const handleToggleActive = async (event: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
+    if (!id) return;
+
+    try {
+      await updateSurvey(id, { active: event.target.checked });
+
+      queryClient.invalidateQueries({ queryKey: ["getSurveys"] });
+    } catch (error) {
+      processError(error);
+    }
+  };
+
+  const formatTime = (sec: number) => {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+
+    return `${m} мин ${s} сек`;
+  };
 
   return (
-    <div className={styles.card}>
-      daawd
-      {/* <Link
-        to={`/survey/edit/${id}`}
-        className={styles.cardHeader}
-      >
-        {title}
-      </Link>
+    <article className={styles.card}>
+      <header className={styles.header}>
+        <h2 className={styles.title}>
+          <Link to={`/survey/edit/${id}`}>{title}</Link>
+        </h2>
+        <label
+          className={styles.switch}
+          htmlFor="survey-card-checkbox"
+        >
+          <input
+            id="survey-card-checkbox"
+            type="checkbox"
+            checked={active}
+            onChange={handleToggleActive}
+          />
 
-      <div className={styles.cardBody}>{description}</div>
+          <span className={styles.slider} />
+        </label>
+      </header>
 
       <div className={styles.stats}>
-        <span className={styles.badge}>{responsesCount} ответов</span>
-        <span className={styles.badge}>{completionRate}% завершено</span>
-        <span className={styles.badge}>Обновлено {updatedAt}</span>
+        <div className={styles.statItem}>
+          <strong>{responsesCount}</strong> ответов
+        </div>
+        <div className={styles.statItem}>
+          <strong>{completionRate}%</strong> завершено
+        </div>
+        {averageTimeSec !== undefined && (
+          <div className={styles.statItem}>
+            <strong>{formatTime(averageTimeSec)}</strong> в среднем
+          </div>
+        )}
       </div>
 
-      <div className={styles.actions}>
-        <Link to={`/survey/edit/${id}`}>
+      <footer className={styles.actions}>
+        <Link
+          to={`/survey/edit/${id}`}
+          title="Редактировать"
+        >
           <span className={classNames("icon-edit", styles.actionBtn)} />
         </Link>
-
-        <Link to={`/survey/results/${id}`}>
+        <Link
+          to={`/survey/results/${id}`}
+          title="Результаты"
+        >
           <span className={classNames("icon-chart", styles.actionBtn)} />
         </Link>
-
-        <button type="button">
-          <span className={classNames("icon-trash", styles.deleteBtn)} />
+        <button
+          type="button"
+          onClick={handleDelete}
+          title="Удалить"
+          className={styles.deleteBtn}
+        >
+          <span className="icon-trash" />
         </button>
-      </div> */}
-    </div>
+      </footer>
+    </article>
   );
 };
 

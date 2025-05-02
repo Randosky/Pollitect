@@ -50,10 +50,26 @@ export function useSurveyController() {
    * @param {ISurvey} survey - новые данные опроса
    * @returns {Promise<ISurvey>}
    */
-  async function updateSurvey(id: number, survey: ISurvey): Promise<ISurvey> {
-    const res = await client.put<ISurvey>(`/${id}`, survey);
+  async function updateSurvey(id: number, survey: Partial<ISurvey>): Promise<ISurvey> {
+    const res = await client.patch<ISurvey>(`/${id}`, survey);
 
     return res.data;
+  }
+
+  /**
+   * Создать или обновить опрос
+   * @param {number} id - идентификатор опроса
+   * @param {ISurvey} survey - новые данные опроса
+   * @returns {Promise<ISurvey>}
+   */
+  async function saveSurvey(id: number | undefined, survey: Partial<ISurvey>): Promise<ISurvey | undefined> {
+    if (!id || id < 0) {
+      if (!window.location.pathname.match(/\/survey/)) return;
+
+      return createSurvey(survey as ISurvey);
+    }
+
+    return updateSurvey(id, survey);
   }
 
   /**
@@ -70,6 +86,7 @@ export function useSurveyController() {
     fetchSurveyById,
     createSurvey,
     updateSurvey,
+    saveSurvey,
     deleteSurvey,
   };
 }

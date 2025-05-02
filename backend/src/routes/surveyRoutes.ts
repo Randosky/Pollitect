@@ -39,13 +39,13 @@ router.get("/:id", getSurveyById);
 router.post("/", createSurvey);
 
 /**
- * PUT /api/surveys/{id}
+ * PATCH /api/surveys/{id}
  * @summary Обновить существующий опрос
  * @param {number} id.path.required - ID опроса
  * @param {ISurvey} request.body.required - Новые данные опроса
  * @returns {Survey} 200 - обновлённый опрос
  */
-router.put("/:id", updateSurvey);
+router.patch("/:id", updateSurvey);
 
 /**
  * DELETE /api/surveys/{id}

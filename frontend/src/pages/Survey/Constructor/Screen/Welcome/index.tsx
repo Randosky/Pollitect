@@ -1,10 +1,13 @@
 /* eslint-disable camelcase */
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
+import { useError } from "@hooks/useError";
+import { useSurveyController } from "@hooks/useSurveyController";
 import ActionButtons from "@layout/Footer/ActionButtons";
 import { useLayoutFooter } from "@layout/Provider/LayoutFooter";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
-import { updateWelcomeScreen } from "@store/slices/survey";
+import { setLoaderData } from "@store/slices/layout";
+import { updateSurveyForm } from "@store/slices/survey";
 import checkDeepEquals from "@utils/checkDeepEquals";
 
 import type { TScreenDesignSettings, TWelcomeScreen } from "@pages/Survey/Survey.types";
@@ -21,11 +24,14 @@ import styles from "./Welcome.module.scss";
  */
 const WelcomeScreen: React.FC = (): React.ReactElement => {
   const dispatch = useAppDispatch();
-  const welcomeScreen = useAppSelector(s => s.survey.surveyForm.welcomeScreen);
+  const processError = useError();
+
+  const { id, welcomeScreen } = useAppSelector(s => s.survey.surveyForm);
 
   const [form, setForm] = useState<TWelcomeScreen>(welcomeScreen);
   const [initialForm, setInitialForm] = useState<TWelcomeScreen>(welcomeScreen);
 
+  const { saveSurvey } = useSurveyController();
   const { handleShowFooter, handleCloseFooter } = useLayoutFooter();
 
   /** Синхронизируем стор → локальный стейт */
@@ -38,12 +44,24 @@ const WelcomeScreen: React.FC = (): React.ReactElement => {
   const canSave = useMemo(() => !checkDeepEquals(form, initialForm), [form, initialForm]);
 
   /**
-   * Сохраняет локальные изменения в Redux
+   * Сохраняет локальные изменения
    * @returns {void}
    */
-  const handleSave = useCallback((): void => {
-    dispatch(updateWelcomeScreen(form));
-  }, [dispatch, form]);
+  const handleSave = useCallback(async (): Promise<void> => {
+    dispatch(setLoaderData(true));
+
+    try {
+      const data = await saveSurvey(id, { welcomeScreen: form });
+
+      if (!data) return;
+
+      dispatch(updateSurveyForm(data));
+    } catch (error) {
+      processError(error);
+    } finally {
+      dispatch(setLoaderData(false));
+    }
+  }, [dispatch, processError, form]);
 
   /**
    * Отменяет локальные изменения, восстанавливая начальное состояние

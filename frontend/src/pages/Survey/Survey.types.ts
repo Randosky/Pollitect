@@ -5,6 +5,14 @@ export type TSurveyTabs = "edit" | "design" | "settings";
 export interface ISurvey {
   /** Идентификатор опроса */
   id?: number;
+  /** Название опроса */
+  title: string;
+  /** Включен ли опрос */
+  active: boolean;
+  /** Дата последнего обновления */
+  updatedAt?: Date;
+  /** Дата создания */
+  createdAt?: Date;
   /** Массив вопросов и экранов опроса, упорядоченных по порядковому номеру */
   questions: TQuestion[];
   /** Экран приветствия перед началом опроса */
@@ -17,6 +25,10 @@ export interface ISurvey {
   design_settings: TDesignSettings;
   /** Настройки отображения (поведение, таймер, условия) */
   display_settings: TDisplaySettings;
+  /** Ответы, собранные в ходе прохождения опроса */
+  responses: TAnswer[];
+  /** Статистическая информация по опросу */
+  statistics: TSurveyStats;
 }
 
 /** Все возможные типы вопросов */
@@ -186,4 +198,27 @@ export type TDisplaySettings = {
   url_match_mode: "contains" | "equals";
   /** Список шаблонов URL для показа виджета */
   url_pattern: string[];
+};
+
+/** Тип ответа на один вопрос */
+export type TAnswer = {
+  /** Идентификатор вопроса, к которому относится ответ */
+  question_id: number;
+  /** Значение ответа.
+   * — Для вопросов с одиночным выбором и текстовых: строка
+   * — Для вопросов с несколькими вариантами: массив строк
+   * — Для бинарных вопросов: булевое значение
+   * — Для вопросов с датой: ISO-строка даты
+   */
+  value: string | string[] | boolean;
+};
+
+/** Тип статистики по опросу */
+export type TSurveyStats = {
+  /** Общее число отправленных ответов */
+  responsesCount: number;
+  /** Процент завершённых прохождений */
+  completionRate: number;
+  /** Среднее время прохождения опроса в секундах */
+  averageTimeSec?: number;
 };

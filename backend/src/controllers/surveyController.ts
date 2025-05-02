@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import db from "../models";
-import { SurveyCreationAttributes } from "../models/survey";
+import { SurveyAttributes, SurveyCreationAttributes } from "../models/survey";
+import { ensureQuestionIds, getRandomId } from "../services/surveyService";
 
 const Survey = db.Survey;
 
@@ -82,7 +83,12 @@ export async function createSurvey(req: Request, res: Response): Promise<void> {
 
   try {
     const data = req.body as SurveyCreationAttributes;
-    const newSurvey = await Survey.create({ ...data, user_id: userId });
+
+    const newSurvey = await Survey.create({
+      ...data,
+      user_id: userId,
+      questions: ensureQuestionIds((data.questions as object[]) || []),
+    });
 
     res.status(201).json(newSurvey);
   } catch (error) {
@@ -109,8 +115,43 @@ export async function updateSurvey(req: Request, res: Response): Promise<void> {
     return;
   }
 
+  // Берём только те поля, которые пришли в теле
+  const updateFields = req.body as Partial<SurveyAttributes>;
+
   try {
-    const [updatedCount] = await Survey.update(req.body, {
+    // Если клиент передал массив questions, гарантируем id‑шники
+    if (updateFields.questions) {
+      // Берём текущие вопросы, чтобы избежать коллизии id
+      const current = await Survey.findOne({
+        where: { id, user_id: userId },
+        attributes: ["questions"],
+      });
+
+      if (!current) {
+        res.status(404).json({ message: "Survey not found or no permission" });
+        return;
+      }
+
+      const existingIds = new Set(
+        (current.get("questions") as { id?: number }[]).map((q) => q.id)
+      );
+
+      updateFields.questions = (
+        updateFields.questions as { id?: number }[]
+      ).map((q) => {
+        if (q.id != null) return q;
+
+        let newId: number;
+
+        do {
+          newId = getRandomId();
+        } while (existingIds.has(newId));
+
+        return { ...q, id: newId };
+      });
+    }
+
+    const [updatedCount] = await Survey.update(updateFields, {
       where: { id, user_id: userId },
     });
 

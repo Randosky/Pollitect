@@ -1,5 +1,4 @@
 "use strict";
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -14,36 +13,59 @@ module.exports = {
       user_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: {
-          model: "Users",
-          key: "id",
-        },
+        references: { model: "Users", key: "id" },
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
+      },
+      title: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: "",
+      },
+      active: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
       },
       questions: {
         type: Sequelize.JSONB,
         allowNull: false,
+        defaultValue: [],
       },
       welcomeScreen: {
         type: Sequelize.JSONB,
         allowNull: false,
+        defaultValue: {},
       },
       personalScreen: {
         type: Sequelize.JSONB,
         allowNull: false,
+        defaultValue: {},
       },
       completionScreen: {
         type: Sequelize.JSONB,
         allowNull: false,
+        defaultValue: {},
       },
       design_settings: {
         type: Sequelize.JSONB,
         allowNull: false,
+        defaultValue: {},
       },
       display_settings: {
         type: Sequelize.JSONB,
         allowNull: false,
+        defaultValue: {},
+      },
+      responses: {
+        type: Sequelize.JSONB,
+        allowNull: false,
+        defaultValue: [],
+      },
+      statistics: {
+        type: Sequelize.JSONB,
+        allowNull: false,
+        defaultValue: {},
       },
       createdAt: {
         allowNull: false,

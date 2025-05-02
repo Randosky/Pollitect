@@ -13,6 +13,7 @@ import LayoutContainer from "./Container";
 import ErrorBoundary from "./ErrorBoundary";
 import LayoutFooter from "./Footer";
 import LayoutHeader from "./Header";
+import Loader from "./Loader";
 import Modal from "./Modal";
 import LayoutProvider from "./Provider/LayoutContext";
 import LayoutFooterProvider from "./Provider/LayoutFooter";
@@ -69,6 +70,7 @@ const Layout = () => {
 
                       <Modal />
                       <Toaster />
+                      <Loader />
                     </LayoutContainer>
 
                     <LayoutFooter
