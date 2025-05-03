@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 
 import Fieldset from "@ui/Fieldset";
 import Radio from "@ui/Radio";
@@ -7,18 +7,60 @@ import classNames from "classnames";
 
 import styles from "./UrlConditions.module.scss";
 
-type Props = {
+type TUrlConditionsProps = {
+  /**
+   * Режим соответствия URL:
+   *   - "contains" - содержит (нестрогое соответствие)
+   *   - "equals" - равен (строгое соответствие)
+   */
   mode: "contains" | "equals";
+  /**
+   * Массив URL, которые будут сравниваться с текущим URL.
+   * Если режим "equals", то должен быть только один URL.
+   */
   patterns: string[];
+  /**
+   * Изменяет режим соответствия URL.
+   * @param mode новый режим
+   */
   onModeChange(m: "contains" | "equals"): void;
+  /**
+   * Изменяет массив URL, которые будут сравниваться с текущим URL.
+   * @param p новый массив URL
+   */
   onPatternsChange(p: string[]): void;
 };
 
-const UrlConditions: React.FC<Props> = ({ mode, patterns, onModeChange, onPatternsChange }) => {
+const UrlConditions: React.FC<TUrlConditionsProps> = ({ mode, patterns, onModeChange, onPatternsChange }) => {
+  /* сохранённые strict URL‑ы */
+  const equalsPatterns = useRef<string[]>(patterns.length > 1 ? patterns : [""]);
+
+  /**
+   * Переключает между строгим и нестрогим режимом URL.
+   * @param mode если "equals", берёт сохранённые строгие паттерны, иначе берёт первый паттерн и сохраняет остальные.
+   */
+  const handleSwitchMode = (mode: "contains" | "equals") => {
+    if (mode === "equals") {
+      onPatternsChange(equalsPatterns.current);
+    } else {
+      equalsPatterns.current = patterns.length ? patterns : [""];
+
+      onPatternsChange([patterns[0] ?? ""]);
+    }
+
+    onModeChange(mode);
+  };
+
+  /**
+   * Обновляет конкретный URL‑паттерн в стейте.
+   * @param v новый URL‑паттерн.
+   * @param i индекс, под которым лежит обновляемый паттерн.
+   */
   const setPattern = (v: string, i: number) => {
     const p = [...patterns];
 
     p[i] = v;
+
     onPatternsChange(p);
   };
 
@@ -31,18 +73,18 @@ const UrlConditions: React.FC<Props> = ({ mode, patterns, onModeChange, onPatter
         <Radio
           label="Содержит"
           inputProps={{
-            name: "url-mode-contains",
+            name: "url-mode",
             checked: mode === "contains",
-            onChange: () => onModeChange("contains"),
+            onChange: () => handleSwitchMode("contains"),
           }}
         />
 
         <Radio
           label="Строгое совпадение"
           inputProps={{
-            name: "url-mode-equals",
+            name: "url-mode",
             checked: mode === "equals",
-            onChange: () => onModeChange("equals"),
+            onChange: () => handleSwitchMode("equals"),
           }}
         />
       </div>

@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import React, { useRef } from "react";
+import React from "react";
 
 import Checkbox from "@ui/Checkbox";
 import Fieldset from "@ui/Fieldset";
@@ -16,26 +16,10 @@ import UrlConditions from "./UrlConditions";
 const SettingsView: React.FC<TSettingsViewProps> = ({ settings, onChange }) => {
   const { target_id, timer_sec, block_scroll, prevent_repeat, url_match_mode, url_pattern } = settings;
 
-  /* сохранённые strict URL‑ы */
-  const strictStore = useRef<string[]>(url_pattern.length > 1 ? url_pattern : [""]);
-
   /* таймер включён, если ≥ 0 */
   const timerEnabled = timer_sec >= 0;
-
-  const timerSec = timer_sec >= 0 ? timer_sec : 0;
-  const toggleTimer = (v: boolean) => onChange({ timer_sec: v ? timerSec : 0 });
-
-  const switchMode = (m: "contains" | "equals") => {
-    if (m === "equals") {
-      onChange({ url_pattern: strictStore.current });
-    } else {
-      strictStore.current = url_pattern.length ? url_pattern : [""];
-
-      onChange({ url_pattern: [url_pattern[0] ?? ""] });
-    }
-
-    onChange({ url_match_mode: m });
-  };
+  /* значение таймера */
+  const timerSec = timerEnabled ? timer_sec : 0;
 
   return (
     <div className={pageStyles.page}>
@@ -61,7 +45,7 @@ const SettingsView: React.FC<TSettingsViewProps> = ({ settings, onChange }) => {
             inputProps={{
               id: "timer_enabled",
               checked: timerEnabled,
-              onChange: e => toggleTimer(e.target.checked),
+              onChange: e => onChange({ timer_sec: e.target.checked ? timerSec : -1 }),
             }}
           />
 
@@ -105,7 +89,7 @@ const SettingsView: React.FC<TSettingsViewProps> = ({ settings, onChange }) => {
       <UrlConditions
         mode={url_match_mode}
         patterns={url_pattern}
-        onModeChange={switchMode}
+        onModeChange={m => onChange({ url_match_mode: m })}
         onPatternsChange={p => onChange({ url_pattern: p })}
       />
     </div>
