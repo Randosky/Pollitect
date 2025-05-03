@@ -29,11 +29,11 @@ const TextField: React.FC<TTextFieldProps> = props => {
   } = props;
 
   const {
-    labelProps: { value: labelValue, ...labelProps } = { value: "" },
-    inputProps: { type: inputType, ...inputProps } = { type: "text" },
-    textAreaProps,
-    wrapperProps,
-    containerProps,
+    labelProps: { value: labelValue, className: labelCn, ...labelProps } = { value: "" },
+    inputProps: { type: inputType, className: inputCn, ...inputProps } = { type: "text" },
+    textAreaProps: { className: textAreaCn, ...textAreaProps } = {},
+    wrapperProps: { className: wrapperCn, ...wrapperProps } = {},
+    containerProps: { className: containerCn, ...containerProps } = {},
   } = config || {};
 
   const showPassword = inputType === "password";
@@ -44,12 +44,12 @@ const TextField: React.FC<TTextFieldProps> = props => {
     <section
       data-error={isError}
       data-disabled={isDisabled}
-      className={classNames(styles.container, styles[size])}
+      className={classNames(styles.container, styles[size], containerCn)}
       {...containerProps}
     >
       {labelValue && (
         <label
-          className={styles.label}
+          className={classNames(styles.label, labelCn)}
           {...labelProps}
         >
           {labelValue}
@@ -60,20 +60,20 @@ const TextField: React.FC<TTextFieldProps> = props => {
         customInputComponent
       ) : (
         <div
-          className={styles.inner}
+          className={classNames(styles.inner, wrapperCn)}
           {...wrapperProps}
         >
           {icon}
 
           {type === "textarea" ? (
             <textarea
-              className={styles.field}
+              className={classNames(styles.field, textAreaCn)}
               {...textAreaProps}
             />
           ) : (
             <input
               type={showPassword && showPasswordLocal ? "text" : inputType}
-              className={styles.field}
+              className={classNames(styles.field, inputCn)}
               {...inputProps}
             />
           )}

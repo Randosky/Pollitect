@@ -1,0 +1,47 @@
+.modes {
+  gap: 16px;
+  display: flex;
+}
+
+.list {
+  gap: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.item {
+  gap: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.add {
+  border: none;
+  align-self: flex-end;
+  width: fit-content;
+  border-radius: 5px;
+  padding: 8px 16px;
+  cursor: pointer;
+  background: var(--bg-secondary-contrast);
+
+  &:hover {
+    background: var(--bg-secondary-contrast-hover);
+  }
+}
+
+.remove {
+  border: none;
+  cursor: pointer;
+
+  &__icon {
+    width: 20px;
+    height: 20px;
+    background: var(--bg-error);
+  }
+
+  &:hover {
+    .remove__icon {
+      background: var(--bg-error-hover);
+    }
+  }
+}

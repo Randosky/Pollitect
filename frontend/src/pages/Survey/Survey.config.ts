@@ -29,7 +29,6 @@ export const INITIAL_SURVEY: ISurvey = {
     design_settings: { layout: "without_image", alignment: "left" },
   },
   design_settings: {
-    target_id: "",
     placement: "inbuilt",
     width: 100,
     width_unit: "%",
@@ -43,9 +42,10 @@ export const INITIAL_SURVEY: ISurvey = {
     padding: [16, 16, 16, 16],
   },
   display_settings: {
+    target_id: "",
     block_scroll: false,
     prevent_repeat: false,
-    timer_sec: 0,
+    timer_sec: -1,
     url_match_mode: "contains",
     url_pattern: [window.location.origin],
   },

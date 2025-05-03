@@ -13,6 +13,8 @@ export type TFieldsetLegendProps = React.DetailedHTMLProps<React.HTMLAttributes<
 export type TFieldsetProps = {
   /** Текст легенды (можно опустить, если не нужна) */
   legend?: string;
+  /** Базовый класс для элемента */
+  className?: string;
   /** Дочерние элементы – любые React‑ноды */
   children: ReactNode;
   /** Доп. пропсы для элемента legend */

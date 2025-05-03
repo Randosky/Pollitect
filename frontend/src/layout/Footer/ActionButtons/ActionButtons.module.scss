@@ -17,6 +17,7 @@
 
 .save {
   background-color: var(--bg-contrast);
+  transition: all 0.3s ease;
 
   &:hover {
     background-color: var(--bg-contrast-hover);
@@ -25,6 +26,7 @@
 
 .cancel {
   border: 1px solid var(--bg-contrast);
+  transition: all 0.3s ease;
 
   &:hover {
     border: 1px solid var(--bg-contrast-hover);

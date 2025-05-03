@@ -4,6 +4,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  width: fit-content;
   cursor: pointer;
   user-select: none;
 
@@ -31,7 +32,8 @@
   .fake::after {
     content: "";
     position: absolute;
-    inset: 0;
+    bottom: 20%;
+    right: 25%;
     margin: auto;
 
     /* сама галочка: рисуем 2 стороны бордера + поворот */
