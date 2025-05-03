@@ -1,14 +1,9 @@
 /* eslint-disable camelcase */
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback } from "react";
 
-import { useError } from "@hooks/useError";
+import { useFormWithFooter } from "@hooks/useFormWithFooter";
 import { useSurveyController } from "@hooks/useSurveyController";
-import ActionButtons from "@layout/Footer/ActionButtons";
-import { useLayoutFooter } from "@layout/Provider/LayoutFooter";
-import { useAppDispatch, useAppSelector } from "@store/hooks";
-import { setLoaderData } from "@store/slices/layout";
-import { updateSurveyForm } from "@store/slices/survey";
-import checkDeepEquals from "@utils/checkDeepEquals";
+import { useAppSelector } from "@store/hooks";
 
 import type { TScreenDesignSettings, TWelcomeScreen } from "@pages/Survey/Survey.types";
 
@@ -22,68 +17,19 @@ import styles from "./Welcome.module.scss";
  *
  * @returns {React.ReactElement}
  */
-const WelcomeScreen: React.FC = (): React.ReactElement => {
-  const dispatch = useAppDispatch();
-  const processError = useError();
-
+const WelcomeScreen: React.FC = React.memo((): React.ReactElement => {
   const { id, welcomeScreen } = useAppSelector(s => s.survey.surveyForm);
 
-  const [form, setForm] = useState<TWelcomeScreen>(welcomeScreen);
-  const [initialForm, setInitialForm] = useState<TWelcomeScreen>(welcomeScreen);
-
   const { saveSurvey } = useSurveyController();
-  const { handleShowFooter, handleCloseFooter } = useLayoutFooter();
 
-  /** Синхронизируем стор → локальный стейт */
-  useEffect(() => {
-    setForm(welcomeScreen);
-    setInitialForm(welcomeScreen);
-  }, [welcomeScreen]);
+  /** Функция сохранения формы */
+  const saveForm = useCallback(
+    async (newForm: TWelcomeScreen) => await saveSurvey(id, { welcomeScreen: newForm }),
+    [id, saveSurvey]
+  );
 
-  /** Флаг доступности сохранения */
-  const canSave = useMemo(() => !checkDeepEquals(form, initialForm), [form, initialForm]);
-
-  /**
-   * Сохраняет локальные изменения
-   * @returns {void}
-   */
-  const handleSave = useCallback(async (): Promise<void> => {
-    dispatch(setLoaderData(true));
-
-    try {
-      const data = await saveSurvey(id, { welcomeScreen: form });
-
-      if (!data) return;
-
-      dispatch(updateSurveyForm(data));
-    } catch (error) {
-      processError(error);
-    } finally {
-      dispatch(setLoaderData(false));
-    }
-  }, [dispatch, processError, form]);
-
-  /**
-   * Отменяет локальные изменения, восстанавливая начальное состояние
-   * @returns {void}
-   */
-  const handleCancel = useCallback((): void => {
-    setForm(initialForm);
-  }, [initialForm]);
-
-  /** Показ кнопок футера при наличии изменений */
-  useEffect(() => {
-    if (canSave) {
-      handleShowFooter(
-        <ActionButtons
-          handleSave={handleSave}
-          handleCancel={handleCancel}
-        />
-      );
-    }
-
-    return handleCloseFooter;
-  }, [canSave, handleSave, handleCancel]);
+  /** Хук для работы с состоянием и футером сохранения состояния */
+  const { form, setForm } = useFormWithFooter<TWelcomeScreen>(welcomeScreen, saveForm);
 
   /**
    * Обработчик изменения полей экрана
@@ -229,6 +175,8 @@ const WelcomeScreen: React.FC = (): React.ReactElement => {
       </div>
     </div>
   );
-};
+});
+
+WelcomeScreen.displayName = "WelcomeScreen";
 
 export default WelcomeScreen;

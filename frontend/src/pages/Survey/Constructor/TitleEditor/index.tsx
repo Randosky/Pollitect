@@ -1,11 +1,11 @@
 import React from "react";
 
 import { useError } from "@hooks/useError";
+import { useReplaceSurveyId } from "@hooks/useReplaceSurveyId";
 import { useSurveyController } from "@hooks/useSurveyController";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { updateSurveyForm } from "@store/slices/survey";
 import { useDebounce } from "@uidotdev/usehooks";
-import { useParams } from "react-router-dom";
 
 import { TextField } from "@/ui/TextField";
 
@@ -16,15 +16,13 @@ const DEBOUCE_TIME = 500;
  * Инпут для редактирования названия опроса с debounce‑обновлением на сервере.
  */
 const TitleEditor: React.FC = () => {
-  const { surveyId } = useParams<{ surveyId: string }>();
-  const surveyIdNumber = Number(surveyId);
-
-  const currentTitle = useAppSelector(s => s.survey.surveyForm.title);
+  const { id, title: currentTitle } = useAppSelector(s => s.survey.surveyForm);
 
   const [title, setTitle] = React.useState(currentTitle);
 
   const processError = useError();
   const dispatch = useAppDispatch();
+  const replaceUrl = useReplaceSurveyId();
   const { saveSurvey } = useSurveyController();
 
   const debounced = useDebounce(title, DEBOUCE_TIME);
@@ -35,11 +33,15 @@ const TitleEditor: React.FC = () => {
 
     const patch = async () => {
       try {
-        const data = await saveSurvey(surveyIdNumber, { title: debounced });
+        const data = await saveSurvey(id, { title: debounced });
 
         if (!data) return;
 
         dispatch(updateSurveyForm(data));
+
+        if (data.id) {
+          replaceUrl(data.id);
+        }
       } catch (e) {
         processError(e);
       }

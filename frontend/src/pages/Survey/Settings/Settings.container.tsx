@@ -1,96 +1,38 @@
 /* eslint-disable camelcase */
-// SettingsContainer.tsx
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback } from "react";
 
-import { useError } from "@hooks/useError";
+import { useFormWithFooter } from "@hooks/useFormWithFooter";
 import { useSurveyController } from "@hooks/useSurveyController";
-import ActionButtons from "@layout/Footer/ActionButtons";
-import { useLayoutFooter } from "@layout/Provider/LayoutFooter";
-import { setLoaderData } from "@store/slices/layout";
-import { updateSurveyForm } from "@store/slices/survey";
-import checkDeepEquals from "@utils/checkDeepEquals";
 
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useAppSelector } from "@/store/hooks";
 
 import SettingsView from "./Settings.view";
 
 import type { TDisplaySettings } from "../Survey.types";
 
-const SettingsContainer: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const processError = useError();
-
+const SettingsContainerComponent: React.FC = () => {
   const { id, display_settings: designSettings } = useAppSelector(s => s.survey.surveyForm);
 
-  const [form, setForm] = useState<TDisplaySettings>(designSettings);
-  const [initialForm, setInitialForm] = useState<TDisplaySettings>(designSettings);
-  const [embedCode, setEmbedCode] = useState<string>("");
-
   const { saveSurvey } = useSurveyController();
-  const { handleShowFooter, handleCloseFooter } = useLayoutFooter();
 
-  /** Синхронизация стора → локальный стейт */
-  useEffect(() => {
-    setForm(designSettings);
-    setInitialForm(designSettings);
-  }, [designSettings]);
+  /** Функция сохранения формы */
+  const saveForm = useCallback(
+    async (newForm: TDisplaySettings) => await saveSurvey(id, { display_settings: newForm }),
+    [id, saveSurvey]
+  );
 
-  /** Флаг доступности сохранения */
-  const canSave = useMemo(() => !checkDeepEquals(form, initialForm), [form, initialForm]);
+  /** Хук для работы с состоянием и футером сохранения состояния */
+  const { form, setForm } = useFormWithFooter<TDisplaySettings>(designSettings, saveForm);
 
   /** Обрабатываем изменения формы */
-  const handleChange = useCallback((newForm: TDisplaySettings) => setForm(newForm), []);
-
-  /** Сохраняем изменения в Redux и генерируем код */
-  const handleSave = useCallback(async (): Promise<void> => {
-    dispatch(setLoaderData(true));
-
-    try {
-      const data = await saveSurvey(id, { display_settings: form });
-
-      if (!data) return;
-
-      const code =
-        '<script src="https://your.cdn/widget.js" ' +
-        `data-blockscroll=\"${form.block_scroll}\" ` +
-        `data-preventrepeat=\"${form.prevent_repeat}\" ` +
-        `data-timersec=\"${form.timer_sec}\" ` +
-        `data-urlmode=\"${form.url_match_mode}\"></script>`;
-
-      setEmbedCode(code);
-
-      dispatch(updateSurveyForm(data));
-    } catch (error) {
-      processError(error);
-    } finally {
-      dispatch(setLoaderData(false));
-    }
-  }, [dispatch, processError, form]);
-
-  /** Отменяем локальные изменения */
-  const handleCancel = useCallback(() => setForm(initialForm), [initialForm]);
-
-  /** Показ кнопок футера при наличии изменений */
-  useEffect(() => {
-    if (canSave) {
-      handleShowFooter(
-        <ActionButtons
-          handleSave={handleSave}
-          handleCancel={handleCancel}
-        />
-      );
-    }
-
-    return handleCloseFooter;
-  }, [canSave, handleSave, handleCancel]);
+  const handleChange = useCallback((upd: Partial<TDisplaySettings>) => setForm(prev => ({ ...prev, ...upd })), []);
 
   return (
     <SettingsView
       settings={form}
-      embedCode={embedCode}
       onChange={handleChange}
     />
   );
 };
 
-export { SettingsContainer };
+export const SettingsContainer = React.memo(SettingsContainerComponent);

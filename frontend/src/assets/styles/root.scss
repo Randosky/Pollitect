@@ -204,6 +204,7 @@ body {
   color: var(--text);
   width: 100vw;
   overflow: hidden;
+  font-family: "Inter", sans-serif;
 }
 
 html,
@@ -219,7 +220,7 @@ body {
 }
 
 * {
-  font-family: "Open Sans", sans-serif;
+  font-family: inherit;
   color: var(--text);
 }
 

@@ -1,14 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 
 import Question from ".";
-import { useError } from "@hooks/useError";
+import { useFormWithFooter } from "@hooks/useFormWithFooter";
 import { useSurveyController } from "@hooks/useSurveyController";
-import ActionButtons from "@layout/Footer/ActionButtons";
-import { useLayoutFooter } from "@layout/Provider/LayoutFooter";
-import { useAppDispatch, useAppSelector } from "@store/hooks";
-import { setLoaderData } from "@store/slices/layout";
-import { updateSurveyForm } from "@store/slices/survey";
-import checkDeepEquals from "@utils/checkDeepEquals";
+import { useAppSelector } from "@store/hooks";
 
 import { QUESTION_TYPES } from "../Constuctor.config";
 
@@ -17,66 +12,18 @@ import type { TQuestion, TQuestionType } from "@pages/Survey/Survey.types";
 import styles from "./Question.module.scss";
 
 const QuestionList = () => {
-  const dispatch = useAppDispatch();
-  const processError = useError();
-
   const { id, questions } = useAppSelector(state => state.survey.surveyForm);
 
-  const [form, setForm] = useState(questions);
-  const [initialForm, setInitialForm] = useState(questions);
-
   const { saveSurvey } = useSurveyController();
-  const { handleShowFooter, handleCloseFooter } = useLayoutFooter();
 
-  /** Обновляем локальное состояние */
-  useEffect(() => {
-    setForm(questions);
-    setInitialForm(questions);
-  }, [questions]);
+  /** Функция сохранения формы */
+  const saveForm = useCallback(
+    async (newForm: TQuestion[]) => await saveSurvey(id, { questions: newForm }),
+    [id, saveSurvey]
+  );
 
-  const canSave = useMemo(() => !checkDeepEquals(form, initialForm), [form, initialForm]);
-
-  /**
-   * Сохраняет измененное состояние в редакс
-   * @returns {void}
-   */
-  const saveQuestion = useCallback(async (): Promise<void> => {
-    dispatch(setLoaderData(true));
-
-    try {
-      const data = await saveSurvey(id, { questions: form });
-
-      if (!data) return;
-
-      dispatch(updateSurveyForm(data));
-    } catch (error) {
-      processError(error);
-    } finally {
-      dispatch(setLoaderData(false));
-    }
-  }, [dispatch, processError, form]);
-
-  /**
-   * Очищает состояние
-   * @returns {void}
-   */
-  const cancelQuestion = useCallback((): void => {
-    setForm(initialForm);
-  }, [initialForm]);
-
-  /** Задаем функции обновления формы */
-  useEffect(() => {
-    if (canSave) {
-      handleShowFooter(
-        <ActionButtons
-          handleSave={saveQuestion}
-          handleCancel={cancelQuestion}
-        />
-      );
-    }
-
-    return handleCloseFooter;
-  }, [canSave, saveQuestion, cancelQuestion]);
+  /** Хук для работы с состоянием и футером сохранения состояния */
+  const { form, setForm } = useFormWithFooter<TQuestion[]>(questions, saveForm);
 
   /**
    * Обновляет вопрос в списке

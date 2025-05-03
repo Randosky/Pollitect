@@ -10,10 +10,7 @@ import { Outlet, useParams } from "react-router-dom";
 
 import type { ISurvey } from "./Survey.types";
 
-import styles from "./Survey.module.scss";
-
 import SurveyNavigation from "./Navigation";
-import TitleEditor from "./TitleEditor";
 
 /**
  * Страница для работы с опросом
@@ -64,15 +61,9 @@ const Survey: React.FC = (): ReactElement => {
     handleShowHeader(<SurveyNavigation surveyId={surveyId} />);
 
     return handleCloseHeader;
-  }, [SurveyNavigation]);
+  }, [surveyId, SurveyNavigation]);
 
-  return (
-    <div className={styles.survey}>
-      <TitleEditor />
-
-      <Outlet />
-    </div>
-  );
+  return <Outlet />;
 };
 
 export default Survey;

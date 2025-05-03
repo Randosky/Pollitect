@@ -7,6 +7,8 @@ import type { TConstuctorTabs, TConstuctorViewProps } from "./Constructor.types"
 
 import styles from "./Constructor.module.scss";
 
+import TitleEditor from "./TitleEditor";
+
 const Welcome = lazy(() => import("./Screen/Welcome"));
 const QuestionList = lazy(() => import("./Question/QuestionList"));
 const Personal = lazy(() => import("./Screen/Personal"));
@@ -26,6 +28,8 @@ const ConstructorView: React.FC<TConstuctorViewProps> = ({ currentTab, setCurren
 
   return (
     <div className={styles.root}>
+      <TitleEditor />
+
       <nav className={styles.nav}>
         {(["welcome", "questions", "personal", "completion"] as TConstuctorTabs[]).map(tab => (
           <button

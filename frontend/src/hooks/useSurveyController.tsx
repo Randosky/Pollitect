@@ -1,4 +1,3 @@
-// src/hooks/useSurveyController.ts
 import { useMemo } from "react";
 
 import surveyAxiosInstance from "@api/surveyInstance";

@@ -13,7 +13,7 @@ const DashboardView: React.FC<TDashboardViewProps> = ({ surveyCards }) => (
     <div className={styles.headerRow}>
       <h1 className={styles.title}>Мои опросы</h1>
 
-      <Link to="/survey/edit/new">
+      <Link to="/survey/new/edit">
         <button
           className={styles.createBtn}
           type="button"

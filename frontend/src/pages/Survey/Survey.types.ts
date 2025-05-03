@@ -50,7 +50,7 @@ export type TAlignment = "center" | "left" | "right";
 export type TPlacement = "inbuilt" | "before" | "after";
 
 /** Доступные семейства шрифтов для текста опроса */
-export type TFontFamily = "Open Sans" | "Arial" | "Times New Roman" | "Roboto" | "Montserrat";
+export type TFontFamily = "Inter" | "Open Sans" | "Arial" | "Times New Roman" | "Roboto" | "Montserrat";
 
 /** Возможные вид единиц измерения */
 export type TUnit = "%" | "px";
@@ -160,8 +160,6 @@ export type TScreenDesignSettings = {
 
 /** Основные настройки дизайна виджета опроса */
 export type TDesignSettings = {
-  /** HTML‑id контейнера, куда будет вставлен виджет */
-  target_id: string;
   /** Способ вставки: встроенный, до или после элемента */
   placement: TPlacement;
   /** Ширина виджета */
@@ -188,6 +186,8 @@ export type TDesignSettings = {
 
 /** Настройки поведения отображения опроса */
 export type TDisplaySettings = {
+  /** HTML‑id контейнера, куда будет вставлен виджет */
+  target_id: string;
   /** Блокировать прокрутку страницы при отображении виджета */
   block_scroll: boolean;
   /** Запретить повторное прохождение пользователем */

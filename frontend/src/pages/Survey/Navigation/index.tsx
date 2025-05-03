@@ -18,7 +18,7 @@ const SurveyNavigation: React.FC<{ surveyId?: string }> = ({ surveyId }) => {
 
   const userId = useAppSelector(state => state.user.id);
 
-  const currentTab = SURVEY_TABS.find(tab => new RegExp(`/${tab}/`).test(location.pathname));
+  const currentTab = SURVEY_TABS.find(tab => new RegExp(`/${tab}`).test(location.pathname));
 
   return (
     <div className={styles.header}>
@@ -33,7 +33,7 @@ const SurveyNavigation: React.FC<{ surveyId?: string }> = ({ surveyId }) => {
         {SURVEY_TABS.map(tab => (
           <NavLink
             key={tab}
-            to={`/survey/${tab}/${surveyId}`}
+            to={`/survey/${surveyId}/${tab}`}
             className={classNames(styles.tab, currentTab === tab ? styles.active : null)}
           >
             {SURVEY_TABS_MAP[tab]}

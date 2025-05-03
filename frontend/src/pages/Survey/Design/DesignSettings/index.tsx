@@ -1,8 +1,6 @@
 /* eslint-disable camelcase */
 import React from "react";
 
-import ActionButtons from "@layout/Footer/ActionButtons";
-
 import { FONTS } from "../Design.config";
 
 import type { TDesignSettingsProps } from "../Design.types";
@@ -12,7 +10,7 @@ import styles from "./DesignSettings.module.scss";
 
 import IndentsEditor from "./IndentsEditor/IndentsEditor";
 
-const DesignSettings: React.FC<TDesignSettingsProps> = ({ canSave, settings, onChange, handleSave, handleCancel }) => {
+const DesignSettings: React.FC<TDesignSettingsProps> = ({ settings, onChange }) => {
   return (
     <form className={styles.form}>
       <fieldset className={styles.group}>
@@ -127,13 +125,6 @@ const DesignSettings: React.FC<TDesignSettingsProps> = ({ canSave, settings, onC
         value={settings.margin}
         onChange={val => onChange({ margin: val })}
       />
-
-      {canSave && (
-        <ActionButtons
-          handleSave={handleSave}
-          handleCancel={handleCancel}
-        />
-      )}
     </form>
   );
 };

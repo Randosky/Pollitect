@@ -63,7 +63,7 @@ const SurveyCard: React.FC<TSurveyCardProps> = ({ surveyCard }) => {
     <article className={styles.card}>
       <header className={styles.header}>
         <h2 className={styles.title}>
-          <Link to={`/survey/edit/${id}`}>{title}</Link>
+          <Link to={`/survey/${id}/edit`}>{title}</Link>
         </h2>
         <label
           className={styles.switch}
@@ -96,13 +96,13 @@ const SurveyCard: React.FC<TSurveyCardProps> = ({ surveyCard }) => {
 
       <footer className={styles.actions}>
         <Link
-          to={`/survey/edit/${id}`}
+          to={`/survey/${id}/edit`}
           title="Редактировать"
         >
           <span className={classNames("icon-edit", styles.actionBtn)} />
         </Link>
         <Link
-          to={`/survey/results/${id}`}
+          to={`/survey/${id}/results`}
           title="Результаты"
         >
           <span className={classNames("icon-chart", styles.actionBtn)} />

@@ -140,7 +140,7 @@ const AppRouter = (): ReactElement => {
           />
 
           <Route
-            path="survey"
+            path="survey/:surveyId"
             element={<Survey />}
           >
             {/* Если просто зашли на /survey без саб-роутов */}
@@ -155,17 +155,17 @@ const AppRouter = (): ReactElement => {
             />
 
             <Route
-              path="edit/:surveyId"
+              path="edit"
               element={<Constructor />}
             />
 
             <Route
-              path="design/:surveyId"
+              path="design"
               element={<Design />}
             />
 
             <Route
-              path="settings/:surveyId"
+              path="settings"
               element={<Settings />}
             />
           </Route>
