@@ -83,7 +83,7 @@ const WelcomeScreen: React.FC = (): React.ReactElement => {
     }
 
     return handleCloseFooter;
-  }, [canSave, handleSave, handleCancel, handleShowFooter, handleCloseFooter]);
+  }, [canSave, handleSave, handleCancel]);
 
   /**
    * Обработчик изменения полей экрана

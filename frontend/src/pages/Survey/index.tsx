@@ -2,20 +2,23 @@ import React, { ReactElement, useEffect } from "react";
 
 import { useError } from "@hooks/useError";
 import { useSurveyController } from "@hooks/useSurveyController";
-import Logout from "@layout/Header/Logout";
 import { useLayout } from "@layout/Provider/LayoutContext";
-import { useAppDispatch, useAppSelector } from "@store/hooks";
+import { useAppDispatch } from "@store/hooks";
 import { clearSurveyForm, updateSurveyForm } from "@store/slices/survey";
 import { useQuery } from "@tanstack/react-query";
-import classNames from "classnames";
-import { NavLink, Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
-
-import { SURVEY_TABS, SURVEY_TABS_MAP } from "./Survey.config";
+import { Outlet, useParams } from "react-router-dom";
 
 import type { ISurvey } from "./Survey.types";
 
 import styles from "./Survey.module.scss";
 
+import SurveyNavigation from "./Navigation";
+import TitleEditor from "./TitleEditor";
+
+/**
+ * Страница для работы с опросом
+ * @returns JSX.Element
+ */
 const Survey: React.FC = (): ReactElement => {
   const dispatch = useAppDispatch();
   const processError = useError();
@@ -65,41 +68,9 @@ const Survey: React.FC = (): ReactElement => {
 
   return (
     <div className={styles.survey}>
+      <TitleEditor />
+
       <Outlet />
-    </div>
-  );
-};
-
-const SurveyNavigation: React.FC<{ surveyId?: string }> = ({ surveyId }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const userId = useAppSelector(state => state.user.id);
-
-  const currentTab = SURVEY_TABS.find(tab => new RegExp(`/${tab}/`).test(location.pathname));
-
-  return (
-    <div className={styles.header}>
-      <button
-        className={styles.back_button}
-        onClick={() => navigate(`/dashboard/${userId}`)}
-      >
-        К опросам
-      </button>
-
-      <nav className={styles.tabs}>
-        {SURVEY_TABS.map(tab => (
-          <NavLink
-            key={tab}
-            to={`/survey/${tab}/${surveyId}`}
-            className={classNames(styles.tab, currentTab === tab ? styles.active : null)}
-          >
-            {SURVEY_TABS_MAP[tab]}
-          </NavLink>
-        ))}
-      </nav>
-
-      <Logout className={styles.logout} />
     </div>
   );
 };

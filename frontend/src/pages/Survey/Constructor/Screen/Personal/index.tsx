@@ -1,10 +1,13 @@
 /* eslint-disable camelcase */
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
+import { useError } from "@hooks/useError";
+import { useSurveyController } from "@hooks/useSurveyController";
 import ActionButtons from "@layout/Footer/ActionButtons";
 import { useLayoutFooter } from "@layout/Provider/LayoutFooter";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
-import { updatePersonalScreen } from "@store/slices/survey";
+import { setLoaderData } from "@store/slices/layout";
+import { updateSurveyForm } from "@store/slices/survey";
 import checkDeepEquals from "@utils/checkDeepEquals";
 
 import { PERSONAL_SCREEN_FIELDS } from "../../Constuctor.config";
@@ -28,11 +31,14 @@ import styles from "./Personal.module.scss";
  */
 const PersonalScreen: React.FC = (): React.ReactElement => {
   const dispatch = useAppDispatch();
-  const personalScreen = useAppSelector(s => s.survey.surveyForm.personalScreen);
+  const processError = useError();
+
+  const { id, personalScreen } = useAppSelector(s => s.survey.surveyForm);
 
   const [form, setForm] = useState<TPersonalScreen>(personalScreen);
   const [initialForm, setInitialForm] = useState<TPersonalScreen>(personalScreen);
 
+  const { saveSurvey } = useSurveyController();
   const { handleShowFooter, handleCloseFooter } = useLayoutFooter();
 
   /** Синхронизируем стор → локальный стейт */
@@ -47,9 +53,21 @@ const PersonalScreen: React.FC = (): React.ReactElement => {
   /**
    * Сохраняет локальные изменения в Redux
    */
-  const handleSave = useCallback((): void => {
-    dispatch(updatePersonalScreen(form));
-  }, [dispatch, form]);
+  const handleSave = useCallback(async (): Promise<void> => {
+    dispatch(setLoaderData(true));
+
+    try {
+      const data = await saveSurvey(id, { personalScreen: form });
+
+      if (!data) return;
+
+      dispatch(updateSurveyForm(data));
+    } catch (error) {
+      processError(error);
+    } finally {
+      dispatch(setLoaderData(false));
+    }
+  }, [dispatch, processError, form]);
 
   /**
    * Отменяет локальные изменения, восстанавливая начальное состояние
@@ -70,7 +88,7 @@ const PersonalScreen: React.FC = (): React.ReactElement => {
     }
 
     return handleCloseFooter;
-  }, [canSave, handleSave, handleCancel, handleShowFooter, handleCloseFooter]);
+  }, [canSave, handleSave, handleCancel]);
 
   /**
    * Обработчик изменения простых полей (active, title, description, button_text)

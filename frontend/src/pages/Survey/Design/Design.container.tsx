@@ -1,21 +1,28 @@
+/* eslint-disable camelcase */
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
-import { updateDesignSettings } from "@store/slices/survey";
+import { useError } from "@hooks/useError";
+import { useSurveyController } from "@hooks/useSurveyController";
+import { setLoaderData } from "@store/slices/layout";
+import { updateSurveyForm } from "@store/slices/survey";
 import checkDeepEquals from "@utils/checkDeepEquals";
 
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 
 import DesignView from "./Design.view";
 
-import { TDesignSettings } from "../Survey.types";
+import type { TDesignSettings } from "../Survey.types";
 
 const DesignContainer: React.FC = () => {
   const dispatch = useAppDispatch();
+  const processError = useError();
 
-  const designSettings = useAppSelector(s => s.survey.surveyForm.design_settings);
+  const { id, design_settings: designSettings } = useAppSelector(s => s.survey.surveyForm);
 
   const [form, setForm] = useState<TDesignSettings>(designSettings);
   const [initialForm, setInitialForm] = useState<TDesignSettings>(designSettings);
+
+  const { saveSurvey } = useSurveyController();
 
   /** Синхронизируем стор → локальный стейт */
   useEffect(() => {
@@ -30,9 +37,21 @@ const DesignContainer: React.FC = () => {
    * Сохраняет локальные изменения в Redux
    * @returns {void}
    */
-  const handleSave = useCallback((): void => {
-    dispatch(updateDesignSettings(form));
-  }, [dispatch, form]);
+  const handleSave = useCallback(async (): Promise<void> => {
+    dispatch(setLoaderData(true));
+
+    try {
+      const data = await saveSurvey(id, { design_settings: form });
+
+      if (!data) return;
+
+      dispatch(updateSurveyForm(data));
+    } catch (error) {
+      processError(error);
+    } finally {
+      dispatch(setLoaderData(false));
+    }
+  }, [dispatch, processError, form]);
 
   /**
    * Отменяет локальные изменения, восстанавливая начальное состояние

@@ -2,6 +2,7 @@
 import { useMemo } from "react";
 
 import surveyAxiosInstance from "@api/surveyInstance";
+import { useAppSelector } from "@store/hooks";
 
 import type { ISurvey } from "@pages/Survey/Survey.types";
 
@@ -11,6 +12,7 @@ import type { ISurvey } from "@pages/Survey/Survey.types";
 export function useSurveyController() {
   // Оборачиваем инстанс в useMemo, чтобы не пересоздавать его на каждый ререндер
   const client = useMemo(() => surveyAxiosInstance, []);
+  const surveyForm = useAppSelector(state => state.survey.surveyForm);
 
   /**
    * Получить все опросы текущего пользователя
@@ -66,7 +68,7 @@ export function useSurveyController() {
     if (!id || id < 0) {
       if (!window.location.pathname.match(/\/survey/)) return;
 
-      return createSurvey(survey as ISurvey);
+      return createSurvey({ ...surveyForm, ...survey });
     }
 
     return updateSurvey(id, survey);

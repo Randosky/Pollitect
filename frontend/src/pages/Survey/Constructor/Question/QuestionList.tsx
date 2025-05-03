@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import Question from ".";
+import { useError } from "@hooks/useError";
+import { useSurveyController } from "@hooks/useSurveyController";
 import ActionButtons from "@layout/Footer/ActionButtons";
 import { useLayoutFooter } from "@layout/Provider/LayoutFooter";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
+import { setLoaderData } from "@store/slices/layout";
 import { updateSurveyForm } from "@store/slices/survey";
 import checkDeepEquals from "@utils/checkDeepEquals";
 
@@ -15,34 +18,51 @@ import styles from "./Question.module.scss";
 
 const QuestionList = () => {
   const dispatch = useAppDispatch();
+  const processError = useError();
 
-  const questions = useAppSelector(state => state.survey.surveyForm.questions);
+  const { id, questions } = useAppSelector(state => state.survey.surveyForm);
 
-  const [questionsLocal, setQuestionsLocal] = useState(questions);
-  const [initialQuestionsLocal, setInitialQuestionsLocal] = useState(questions);
+  const [form, setForm] = useState(questions);
+  const [initialForm, setInitialForm] = useState(questions);
 
+  const { saveSurvey } = useSurveyController();
   const { handleShowFooter, handleCloseFooter } = useLayoutFooter();
 
-  const canSave = useMemo(
-    () => !checkDeepEquals(questionsLocal, initialQuestionsLocal),
-    [questionsLocal, initialQuestionsLocal]
-  );
+  /** Обновляем локальное состояние */
+  useEffect(() => {
+    setForm(questions);
+    setInitialForm(questions);
+  }, [questions]);
+
+  const canSave = useMemo(() => !checkDeepEquals(form, initialForm), [form, initialForm]);
 
   /**
    * Сохраняет измененное состояние в редакс
    * @returns {void}
    */
-  const saveQuestion = useCallback((): void => {
-    dispatch(updateSurveyForm({ questions: questionsLocal }));
-  }, [dispatch, questionsLocal]);
+  const saveQuestion = useCallback(async (): Promise<void> => {
+    dispatch(setLoaderData(true));
+
+    try {
+      const data = await saveSurvey(id, { questions: form });
+
+      if (!data) return;
+
+      dispatch(updateSurveyForm(data));
+    } catch (error) {
+      processError(error);
+    } finally {
+      dispatch(setLoaderData(false));
+    }
+  }, [dispatch, processError, form]);
 
   /**
    * Очищает состояние
    * @returns {void}
    */
   const cancelQuestion = useCallback((): void => {
-    setQuestionsLocal(initialQuestionsLocal);
-  }, [initialQuestionsLocal]);
+    setForm(initialForm);
+  }, [initialForm]);
 
   /** Задаем функции обновления формы */
   useEffect(() => {
@@ -58,12 +78,6 @@ const QuestionList = () => {
     return handleCloseFooter;
   }, [canSave, saveQuestion, cancelQuestion]);
 
-  /** Обновляем локальное состояние */
-  useEffect(() => {
-    setQuestionsLocal(questions);
-    setInitialQuestionsLocal(questions);
-  }, [questions]);
-
   /**
    * Обновляет вопрос в списке
    * @param {number} index - индекс вопроса
@@ -71,7 +85,7 @@ const QuestionList = () => {
    * @returns {void}
    */
   const updateQuestion = useCallback((index: number, upd: Partial<TQuestion>): void => {
-    setQuestionsLocal(prev =>
+    setForm(prev =>
       prev.map((question, i) => {
         if (i !== index) return question;
 
@@ -86,7 +100,7 @@ const QuestionList = () => {
    * @returns {void}
    */
   const removeQuestion = useCallback((index: number): void => {
-    setQuestionsLocal(prev => prev.filter((_, i) => i !== index));
+    setForm(prev => prev.filter((_, i) => i !== index));
   }, []);
 
   /**
@@ -95,7 +109,7 @@ const QuestionList = () => {
    * @returns {void}
    */
   const addQuestion = useCallback((type: TQuestionType): void => {
-    setQuestionsLocal(prev => {
+    setForm(prev => {
       const initialQuestion: TQuestion = {
         type,
         order: prev.length + 1,
@@ -108,11 +122,11 @@ const QuestionList = () => {
   }, []);
 
   const handlers = useMemo(() => {
-    return questionsLocal.map((_, i) => ({
+    return form.map((_, i) => ({
       onChange: (upd: Partial<TQuestion>) => updateQuestion(i, upd),
       onRemove: () => removeQuestion(i),
     }));
-  }, [questionsLocal.length, updateQuestion, removeQuestion]);
+  }, [form.length, updateQuestion, removeQuestion]);
 
   return (
     <div className={styles.questionList}>
@@ -127,7 +141,7 @@ const QuestionList = () => {
         ))}
       </div>
 
-      {questionsLocal.map((question, questionIndex) => {
+      {form.map((question, questionIndex) => {
         return (
           <div
             key={`${questionIndex}-${question.order}`}

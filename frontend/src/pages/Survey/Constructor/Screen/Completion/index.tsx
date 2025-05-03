@@ -1,10 +1,13 @@
 /* eslint-disable camelcase */
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
+import { useError } from "@hooks/useError";
+import { useSurveyController } from "@hooks/useSurveyController";
 import ActionButtons from "@layout/Footer/ActionButtons";
 import { useLayoutFooter } from "@layout/Provider/LayoutFooter";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
-import { updateCompletionScreen } from "@store/slices/survey";
+import { setLoaderData } from "@store/slices/layout";
+import { updateSurveyForm } from "@store/slices/survey";
 import checkDeepEquals from "@utils/checkDeepEquals";
 
 import type { TCompletionScreen, TScreenDesignSettings } from "@pages/Survey/Survey.types";
@@ -21,11 +24,14 @@ import styles from "./Completion.module.scss";
  */
 const CompletionScreen: React.FC = (): React.ReactElement => {
   const dispatch = useAppDispatch();
-  const completionScreen = useAppSelector(s => s.survey.surveyForm.completionScreen);
+  const processError = useError();
+
+  const { id, completionScreen } = useAppSelector(s => s.survey.surveyForm);
 
   const [form, setForm] = useState<TCompletionScreen>(completionScreen);
   const [initialForm, setInitialForm] = useState<TCompletionScreen>(completionScreen);
 
+  const { saveSurvey } = useSurveyController();
   const { handleShowFooter, handleCloseFooter } = useLayoutFooter();
 
   /** Синхронизируем стор → локальный стейт */
@@ -40,9 +46,21 @@ const CompletionScreen: React.FC = (): React.ReactElement => {
   /**
    * Сохраняет локальные изменения в Redux
    */
-  const handleSave = useCallback((): void => {
-    dispatch(updateCompletionScreen(form));
-  }, [dispatch, form]);
+  const handleSave = useCallback(async (): Promise<void> => {
+    dispatch(setLoaderData(true));
+
+    try {
+      const data = await saveSurvey(id, { completionScreen: form });
+
+      if (!data) return;
+
+      dispatch(updateSurveyForm(data));
+    } catch (error) {
+      processError(error);
+    } finally {
+      dispatch(setLoaderData(false));
+    }
+  }, [dispatch, processError, form]);
 
   /**
    * Отменяет локальные изменения, восстанавливая начальное состояние
@@ -63,7 +81,7 @@ const CompletionScreen: React.FC = (): React.ReactElement => {
     }
 
     return handleCloseFooter;
-  }, [canSave, handleSave, handleCancel, handleShowFooter, handleCloseFooter]);
+  }, [canSave, handleSave, handleCancel]);
 
   /**
    * Обработчик изменения простых полей
