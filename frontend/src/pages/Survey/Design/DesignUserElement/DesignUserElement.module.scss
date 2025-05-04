@@ -1,0 +1,13 @@
+.userElement {
+  grid-area: element0;
+  padding: 16px;
+  flex: 1 1 auto;
+  min-width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 5px;
+  background-color: var(--bg-secondary-contrast);
+  transition: all 0.3s ease;
+}

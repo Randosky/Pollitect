@@ -1,41 +1,38 @@
 @import "@styles/breakpoints";
 
-.root {
-  display: flex;
-  height: 100vh;
-  width: 100vw;
-  background-color: var(--bg);
+.container {
+  row-gap: 32px;
+  display: grid;
+  flex: 1 1 auto;
+  grid-template-rows: auto auto;
 }
 
 .sidebar {
-  width: 320px;
-  padding: 24px;
-  background-color: var(--bg-contrast);
-  border-right: 1px solid var(--border);
+  padding: 24px 16px;
   overflow-y: auto;
-}
-
-.header {
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 16px;
+  overflow-x: hidden;
 }
 
 .previewArea {
-  flex-grow: 1;
-  padding: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 24px 16px;
+  overflow: auto;
+
+  &.before {
+    display: grid;
+    grid-template-areas: "preview element";
+  }
+
+  &.after {
+    display: grid;
+    grid-template-areas: "element preview";
+  }
 }
 
-@media (max-width: $sm) {
-  .root {
-    flex-direction: column;
-  }
-  .sidebar {
-    width: 100%;
-    border-right: none;
-    border-bottom: 1px solid var(--border);
+@media (min-width: $sm) {
+  .container {
+    row-gap: 0;
+    column-gap: 32px;
+    grid-template-rows: none;
+    grid-template-columns: 30% 1fr;
   }
 }

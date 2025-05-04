@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 
 import { useFormWithFooter } from "@hooks/useFormWithFooter";
 import { useSurveyController } from "@hooks/useSurveyController";
@@ -24,6 +24,11 @@ const DesignContainer: React.FC = () => {
   /** Хук для работы с состоянием и футером сохранения состояния */
   const { form, setForm } = useFormWithFooter<TDesignSettings>(designSettings, saveForm);
 
+  /* «фон сайта» живёт локально */
+  const [siteBg, setSiteBg] = useState<string>("#f2f0f0");
+  /* «фон элемента на сайте» живёт локально */
+  const [siteElementBg, setSiteElementBg] = useState<string>("#aed2d7");
+
   /**
    * Обработчик изменений настроек
    * @param {Partial<TDesignSettings>} upd — новые поля
@@ -35,7 +40,11 @@ const DesignContainer: React.FC = () => {
   return (
     <DesignView
       settings={form}
+      siteBg={siteBg}
+      siteElementBg={siteElementBg}
       onChange={handleChange}
+      setSiteBg={setSiteBg}
+      setSiteElementBg={setSiteElementBg}
     />
   );
 };

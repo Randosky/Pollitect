@@ -1,0 +1,52 @@
+@import "@styles/breakpoints";
+
+/* ───── оболочка со стрелкой ───── */
+.selectWrapper {
+  position: relative;
+  width: 100%;
+  background-color: var(--white);
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    width: 8px;
+    height: 8px;
+    border-bottom: 2px solid var(--text);
+    border-right: 2px solid var(--text);
+    transform: translateY(-70%) rotate(45deg); /* ↓ */
+    transition: transform 0.2s;
+    pointer-events: none;
+  }
+
+  /* когда opened === true  → стрелка ↑ */
+  &.opened::after {
+    transform: translateY(-40%) rotate(-135deg); /* ↑ */
+  }
+}
+
+/* ───── сам select ───── */
+.select {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: none; /* важно: чтобы не перекрывать стрелку */
+  color: var(--text);
+  font-size: 14px;
+  cursor: pointer;
+  appearance: none; /* убираем системную стрелку */
+
+  &.mobile {
+    padding: 6px 6px 6px 10px;
+    font-size: 14px;
+    line-height: 140%;
+  }
+
+  &.desktop {
+    padding: 8px 8px 8px 12px;
+    font-size: 16px;
+    line-height: 150%;
+  }
+}

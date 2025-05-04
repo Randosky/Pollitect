@@ -8,6 +8,11 @@
   flex-direction: column;
 }
 
+.hint {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
 .flagsRow {
   gap: 32px;
   display: flex;

@@ -178,6 +178,8 @@ export type TDesignSettings = {
   button_color: string;
   /** Выбранное семейство шрифта */
   font_family: TFontFamily;
+  /** Скругление краев [top-left, top-right, bottom-right, bottom-left] */
+  borderRadius: TIndents;
   /** Отступы внутри виджета [top, right, bottom, left] */
   margin: TIndents;
   /** Поля внутри виджета [top, right, bottom, left] */

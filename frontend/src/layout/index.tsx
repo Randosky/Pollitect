@@ -22,9 +22,7 @@ import LayoutWrapper from "./Wrapper";
 
 /** Лейаут для проекта в кабинете */
 const Layout = () => {
-  const headerRef = useRef<HTMLElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const footerRef = useRef<HTMLElement | null>(null);
 
   const [loading, setLoading] = useState(true);
 
@@ -34,18 +32,6 @@ const Layout = () => {
     const html = document.documentElement;
 
     html.setAttribute("translate", "no");
-
-    if (headerRef.current) {
-      const headerHeight = headerRef.current.offsetHeight;
-
-      html.style.setProperty("--header-height", `${headerHeight}px`);
-    }
-
-    if (footerRef.current) {
-      const footerHeight = footerRef.current.offsetHeight;
-
-      html.style.setProperty("--footer-height", `${footerHeight}px`);
-    }
 
     setLoading(false);
   }, []);
@@ -63,7 +49,7 @@ const Layout = () => {
               <LayoutFooterProvider>
                 <ErrorBoundary>
                   <LayoutWrapper ref={wrapperRef}>
-                    <LayoutHeader ref={headerRef} />
+                    <LayoutHeader />
 
                     <LayoutContainer>
                       <AppRouter />
@@ -73,10 +59,7 @@ const Layout = () => {
                       <Loader />
                     </LayoutContainer>
 
-                    <LayoutFooter
-                      ref={footerRef}
-                      wrapperRef={wrapperRef}
-                    />
+                    <LayoutFooter wrapperRef={wrapperRef} />
                   </LayoutWrapper>
                 </ErrorBoundary>
               </LayoutFooterProvider>

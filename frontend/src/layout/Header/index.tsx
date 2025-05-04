@@ -1,21 +1,31 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 import { useLayout } from "@layout/Provider/LayoutContext";
 
 import styles from "./Header.module.scss";
 
-export type TLayoutHeaderProps = {
-  ref: React.RefObject<HTMLElement | null>;
-};
+const LayoutHeader: React.FC = () => {
+  const headerRef = useRef<HTMLElement | null>(null);
 
-const LayoutHeader: React.FC<TLayoutHeaderProps> = ({ ref }) => {
   const { showHeader, headerContent } = useLayout();
+
+  useEffect(() => {
+    const html = document.documentElement;
+
+    if (showHeader && html && headerRef.current) {
+      const headerHeight = headerRef.current.offsetHeight;
+
+      html.style.setProperty("--header-height", `${headerHeight}px`);
+    } else {
+      html.style.removeProperty("--header-height");
+    }
+  }, [showHeader]);
 
   if (!showHeader) return;
 
   return (
     <header
-      ref={ref}
+      ref={headerRef}
       className={styles.header}
     >
       {headerContent}

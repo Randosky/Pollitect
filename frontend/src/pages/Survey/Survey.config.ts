@@ -38,7 +38,8 @@ export const INITIAL_SURVEY: ISurvey = {
     text_color: "#000000",
     button_color: "#00bcd4",
     font_family: "Open Sans",
-    margin: [16, 16, 16, 16],
+    borderRadius: [5, 5, 5, 5],
+    margin: [0, 0, 0, 0],
     padding: [16, 16, 16, 16],
   },
   display_settings: {

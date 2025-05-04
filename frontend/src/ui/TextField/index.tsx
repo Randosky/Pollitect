@@ -1,4 +1,4 @@
-import React from "react";
+import React, { PropsWithChildren } from "react";
 
 import classNames from "classnames";
 
@@ -17,10 +17,11 @@ import styles from "./TextField.module.scss";
  * @prop {boolean | undefined} isDisabled - флаг блокировки поля ввода
  * @prop {React.ReactElement | undefined} customInputComponent - кастомный компонент поля ввода
  */
-const TextField: React.FC<TTextFieldProps> = props => {
+const TextField: React.FC<PropsWithChildren<TTextFieldProps>> = props => {
   const {
     icon,
     config,
+    children,
     type = "input",
     size = "desktop",
     isError = false,
@@ -77,6 +78,8 @@ const TextField: React.FC<TTextFieldProps> = props => {
               {...inputProps}
             />
           )}
+
+          {children}
 
           {showPassword && (
             <button

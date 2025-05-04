@@ -29,7 +29,7 @@ const SettingsView: React.FC<TSettingsViewProps> = ({ settings, onChange }) => {
         <TextField
           size="mobile"
           config={{
-            labelProps: { value: "ID контейнера" },
+            labelProps: { value: "Идентификатор контейнера" },
             wrapperProps: { className: classNames(styles.input, styles.targetId) },
             inputProps: {
               id: "target_id",
@@ -59,10 +59,18 @@ const SettingsView: React.FC<TSettingsViewProps> = ({ settings, onChange }) => {
                   type: "number",
                   min: 1,
                   value: timer_sec,
-                  onChange: e => onChange({ timer_sec: +e.target.value }),
+                  onChange: e => {
+                    const v = +e.currentTarget.value;
+
+                    e.currentTarget.value = v.toString();
+
+                    onChange({ timer_sec: v });
+                  },
                 },
               }}
-            />
+            >
+              <span className={styles.hint}>сек</span>
+            </TextField>
           )}
         </div>
 

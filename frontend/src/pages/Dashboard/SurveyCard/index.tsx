@@ -62,15 +62,18 @@ const SurveyCard: React.FC<TSurveyCardProps> = ({ surveyCard }) => {
   return (
     <article className={styles.card}>
       <header className={styles.header}>
+        <h2>ID: {id}</h2>
+
         <h2 className={styles.title}>
           <Link to={`/survey/${id}/edit`}>{title}</Link>
         </h2>
+
         <label
           className={styles.switch}
-          htmlFor="survey-card-checkbox"
+          htmlFor={`survey-card-checkbox-${id}`}
         >
           <input
-            id="survey-card-checkbox"
+            id={`survey-card-checkbox-${id}`}
             type="checkbox"
             checked={active}
             onChange={handleToggleActive}
@@ -101,12 +104,14 @@ const SurveyCard: React.FC<TSurveyCardProps> = ({ surveyCard }) => {
         >
           <span className={classNames("icon-edit", styles.actionBtn)} />
         </Link>
+
         <Link
           to={`/survey/${id}/results`}
           title="Результаты"
         >
           <span className={classNames("icon-chart", styles.actionBtn)} />
         </Link>
+
         <button
           type="button"
           onClick={handleDelete}

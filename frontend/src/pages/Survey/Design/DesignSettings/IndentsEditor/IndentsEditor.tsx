@@ -1,5 +1,7 @@
-/* eslint-disable camelcase */
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
+
+import Select from "@ui/Select";
+import { TextField } from "@ui/TextField";
 
 import type { TIndents } from "@pages/Survey/Survey.types";
 
@@ -14,91 +16,127 @@ type TIndentsEditorProps = {
 const IndentsEditor: React.FC<TIndentsEditorProps> = ({ label, value, onChange }) => {
   const [mode, setMode] = useState<"one" | "two" | "four">("one");
 
-  const handleChange = (index: number, newValue: number) => {
-    const updated = [...value] as TIndents;
+  /** единое значение */
+  const handleSingle = (v: number) => onChange([v, v, v, v]);
 
-    updated[index] = newValue;
+  /** два значения (TB / LR) */
+  const handleDouble = (vTB: number, vLR: number) => onChange([vTB, vLR, vTB, vLR]);
+
+  /** изменения в режиме «четыре» */
+  const handleQuad = (i: number, v: number) => {
+    const updated: TIndents = [...value];
+
+    updated[i] = v;
     onChange(updated);
   };
 
-  const renderFields = () => {
+  const cleaner = (cb: (v: number) => void) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const v = +e.currentTarget.value;
+
+    e.currentTarget.value = v.toString();
+
+    cb(v);
+  };
+
+  /** генерируем JSX‑поля под выбранный режим */
+  const inputs = useMemo(() => {
     switch (mode) {
       case "one":
         return (
-          <input
-            type="number"
-            value={value[0]}
-            onChange={e => onChange(Array(4).fill(+e.target.value) as TIndents)}
-          />
+          <TextField
+            size="mobile"
+            config={{
+              inputProps: {
+                id: `${label}-one`,
+                type: "number",
+                value: value[0],
+                onChange: cleaner(v => handleSingle(v)),
+              },
+            }}
+          >
+            <span className={styles.hint}>px</span>
+          </TextField>
         );
 
       case "two":
         return (
           <>
-            <input
-              type="number"
-              placeholder="Top/Bottom"
-              value={value[0]}
-              onChange={e => onChange([+e.target.value, value[1], +e.target.value, value[3]] as TIndents)}
-            />
-            <input
-              type="number"
-              placeholder="Left/Right"
-              value={value[1]}
-              onChange={e => onChange([value[0], +e.target.value, value[2], +e.target.value] as TIndents)}
-            />
+            <TextField
+              size="mobile"
+              config={{
+                inputProps: {
+                  id: `${label}-tb`,
+                  type: "number",
+                  placeholder: "Top / Bottom",
+                  value: value[0],
+                  onChange: cleaner(v => handleDouble(v, value[1])),
+                },
+              }}
+            >
+              <span className={styles.hint}>px</span>
+            </TextField>
+
+            <TextField
+              size="mobile"
+              config={{
+                inputProps: {
+                  id: `${label}-lr`,
+                  type: "number",
+                  placeholder: "Left / Right",
+                  value: value[1],
+                  onChange: cleaner(v => handleDouble(value[0], v)),
+                },
+              }}
+            >
+              <span className={styles.hint}>px</span>
+            </TextField>
           </>
         );
 
-      case "four":
+      default:
         return (
           <>
-            <input
-              type="number"
-              placeholder="Top"
-              value={value[0]}
-              onChange={e => handleChange(0, +e.target.value)}
-            />
-            <input
-              type="number"
-              placeholder="Right"
-              value={value[1]}
-              onChange={e => handleChange(1, +e.target.value)}
-            />
-            <input
-              type="number"
-              placeholder="Bottom"
-              value={value[2]}
-              onChange={e => handleChange(2, +e.target.value)}
-            />
-            <input
-              type="number"
-              placeholder="Left"
-              value={value[3]}
-              onChange={e => handleChange(3, +e.target.value)}
-            />
+            {["Top", "Right", "Bottom", "Left"].map((p, i) => (
+              <TextField
+                key={p}
+                size="mobile"
+                config={{
+                  inputProps: {
+                    id: `${label}-${p.toLowerCase()}`,
+                    type: "number",
+                    placeholder: p,
+                    value: value[i],
+                    onChange: cleaner(v => handleQuad(i, v)),
+                  },
+                }}
+              >
+                <span className={styles.hint}>px</span>
+              </TextField>
+            ))}
           </>
         );
     }
-  };
+  }, [mode, value]);
 
   return (
-    <fieldset className={styles.group}>
-      <legend className={styles.legend}>
-        {label}
-        <select
-          className={styles.select}
+    <section className={styles.indents}>
+      <div className={styles.block}>
+        <span className={styles.label}>{label}</span>
+
+        <Select
+          size="mobile"
           value={mode}
           onChange={e => setMode(e.target.value as "one" | "two" | "four")}
         >
-          <option value="one">1</option>
-          <option value="two">2</option>
-          <option value="four">4</option>
-        </select>
-      </legend>
-      <div className={styles.row}>{renderFields()}</div>
-    </fieldset>
+          <option value="one">Один для всех</option>
+          <option value="two">Верх/низ и бока</option>
+          <option value="four">Каждая сторона</option>
+        </Select>
+      </div>
+
+      <div className={styles.row}>{inputs}</div>
+    </section>
   );
 };
 
-export default IndentsEditor;
+export default React.memo(IndentsEditor);

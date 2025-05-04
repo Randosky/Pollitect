@@ -8,29 +8,28 @@
 }
 
 .mainContainer {
-  flex: 1;
   padding: 0px 8px 8px;
   background: var(--bg);
-
-  &.mainContainer__withFooter {
-    padding-bottom: 0;
-  }
+  height: calc(100vh - 8px - var(--header-height) - var(--footer-height));
 }
 
 @media (min-width: $sm) {
   .mainContainer {
     padding: 0 16px 16px;
+    height: calc(100vh - 16px - var(--header-height) - var(--footer-height));
   }
 }
 
 @media (min-width: $md) {
   .mainContainer {
     padding: 0px 32px 32px;
+    height: calc(100vh - 32px - var(--header-height) - var(--footer-height));
   }
 }
 
 @media (min-width: $lg) {
   .mainContainer {
     padding: 0px 48px 48px;
+    height: calc(100vh - 48px - var(--header-height) - var(--footer-height));
   }
 }

@@ -1,12 +1,11 @@
 // src/layout/Footer/LayoutFooter.tsx
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { useLayoutFooter } from "@layout/Provider/LayoutFooter";
 
 import styles from "./Footer.module.scss";
 
 export type TLayoutFooterProps = {
-  ref: React.RefObject<HTMLElement | null>;
   wrapperRef: React.RefObject<HTMLDivElement | null>;
 };
 
@@ -18,10 +17,24 @@ export type TLayoutFooterProps = {
  *
  * @param props.ref — ref для корневого <footer>
  */
-const LayoutFooter: React.FC<TLayoutFooterProps> = ({ ref: footerRef, wrapperRef }) => {
+const LayoutFooter: React.FC<TLayoutFooterProps> = ({ wrapperRef }) => {
+  const footerRef = useRef<HTMLElement | null>(null);
+
   const { showFooter, footerContent } = useLayoutFooter();
 
   const [hasShadow, setHasShadow] = useState<boolean>(false);
+
+  useEffect(() => {
+    const html = document.documentElement;
+
+    if (showFooter && html && footerRef.current) {
+      const footerHeight = footerRef.current.offsetHeight;
+
+      html.style.setProperty("--footer-height", `${footerHeight}px`);
+    } else {
+      html.style.removeProperty("--footer-height");
+    }
+  }, [showFooter]);
 
   /** Функция обработчик прокрутки
    * @returns {void}
@@ -46,7 +59,7 @@ const LayoutFooter: React.FC<TLayoutFooterProps> = ({ ref: footerRef, wrapperRef
     return () => {
       wrapperRef.current?.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [showFooter]);
 
   if (!showFooter) {
     return null;
