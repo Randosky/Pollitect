@@ -2,6 +2,7 @@ import React from "react";
 
 import Button from "@ui/Button";
 import { TextField } from "@ui/TextField";
+import { isDarkColor } from "@utils/isDarkColor";
 
 import type { TDesignPreviewProps } from "../Design.types";
 
@@ -50,7 +51,10 @@ const DesignPreview: React.FC<TDesignPreviewProps> = ({ settings }) => {
         variant="primary"
         disabled
         className={styles.button}
-        style={{ backgroundColor: settings.button_color }}
+        style={{
+          backgroundColor: settings.button_color,
+          color: isDarkColor(settings.button_color) ? "var(--white)" : "var(--black)",
+        }}
       >
         Отправить
       </Button>
