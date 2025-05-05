@@ -1,73 +1,135 @@
 @import "@styles/breakpoints";
 
-.screenBlock {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 16px;
+.screen {
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 
-  @media (min-width: 768px) {
-    padding: 24px;
+  width: 100%;
+  height: 100%;
+  padding: 16px;
+
+  border-radius: 5px;
+  background: var(--white);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.body {
+  flex: 1 1 auto;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 5px;
+  border: 1px dashed var(--bg-contrast);
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  object-fit: cover;
+  object-position: center;
+
+  background: var(--bg);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.inputWrapper {
+  border: none;
+  outline: none;
+  background: none;
+  border-radius: 0;
+}
+
+.hintContainer {
+  width: fit-content;
+
+  .hint {
+    font-size: 12px;
   }
 }
 
-.row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.title {
-  width: 100%;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  background: var(--bg-light);
-}
-
-.description {
-  width: 100%;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 8px;
-  font-size: 14px;
-  min-height: 60px;
-  resize: vertical;
-  background: var(--bg-light);
-}
-
-.input,
-.smallInput {
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 8px;
-  font-size: 14px;
-  background: var(--bg-light);
-}
-
-.fieldList {
+.headerContainer {
+  gap: 12px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+
+  .header {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .description {
+    margin: 0;
+    font-size: 14px;
+    line-height: 140%;
+  }
 }
 
-.addOption {
-  align-self: flex-start;
-  background: var(--bg-contrast);
-  color: var(--text-contrast);
-  border: none;
-  border-radius: 4px;
-  padding: 6px 12px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background 0.2s;
-  &:hover {
-    background: var(--bg-contrast-hover);
+.buttonContainer {
+  margin-top: 12px;
+  width: fit-content;
+
+  .buttonWrapper {
+    width: 130px;
+    padding: 10px 18px;
+    border-radius: 8px;
+    background-color: var(--bg-contrast, #000);
+  }
+
+  .button {
+    font-weight: 600;
+    font-size: 14px;
+  }
+}
+
+.legalInfoContainer {
+  margin-top: auto;
+  width: fit-content;
+
+  .legalInfo {
+    font-size: 12px;
+    color: #2b2b2b;
+  }
+}
+
+.footer {
+  gap: 16px;
+  display: flex;
+  padding: 8px 16px;
+  border-radius: 5px;
+  color: var(--text);
+  background: var(--bg);
+}
+
+@media (min-width: $sm) {
+  .content {
+    .header {
+      font-size: 22px;
+    }
+
+    .description {
+      font-size: 15px;
+    }
+
+    .button {
+      font-size: 15px;
+    }
+
+    .buttonWrapper {
+      padding: 10px 24px;
+    }
   }
 }

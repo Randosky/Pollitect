@@ -1,13 +1,16 @@
 /* eslint-disable camelcase */
-import React, { useCallback } from "react";
+import React, { CSSProperties, useCallback, useMemo } from "react";
 
 import { useFormWithFooter } from "@hooks/useFormWithFooter";
 import { useSurveyController } from "@hooks/useSurveyController";
 import { useAppSelector } from "@store/hooks";
+import Checkbox from "@ui/Checkbox";
+import Select from "@ui/Select";
+import { TextField } from "@ui/TextField";
 
 import type { TScreenDesignSettings, TWelcomeScreen } from "@pages/Survey/Survey.types";
 
-import styles from "./Welcome.module.scss";
+import screenStyles from "../Screen.module.scss";
 
 /**
  * Экран приветствия с локальным состоянием и кнопками «Сохранить»/«Отменить».
@@ -36,7 +39,7 @@ const WelcomeScreen: React.FC = React.memo((): React.ReactElement => {
    *
    * @param e Событие изменения поля
    */
-  const handleFieldChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+  const handleField = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, type, value, checked } = e.currentTarget as HTMLInputElement;
 
     setForm(prev => ({
@@ -50,130 +53,218 @@ const WelcomeScreen: React.FC = React.memo((): React.ReactElement => {
    *
    * @param e Событие изменения поля дизайна
    */
-  const handleDesignChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
+  const handleDesign = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.currentTarget;
 
     setForm(prev => ({
       ...prev,
-      design_settings: {
-        ...prev.design_settings,
-        [name as keyof TScreenDesignSettings]: value,
-      },
+      design_settings: { ...prev.design_settings, [name as keyof TScreenDesignSettings]: value },
     }));
   }, []);
 
+  /** Стили для body */
+  const stylesBody = useMemo<CSSProperties>(() => {
+    let returnValue: CSSProperties = {};
+
+    switch (form.design_settings.layout) {
+      case "without_image":
+        returnValue = { display: "flex" };
+        break;
+
+      case "with_image":
+        returnValue = {
+          display: "grid",
+          gridTemplateColumns: "1fr 45%",
+        };
+        break;
+
+      case "image_background":
+        returnValue = {
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundImage: `url(${form.design_settings.image_url})`,
+        };
+        break;
+    }
+
+    return returnValue;
+  }, [form.design_settings.image_url, form.design_settings.layout]);
+
+  /** Стили для content */
+  const stylesContent = useMemo<CSSProperties>(() => {
+    let returnValue: CSSProperties = {};
+
+    switch (form.design_settings.alignment) {
+      case "left":
+        returnValue = { alignItems: "flex-start" };
+        break;
+
+      case "center":
+        returnValue = { alignItems: "center" };
+        break;
+
+      case "right":
+        returnValue = { alignItems: "flex-end" };
+        break;
+    }
+
+    return returnValue;
+  }, [form.design_settings.alignment]);
+
   return (
-    <div className={styles.item}>
-      <div className={styles.screen}>
-        <label className={styles.checkbox}>
-          <input
-            name="active"
-            type="checkbox"
-            checked={form.active}
-            onChange={handleFieldChange}
+    <article className={screenStyles.screen}>
+      <Checkbox
+        label={form.active ? "Активен" : "Выключен"}
+        inputProps={{
+          id: "active",
+          name: "active",
+          checked: form.active,
+          onChange: handleField,
+        }}
+      />
+
+      <div
+        style={stylesBody}
+        className={screenStyles.body}
+      >
+        {form.design_settings.layout === "with_image" &&
+          (form.design_settings.image_url ? (
+            <img
+              alt="welcome-screen-image"
+              className={screenStyles.image}
+              src={form.design_settings.image_url || ""}
+            />
+          ) : (
+            <div className={screenStyles.image}>Изображение</div>
+          ))}
+
+        <div
+          style={stylesContent}
+          className={screenStyles.content}
+        >
+          <TextField
+            size="mobile"
+            config={{
+              containerProps: { className: screenStyles.hintContainer },
+              wrapperProps: { className: screenStyles.inputWrapper },
+              inputProps: {
+                name: "hint",
+                id: "welcome-screen-hint",
+                placeholder: "Подсказка",
+                className: screenStyles.hint,
+                value: form?.hint ?? "",
+                onChange: handleField,
+              },
+            }}
           />
-          Активировать экран
-        </label>
 
-        <div className={styles.field}>
-          <label htmlFor="welcome-screen-hint">Подсказка</label>
-          <input
-            id="welcome-screen-hint"
-            type="text"
-            name="hint"
-            value={form.hint || ""}
-            onChange={handleFieldChange}
-          />
-        </div>
+          <div className={screenStyles.headerContainer}>
+            <TextField
+              size="mobile"
+              config={{
+                wrapperProps: { className: screenStyles.inputWrapper },
+                inputProps: {
+                  name: "title",
+                  id: "welcome-screen-title",
+                  placeholder: "Заголовок",
+                  className: screenStyles.header,
+                  value: form?.title ?? "",
+                  onChange: handleField,
+                },
+              }}
+            />
 
-        <div className={styles.field}>
-          <label htmlFor="welcome-screen-title">Заголовок</label>
-          <input
-            id="welcome-screen-title"
-            name="title"
-            type="text"
-            required
-            value={form.title || ""}
-            onChange={handleFieldChange}
-          />
-        </div>
-
-        <div className={styles.field}>
-          <label htmlFor="welcome-screen-description">Описание</label>
-          <textarea
-            id="welcome-screen-description"
-            name="description"
-            value={form.description || ""}
-            onChange={handleFieldChange}
-          />
-        </div>
-
-        <div className={styles.field}>
-          <label htmlFor="welcome-screen-button_text">Текст кнопки</label>
-          <input
-            id="welcome-screen-button_text"
-            name="button_text"
-            type="text"
-            required
-            value={form.button_text}
-            onChange={handleFieldChange}
-          />
-        </div>
-
-        <div className={styles.field}>
-          <label htmlFor="welcome-screen-legal_info">Юридическая информация</label>
-          <textarea
-            id="welcome-screen-legal_info"
-            name="legal_info"
-            value={form.legal_info || ""}
-            onChange={handleFieldChange}
-          />
-        </div>
-
-        <div className={styles.design}>
-          <h4>Дизайн экрана</h4>
-
-          <div className={styles.field}>
-            <label htmlFor="welcome-screen-layout">Схема</label>
-            <select
-              id="welcome-screen-layout"
-              name="layout"
-              value={form.design_settings.layout}
-              onChange={handleDesignChange}
-            >
-              <option value="without_image">Без картинки</option>
-              <option value="with_image">С картинкой</option>
-              <option value="image_background">Картинка фоном</option>
-            </select>
-          </div>
-
-          <div className={styles.field}>
-            <label htmlFor="welcome-screen-alignment">Выравнивание</label>
-            <select
-              id="welcome-screen-alignment"
-              name="alignment"
-              value={form.design_settings.alignment}
-              onChange={handleDesignChange}
-            >
-              <option value="center">По центру</option>
-              <option value="left">Слева</option>
-              <option value="right">Справа</option>
-            </select>
-          </div>
-
-          <div className={styles.field}>
-            <label htmlFor="welcome-screen-image_url">URL картинки</label>
-            <input
-              id="welcome-screen-image_url"
-              name="image_url"
-              type="text"
-              value={form.design_settings.image_url || ""}
-              onChange={handleDesignChange}
+            <TextField
+              size="mobile"
+              type="textarea"
+              config={{
+                wrapperProps: { className: screenStyles.inputWrapper },
+                textAreaProps: {
+                  name: "description",
+                  id: "welcome-screen-description",
+                  placeholder: "Описание",
+                  className: screenStyles.description,
+                  value: form?.description ?? "",
+                  onChange: handleField,
+                  rows: 3,
+                },
+              }}
             />
           </div>
+
+          <TextField
+            size="mobile"
+            config={{
+              containerProps: { className: screenStyles.buttonContainer },
+              wrapperProps: { className: screenStyles.buttonWrapper },
+              inputProps: {
+                name: "button_text",
+                id: "welcome-screen-button_text",
+                placeholder: "Начать",
+                className: screenStyles.button,
+                value: form.button_text,
+                onChange: handleField,
+              },
+            }}
+          />
+
+          <TextField
+            size="mobile"
+            config={{
+              containerProps: { className: screenStyles.legalInfoContainer },
+              wrapperProps: { className: screenStyles.inputWrapper },
+              inputProps: {
+                name: "legal_info",
+                id: "welcome-screen-legal_info",
+                placeholder: "Юридическая информация",
+                className: screenStyles.legalInfo,
+                value: form.legal_info || "",
+                onChange: handleField,
+              },
+            }}
+          />
         </div>
       </div>
-    </div>
+
+      <div className={screenStyles.footer}>
+        <Select
+          size="mobile"
+          value={form.design_settings.layout}
+          onChange={handleDesign}
+          name="layout"
+        >
+          <option value="without_image">Без картинки</option>
+          <option value="with_image">Картинка слева</option>
+          <option value="image_background">Фон‑картинка</option>
+        </Select>
+
+        <Select
+          size="mobile"
+          value={form.design_settings.alignment}
+          onChange={handleDesign}
+          name="alignment"
+        >
+          <option value="left">Слева</option>
+          <option value="center">Центр</option>
+          <option value="right">Справа</option>
+        </Select>
+
+        {form.design_settings.layout !== "without_image" && (
+          <TextField
+            size="mobile"
+            config={{
+              inputProps: {
+                name: "image_url",
+                placeholder: "URL картинки",
+                value: form.design_settings.image_url || "",
+                onChange: handleDesign,
+              },
+            }}
+          />
+        )}
+      </div>
+    </article>
   );
 });
 

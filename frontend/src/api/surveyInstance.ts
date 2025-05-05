@@ -1,6 +1,8 @@
 /* eslint-disable camelcase */
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 
+import { FORBIDDEN_CODE } from "@/config";
+
 const AUTH_ERROR = 401;
 const baseURL = import.meta.env.VITE_API_URL;
 
@@ -47,8 +49,13 @@ surveyAxiosInstance.interceptors.response.use(
         // Повторно отправляем оригинальный запрос с обновленным токеном
         return await surveyAxiosInstance(originalRequest);
       } catch (refreshError) {
-        console.error("Token refresh failed:", refreshError);
-        // Здесь можно добавить логику для обработки ошибки обновления токена
+        if ((refreshError as AxiosError).status === FORBIDDEN_CODE) {
+          sessionStorage.removeItem("user");
+          sessionStorage.removeItem("accessToken");
+          window.location.reload();
+        } else {
+          console.error("Token refresh failed:", refreshError);
+        }
       }
     }
 

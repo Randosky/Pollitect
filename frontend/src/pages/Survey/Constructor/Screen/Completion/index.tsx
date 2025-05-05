@@ -1,13 +1,16 @@
 /* eslint-disable camelcase */
-import { useCallback } from "react";
+import React, { CSSProperties, useCallback, useMemo } from "react";
 
 import { useFormWithFooter } from "@hooks/useFormWithFooter";
 import { useSurveyController } from "@hooks/useSurveyController";
 import { useAppSelector } from "@store/hooks";
+import Checkbox from "@ui/Checkbox";
+import Select from "@ui/Select";
+import { TextField } from "@ui/TextField";
 
 import type { TCompletionScreen, TScreenDesignSettings } from "@pages/Survey/Survey.types";
 
-import styles from "./Completion.module.scss";
+import screenStyles from "../Screen.module.scss";
 
 /**
  * Экран завершения с локальным состоянием и кнопками «Сохранить»/«Отменить».
@@ -17,9 +20,8 @@ import styles from "./Completion.module.scss";
  *
  * @returns {React.ReactElement}
  */
-const CompletionScreen: React.FC = (): React.ReactElement => {
+const CompletionScreen: React.FC = React.memo(() => {
   const { id, completionScreen } = useAppSelector(s => s.survey.surveyForm);
-
   const { saveSurvey } = useSurveyController();
 
   /** Функция сохранения формы */
@@ -31,12 +33,9 @@ const CompletionScreen: React.FC = (): React.ReactElement => {
   /** Хук для работы с состоянием и футером сохранения состояния */
   const { form, setForm } = useFormWithFooter<TCompletionScreen>(completionScreen, saveForm);
 
-  /**
-   * Обработчик изменения простых полей
-   */
-  const handleFieldChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
-    const target = e.currentTarget as HTMLInputElement;
-    const { name, type, value, checked } = target;
+  /** Обработчик изменения полей экрана */
+  const handleField = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, type, value, checked } = e.currentTarget as HTMLInputElement;
 
     setForm(prev => ({
       ...prev,
@@ -44,10 +43,8 @@ const CompletionScreen: React.FC = (): React.ReactElement => {
     }));
   }, []);
 
-  /**
-   * Обработчик изменения дизайна экрана
-   */
-  const handleDesignChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
+  /** Обработчик изменения настроек дизайна экрана */
+  const handleDesign = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.currentTarget;
 
     setForm(prev => ({
@@ -59,104 +56,181 @@ const CompletionScreen: React.FC = (): React.ReactElement => {
     }));
   }, []);
 
+  /** Стили для body */
+  const stylesBody = useMemo<CSSProperties>(() => {
+    switch (form.design_settings.layout) {
+      case "without_image":
+        return { display: "flex", alignItems: "center", justifyContent: "center" };
+
+      case "with_image":
+        return { display: "grid", alignItems: "center", gridTemplateColumns: "1fr 45%" };
+
+      case "image_background":
+        return {
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundImage: `url(${form.design_settings.image_url})`,
+        };
+
+      default:
+        return {};
+    }
+  }, [form.design_settings]);
+
+  /** Стили для content */
+  const stylesContent = useMemo<CSSProperties>(() => {
+    switch (form.design_settings.alignment) {
+      case "left":
+        return { alignItems: "flex-start" };
+
+      case "center":
+        return { alignItems: "center" };
+
+      case "right":
+        return { alignItems: "flex-end" };
+
+      default:
+        return {};
+    }
+  }, [form.design_settings.alignment]);
+
   return (
-    <div className={styles.item}>
-      <div className={styles.screen}>
-        <label className={styles.checkbox}>
-          <input
-            name="active"
-            type="checkbox"
-            checked={form.active}
-            onChange={handleFieldChange}
-          />
-          Активировать экран завершения
-        </label>
+    <article className={screenStyles.screen}>
+      <Checkbox
+        label={form.active ? "Активен" : "Выключен"}
+        inputProps={{
+          id: "active",
+          name: "active",
+          checked: form.active,
+          onChange: handleField,
+        }}
+      />
 
-        <div className={styles.field}>
-          <label htmlFor="completion-title">Заголовок</label>
-          <input
-            id="completion-title"
-            name="title"
-            type="text"
-            value={form.title || ""}
-            onChange={handleFieldChange}
-          />
-        </div>
+      <div
+        style={stylesBody}
+        className={screenStyles.body}
+      >
+        {form.design_settings.layout === "with_image" &&
+          (form.design_settings.image_url ? (
+            <img
+              alt="completion-screen-image"
+              className={screenStyles.image}
+              src={form.design_settings.image_url || ""}
+            />
+          ) : (
+            <div className={screenStyles.image}>Изображение</div>
+          ))}
 
-        <div className={styles.field}>
-          <label htmlFor="completion-description">Описание</label>
-          <textarea
-            id="completion-description"
-            name="description"
-            value={form.description || ""}
-            onChange={handleFieldChange}
-          />
-        </div>
+        <div
+          style={stylesContent}
+          className={screenStyles.content}
+        >
+          <div className={screenStyles.headerContainer}>
+            <TextField
+              size="mobile"
+              config={{
+                wrapperProps: { className: screenStyles.inputWrapper },
+                inputProps: {
+                  name: "title",
+                  placeholder: "Заголовок",
+                  className: screenStyles.header,
+                  value: form.title,
+                  onChange: handleField,
+                },
+              }}
+            />
 
-        <div className={styles.field}>
-          <label htmlFor="completion-button_text">Текст кнопки</label>
-          <input
-            id="completion-button_text"
-            name="button_text"
-            type="text"
-            value={form.button_text || ""}
-            onChange={handleFieldChange}
-          />
-        </div>
-
-        <div className={styles.field}>
-          <label htmlFor="completion-button_url">URL кнопки</label>
-          <input
-            id="completion-button_url"
-            name="button_url"
-            type="text"
-            value={form.button_url || ""}
-            onChange={handleFieldChange}
-          />
-        </div>
-
-        <div className={styles.design}>
-          <h4>Дизайн экрана</h4>
-          <div className={styles.field}>
-            <label htmlFor="completion-layout">Схема</label>
-            <select
-              id="completion-layout"
-              name="layout"
-              value={form.design_settings.layout}
-              onChange={handleDesignChange}
-            >
-              <option value="without_image">Без картинки</option>
-              <option value="with_image">С картинкой</option>
-              <option value="image_background">Картинка фоном</option>
-            </select>
-          </div>
-          <div className={styles.field}>
-            <label htmlFor="completion-alignment">Выравнивание</label>
-            <select
-              id="completion-alignment"
-              name="alignment"
-              value={form.design_settings.alignment}
-              onChange={handleDesignChange}
-            >
-              <option value="center">По центру</option>
-              <option value="left">Слева</option>
-              <option value="right">Справа</option>
-            </select>
-          </div>
-          <div className={styles.field}>
-            <label htmlFor="completion-image_url">URL картинки</label>
-            <input
-              id="completion-image_url"
-              name="image_url"
-              type="text"
-              value={form.design_settings.image_url || ""}
-              onChange={handleDesignChange}
+            <TextField
+              size="mobile"
+              type="textarea"
+              config={{
+                wrapperProps: { className: screenStyles.inputWrapper },
+                textAreaProps: {
+                  name: "description",
+                  placeholder: "Описание",
+                  className: screenStyles.description,
+                  value: form.description,
+                  onChange: handleField,
+                  rows: 3,
+                },
+              }}
             />
           </div>
+
+          <TextField
+            size="mobile"
+            config={{
+              containerProps: { className: screenStyles.buttonContainer },
+              wrapperProps: { className: screenStyles.buttonWrapper },
+              inputProps: {
+                name: "button_text",
+                placeholder: "Текст кнопки",
+                className: screenStyles.button,
+                value: form.button_text,
+                onChange: handleField,
+              },
+            }}
+          />
         </div>
       </div>
-    </div>
+
+      <div className={screenStyles.footer}>
+        <TextField
+          size="mobile"
+          config={{
+            inputProps: {
+              name: "button_url",
+              placeholder: "URL кнопки",
+              value: form.button_url,
+              onChange: handleField,
+            },
+          }}
+        />
+
+        <Select
+          size="mobile"
+          name="layout"
+          value={form.design_settings.layout}
+          onChange={handleDesign}
+        >
+          <option value="without_image">Без картинки</option>
+          <option value="with_image">Картинка слева</option>
+          <option value="image_background">Фон‑картинка</option>
+        </Select>
+
+        <Select
+          size="mobile"
+          name="alignment"
+          value={form.design_settings.alignment}
+          onChange={handleDesign}
+        >
+          <option value="left">Слева</option>
+          <option value="center">Центр</option>
+          <option value="right">Справа</option>
+        </Select>
+
+        {form.design_settings.layout !== "without_image" && (
+          <TextField
+            size="mobile"
+            config={{
+              inputProps: {
+                name: "image_url",
+                placeholder: "URL картинки",
+                value: form.design_settings.image_url || "",
+                onChange: handleDesign,
+              },
+            }}
+          />
+        )}
+      </div>
+    </article>
   );
-};
+});
+
+CompletionScreen.displayName = "CompletionScreen";
 
 export default CompletionScreen;

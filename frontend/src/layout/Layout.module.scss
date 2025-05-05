@@ -11,6 +11,11 @@
   padding: 0px 8px 8px;
   background: var(--bg);
   height: calc(100vh - 8px - var(--header-height) - var(--footer-height));
+
+  &.mainContainer__withFooter {
+    padding-bottom: 0;
+    height: calc(100vh - var(--header-height) - var(--footer-height));
+  }
 }
 
 @media (min-width: $sm) {

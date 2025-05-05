@@ -1,49 +1,34 @@
 /* eslint-disable camelcase */
-import { useCallback } from "react";
+import React, { CSSProperties, useCallback, useMemo } from "react";
 
 import { useFormWithFooter } from "@hooks/useFormWithFooter";
 import { useSurveyController } from "@hooks/useSurveyController";
 import { useAppSelector } from "@store/hooks";
+import Checkbox from "@ui/Checkbox";
+import Select from "@ui/Select";
+import { TextField } from "@ui/TextField";
+import classNames from "classnames";
 
-import { PERSONAL_SCREEN_FIELDS } from "../../Constuctor.config";
+import type { TPersonalScreen, TScreenDesignSettings } from "@pages/Survey/Survey.types";
 
-import type {
-  TPersonalFieldType,
-  TPersonalScreen,
-  TScreenDesignSettings,
-  TScreenPersonalField,
-} from "@pages/Survey/Survey.types";
-
+import screenStyles from "../Screen.module.scss";
 import styles from "./Personal.module.scss";
 
-/**
- * Экран сбора персональных данных с локальным состоянием и кнопками «Сохранить»/«Отменить».
- *
- * Данные берутся из Redux → клонируются в form и initialForm.
- * При изменении form показываются кнопки управления, при сохранении — диспатч в Redux.
- *
- * @returns {React.ReactElement}
- */
-const PersonalScreen: React.FC = (): React.ReactElement => {
+const PersonalScreen: React.FC = React.memo(() => {
   const { id, personalScreen } = useAppSelector(s => s.survey.surveyForm);
-
   const { saveSurvey } = useSurveyController();
 
-  /** Функция сохранения формы */
+  /** Сохраняем только contactScreen */
   const saveForm = useCallback(
-    async (newForm: TPersonalScreen) => await saveSurvey(id, { personalScreen: newForm }),
+    (newForm: TPersonalScreen) => saveSurvey(id, { personalScreen: newForm }),
     [id, saveSurvey]
   );
 
-  /** Хук для работы с состоянием и футером сохранения состояния */
   const { form, setForm } = useFormWithFooter<TPersonalScreen>(personalScreen, saveForm);
 
-  /**
-   * Обработчик изменения простых полей (active, title, description, button_text)
-   */
-  const handleFieldChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
-    const target = e.currentTarget as HTMLInputElement;
-    const { name, type, value, checked } = target;
+  /** обработка обычных полей */
+  const handleField = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, type, value, checked } = e.currentTarget as HTMLInputElement;
 
     setForm(prev => ({
       ...prev,
@@ -51,38 +36,8 @@ const PersonalScreen: React.FC = (): React.ReactElement => {
     }));
   }, []);
 
-  /**
-   * Переключает включение/выключение поля сбора (name, email, phone, address)
-   */
-  const handleToggleField = useCallback((fieldType: TPersonalFieldType): void => {
-    setForm(prev => {
-      const fields = prev.personal_fields ?? [];
-      const exists = fields.some(f => f.type === fieldType);
-      const next = exists
-        ? fields.filter(f => f.type !== fieldType)
-        : [...fields, { type: fieldType, required: false, label: fieldType, placeholder: "" } as TScreenPersonalField];
-
-      return { ...prev, personal_fields: next };
-    });
-  }, []);
-
-  /**
-   * Обновляет настройки одного поля персональных данных
-   */
-  const handleSubFieldChange = useCallback((idx: number, upd: Partial<TScreenPersonalField>): void => {
-    setForm(prev => {
-      const fields = [...(prev.personal_fields ?? [])];
-
-      fields[idx] = { ...fields[idx], ...upd };
-
-      return { ...prev, personal_fields: fields };
-    });
-  }, []);
-
-  /**
-   * Обработчик изменения дизайна экрана
-   */
-  const handleDesignChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
+  /** обработка design_settings */
+  const handleDesign = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.currentTarget;
 
     setForm(prev => ({
@@ -94,141 +49,182 @@ const PersonalScreen: React.FC = (): React.ReactElement => {
     }));
   }, []);
 
+  /** стили для body */
+  const stylesBody = useMemo<CSSProperties>(() => {
+    return form.design_settings.layout === "image_background"
+      ? {
+          backgroundImage: `url(${form.design_settings.image_url})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }
+      : {};
+  }, [form.design_settings]);
+
+  /** стили для content */
+  const stylesContent = useMemo<CSSProperties>(() => {
+    switch (form.design_settings.alignment) {
+      case "left":
+        return { alignItems: "flex-start" };
+
+      case "right":
+        return { alignItems: "flex-end" };
+
+      case "center":
+
+      default:
+        return { alignItems: "center" };
+    }
+  }, [form.design_settings.alignment]);
+
   return (
-    <div className={styles.item}>
-      <div className={styles.screen}>
-        <label className={styles.checkbox}>
-          <input
-            name="active"
-            type="checkbox"
-            checked={form.active}
-            onChange={handleFieldChange}
-          />
-          Активировать сбор персональных данных
-        </label>
+    <article className={screenStyles.screen}>
+      <Checkbox
+        label={form.active ? "Активен" : "Выключен"}
+        inputProps={{
+          id: "active",
+          name: "active",
+          checked: form.active,
+          onChange: handleField,
+        }}
+      />
 
-        <div className={styles.field}>
-          <label htmlFor="personal-title">Заголовок</label>
-          <input
-            id="personal-title"
-            name="title"
-            type="text"
-            value={form.title || ""}
-            onChange={handleFieldChange}
-          />
-        </div>
-
-        <div className={styles.field}>
-          <label htmlFor="personal-description">Описание</label>
-          <textarea
-            id="personal-description"
-            name="description"
-            value={form.description || ""}
-            onChange={handleFieldChange}
-          />
-        </div>
-
-        <div className={styles.field}>
-          <label htmlFor="personal-button_text">Текст кнопки</label>
-          <input
-            id="personal-button_text"
-            name="button_text"
-            type="text"
-            value={form.button_text}
-            onChange={handleFieldChange}
-          />
-        </div>
-
-        <fieldset className={styles.checkboxGroup}>
-          <legend>Поля для сбора</legend>
-          {PERSONAL_SCREEN_FIELDS.map(f => (
-            <label
-              key={f}
-              className={styles.checkbox}
-            >
-              <input
-                type="checkbox"
-                checked={form.personal_fields?.some(p => p.type === f) || false}
-                onChange={() => handleToggleField(f)}
-              />
-              {f}
-            </label>
-          ))}
-        </fieldset>
-
-        {form.personal_fields?.map((field, idx) => (
-          <div
-            key={idx}
-            className={styles.field}
-          >
-            <h5>{field.type}</h5>
-            <label className={styles.checkbox}>
-              <input
-                type="checkbox"
-                checked={field.required}
-                onChange={e => handleSubFieldChange(idx, { required: e.currentTarget.checked })}
-              />
-              Обязательное
-            </label>
-            <label htmlFor={`label-${idx}`}>Метка</label>
-            <input
-              id={`label-${idx}`}
-              type="text"
-              value={field.label}
-              onChange={e => handleSubFieldChange(idx, { label: e.currentTarget.value })}
+      <div
+        style={stylesBody}
+        className={classNames(screenStyles.body, styles.body)}
+      >
+        <div
+          className={screenStyles.content}
+          style={stylesContent}
+        >
+          <div className={screenStyles.headerContainer}>
+            <TextField
+              size="mobile"
+              config={{
+                wrapperProps: { className: screenStyles.inputWrapper },
+                inputProps: {
+                  name: "title",
+                  id: "welcome-screen-title",
+                  placeholder: "Заголовок",
+                  className: screenStyles.header,
+                  value: form?.title ?? "",
+                  onChange: handleField,
+                },
+              }}
             />
-            <label htmlFor={`placeholder-${idx}`}>Placeholder</label>
-            <input
-              id={`placeholder-${idx}`}
-              type="text"
-              value={field.placeholder}
-              onChange={e => handleSubFieldChange(idx, { placeholder: e.currentTarget.value })}
-            />
-          </div>
-        ))}
 
-        <div className={styles.design}>
-          <h4>Дизайн экрана</h4>
-          <div className={styles.field}>
-            <label htmlFor="personal-layout">Схема</label>
-            <select
-              id="personal-layout"
-              name="layout"
-              value={form.design_settings.layout}
-              onChange={handleDesignChange}
-            >
-              <option value="without_image">Без картинки</option>
-              <option value="with_image">С картинкой</option>
-              <option value="image_background">Картинка фоном</option>
-            </select>
-          </div>
-          <div className={styles.field}>
-            <label htmlFor="personal-alignment">Выравнивание</label>
-            <select
-              id="personal-alignment"
-              name="alignment"
-              value={form.design_settings.alignment}
-              onChange={handleDesignChange}
-            >
-              <option value="center">По центру</option>
-              <option value="left">Слева</option>
-              <option value="right">Справа</option>
-            </select>
-          </div>
-          <div className={styles.field}>
-            <label htmlFor="personal-image_url">URL картинки</label>
-            <input
-              id="personal-image_url"
-              name="image_url"
-              type="text"
-              value={form.design_settings.image_url || ""}
-              onChange={handleDesignChange}
+            <TextField
+              size="mobile"
+              type="textarea"
+              config={{
+                wrapperProps: { className: screenStyles.inputWrapper },
+                textAreaProps: {
+                  name: "description",
+                  id: "welcome-screen-description",
+                  placeholder: "Описание",
+                  className: screenStyles.description,
+                  value: form?.description ?? "",
+                  onChange: handleField,
+                  rows: 3,
+                },
+              }}
             />
           </div>
         </div>
+
+        <form className={styles.form}>
+          <TextField
+            size="mobile"
+            config={{ inputProps: { placeholder: "Имя" } }}
+          />
+          <TextField
+            size="mobile"
+            config={{ inputProps: { placeholder: "Email" } }}
+          />
+          <TextField
+            size="mobile"
+            config={{ inputProps: { placeholder: "Телефон" } }}
+          />
+          <TextField
+            size="mobile"
+            config={{ inputProps: { placeholder: "Комментарий" } }}
+          />
+
+          <TextField
+            size="mobile"
+            config={{
+              containerProps: { className: classNames(screenStyles.buttonContainer, styles.buttonContainer) },
+              wrapperProps: { className: classNames(screenStyles.buttonWrapper, styles.buttonWrapper) },
+              inputProps: {
+                name: "button_text",
+                id: "welcome-screen-button_text",
+                placeholder: "Отправить",
+                className: screenStyles.button,
+                value: form.button_text,
+                onChange: handleField,
+              },
+            }}
+          />
+
+          <span className={styles.legalInfo}>
+            Отправляя форму, я принимаю условия{" "}
+            <a
+              href="/"
+              target="_blank"
+            >
+              политики конфиденциальности
+            </a>{" "}
+            и даю согласие на обработку моих{" "}
+            <a
+              href="/"
+              target="_blank"
+            >
+              персональных данных
+            </a>
+          </span>
+        </form>
       </div>
-    </div>
-  );
-};
 
+      <div className={screenStyles.footer}>
+        <Select
+          size="mobile"
+          name="layout"
+          value={form.design_settings.layout}
+          onChange={handleDesign}
+        >
+          <option value="without_image">Без картинки</option>
+          <option value="image_background">Фон‑картинка</option>
+        </Select>
+
+        <Select
+          size="mobile"
+          name="alignment"
+          value={form.design_settings.alignment}
+          onChange={handleDesign}
+        >
+          <option value="left">Слева</option>
+          <option value="center">Центр</option>
+          <option value="right">Справа</option>
+        </Select>
+
+        {form.design_settings.layout !== "without_image" && (
+          <TextField
+            size="mobile"
+            config={{
+              wrapperProps: { className: screenStyles.inputWrapper },
+              inputProps: {
+                name: "image_url",
+                placeholder: "URL картинки",
+                value: form.design_settings.image_url || "",
+                onChange: handleDesign,
+              },
+            }}
+          />
+        )}
+      </div>
+    </article>
+  );
+});
+
+PersonalScreen.displayName = "ContactScreen";
 export default PersonalScreen;

@@ -14,17 +14,17 @@ export const SURVEY_TABS_MAP: Record<TSurveyTabs, string> = {
 export const INITIAL_SURVEY: ISurvey = {
   questions: [],
   welcomeScreen: {
-    active: false,
+    active: true,
     button_text: "Начать",
     design_settings: { layout: "without_image", alignment: "left" },
   },
   personalScreen: {
-    active: false,
-    button_text: "Далее",
+    active: true,
+    button_text: "Отправить",
     design_settings: { layout: "without_image", alignment: "left" },
   },
   completionScreen: {
-    active: false,
+    active: true,
     button_text: "Завершить",
     design_settings: { layout: "without_image", alignment: "left" },
   },

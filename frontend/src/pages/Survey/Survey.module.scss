@@ -12,16 +12,12 @@
   font-weight: 600;
 }
 
-.container {
-  height: calc(100% - 56px);
-}
-
 @media (min-width: $sm) {
-  .page {
-    gap: 32px;
-  }
-
   .title {
     font-size: 24px;
+  }
+
+  .container {
+    height: calc(100% - 56px);
   }
 }

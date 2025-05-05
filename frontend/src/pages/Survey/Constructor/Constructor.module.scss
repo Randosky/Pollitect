@@ -1,9 +1,27 @@
 @import "@styles/breakpoints";
 
-.root {
-  gap: 32px;
-  display: flex;
-  flex-direction: column;
+.page {
+  // переходы для react-transition-group
+  .fadeEnter {
+    opacity: 0;
+  }
+  .fadeEnterActive {
+    opacity: 1;
+    transition: opacity 300ms ease-in;
+  }
+  .fadeExit {
+    opacity: 1;
+  }
+  .fadeExitActive {
+    opacity: 0;
+    transition: opacity 300ms ease-out;
+  }
+
+  .tabContainer {
+    flex: 1 1 auto;
+    overflow: auto;
+    height: max-content;
+  }
 }
 
 .nav {
@@ -39,24 +57,4 @@
       color: var(--text);
     }
   }
-}
-
-// переходы для react-transition-group
-.fadeEnter {
-  opacity: 0;
-}
-.fadeEnterActive {
-  opacity: 1;
-  transition: opacity 300ms ease-in;
-}
-.fadeExit {
-  opacity: 1;
-}
-.fadeExitActive {
-  opacity: 0;
-  transition: opacity 300ms ease-out;
-}
-
-.tabContent {
-  position: relative;
 }

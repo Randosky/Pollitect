@@ -1,10 +1,12 @@
 // src/pages/Constructor/ConstructorView.tsx
 import React, { Suspense, lazy, useRef } from "react";
 
+import classNames from "classnames";
 import { CSSTransition, SwitchTransition } from "react-transition-group";
 
 import type { TConstuctorTabs, TConstuctorViewProps } from "./Constructor.types";
 
+import pageStyles from "../Survey.module.scss";
 import styles from "./Constructor.module.scss";
 
 import TitleEditor from "./TitleEditor";
@@ -27,9 +29,7 @@ const ConstructorView: React.FC<TConstuctorViewProps> = ({ currentTab, setCurren
   const ActiveComponent = TAB_COMPONENTS[currentTab];
 
   return (
-    <div className={styles.root}>
-      <TitleEditor />
-
+    <div className={classNames(pageStyles.page, styles.page)}>
       <nav className={styles.nav}>
         {(["welcome", "questions", "personal", "completion"] as TConstuctorTabs[]).map(tab => (
           <button
@@ -49,6 +49,8 @@ const ConstructorView: React.FC<TConstuctorViewProps> = ({ currentTab, setCurren
         ))}
       </nav>
 
+      <TitleEditor />
+
       <SwitchTransition>
         <CSSTransition
           key={currentTab}
@@ -64,7 +66,7 @@ const ConstructorView: React.FC<TConstuctorViewProps> = ({ currentTab, setCurren
         >
           <div
             ref={nodeRef}
-            className={styles.tabContent}
+            className={classNames(pageStyles.container, styles.tabContainer)}
           >
             <Suspense fallback={<div>Загрузка...</div>}>
               <ActiveComponent />
