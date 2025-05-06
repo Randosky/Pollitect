@@ -11,8 +11,16 @@ import type { TSurveyCardProps } from "../Dashboard.types";
 
 import styles from "./SurveyCard.module.scss";
 
+const SEC_IN_MIN = 60;
+
 const SurveyCard: React.FC<TSurveyCardProps> = ({ surveyCard }) => {
-  const { id, title, active, statistics: { responsesCount, completionRate, averageTimeSec } = {} } = surveyCard;
+  const {
+    id,
+    title,
+    active,
+    display_settings: displaySettings,
+    statistics: { responsesCount, completionRate, averageTimeSec } = {},
+  } = surveyCard;
 
   const processError = useError();
   const queryClient = useQueryClient();
@@ -53,8 +61,8 @@ const SurveyCard: React.FC<TSurveyCardProps> = ({ surveyCard }) => {
   };
 
   const formatTime = (sec: number) => {
-    const m = Math.floor(sec / 60);
-    const s = sec % 60;
+    const m = Math.floor(sec / SEC_IN_MIN);
+    const s = sec % SEC_IN_MIN;
 
     return `${m} мин ${s} сек`;
   };
@@ -62,9 +70,8 @@ const SurveyCard: React.FC<TSurveyCardProps> = ({ surveyCard }) => {
   return (
     <article className={styles.card}>
       <header className={styles.header}>
-        <h2>ID: {id}</h2>
-
         <h2 className={styles.title}>
+          <span>ID: {id}</span>
           <Link to={`/survey/${id}/edit`}>{title}</Link>
         </h2>
 
@@ -82,6 +89,16 @@ const SurveyCard: React.FC<TSurveyCardProps> = ({ surveyCard }) => {
           <span className={styles.slider} />
         </label>
       </header>
+
+      {displaySettings.url_pattern[0] && (
+        <Link
+          target="_blank"
+          rel="noopener noreferrer"
+          to={displaySettings.url_pattern[0]}
+        >
+          {displaySettings.url_pattern[0]}
+        </Link>
+      )}
 
       <div className={styles.stats}>
         <div className={styles.statItem}>
@@ -106,7 +123,7 @@ const SurveyCard: React.FC<TSurveyCardProps> = ({ surveyCard }) => {
         </Link>
 
         <Link
-          to={`/survey/${id}/results`}
+          to={`/survey/${id}/statistic`}
           title="Результаты"
         >
           <span className={classNames("icon-chart", styles.actionBtn)} />

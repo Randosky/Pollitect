@@ -8,6 +8,7 @@ import Survey from "@pages/Survey";
 import Constructor from "@pages/Survey/Constructor";
 import Design from "@pages/Survey/Design";
 import Settings from "@pages/Survey/Settings";
+import Statistic from "@pages/Survey/Statistic";
 import { useAppSelector } from "@store/hooks";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 
@@ -167,6 +168,11 @@ const AppRouter = (): ReactElement => {
             <Route
               path="settings"
               element={<Settings />}
+            />
+
+            <Route
+              path="statistic"
+              element={<Statistic />}
             />
           </Route>
         </Route>
