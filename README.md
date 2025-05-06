@@ -2,7 +2,7 @@
 
 Для локальной разработки
 
-<script src="http://localhost:3000/pollitect.js" type="text/javascript" charset="utf-8" defer></script>
+<script src="http://localhost:3000/pollitect.js" type="text/javascript" charset="utf-8" data-user={Идентификатор пользователя} defer></script>
 
 Сайт для локальной разработки, на котором установлен скрипт
 
@@ -17,5 +17,4 @@ https://hs7215.callibri.space/
 
 Процесс разработки виджета локально:
 
-1. Запускаем http-server
-2. Запускаем команду npm run build-watch (для отслеживания изменений)
+1. Запускаем yarn dev (измениния отслеживаются автоматически)
