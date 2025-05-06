@@ -68,7 +68,7 @@ const WelcomeScreen: React.FC = React.memo((): React.ReactElement => {
 
     switch (form.design_settings.layout) {
       case "without_image":
-        returnValue = { display: "flex" };
+        returnValue = {};
         break;
 
       case "with_image":
@@ -144,6 +144,7 @@ const WelcomeScreen: React.FC = React.memo((): React.ReactElement => {
           className={screenStyles.content}
         >
           <TextField
+            autoWidth
             size="mobile"
             config={{
               containerProps: { className: screenStyles.hintContainer },

@@ -30,26 +30,28 @@ const ConstructorView: React.FC<TConstuctorViewProps> = ({ currentTab, setCurren
 
   return (
     <div className={classNames(pageStyles.page, styles.page)}>
-      <nav className={styles.nav}>
-        {(["welcome", "questions", "personal", "completion"] as TConstuctorTabs[]).map(tab => (
-          <button
-            key={tab}
-            className={currentTab === tab ? styles.activeTab : undefined}
-            onClick={() => setCurrentTab(tab)}
-          >
-            {
-              {
-                welcome: "Приветствие",
-                questions: "Вопросы",
-                personal: "Сбор данных",
-                completion: "Завершение",
-              }[tab]
-            }
-          </button>
-        ))}
-      </nav>
+      <div className={styles.header}>
+        <TitleEditor />
 
-      <TitleEditor />
+        <nav className={styles.nav}>
+          {(["welcome", "questions", "personal", "completion"] as TConstuctorTabs[]).map(tab => (
+            <button
+              key={tab}
+              className={currentTab === tab ? styles.activeTab : undefined}
+              onClick={() => setCurrentTab(tab)}
+            >
+              {
+                {
+                  welcome: "Приветствие",
+                  questions: "Вопросы",
+                  personal: "Сбор данных",
+                  completion: "Завершение",
+                }[tab]
+              }
+            </button>
+          ))}
+        </nav>
+      </div>
 
       <SwitchTransition>
         <CSSTransition

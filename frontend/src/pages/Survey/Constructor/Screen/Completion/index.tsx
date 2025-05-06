@@ -60,16 +60,13 @@ const CompletionScreen: React.FC = React.memo(() => {
   const stylesBody = useMemo<CSSProperties>(() => {
     switch (form.design_settings.layout) {
       case "without_image":
-        return { display: "flex", alignItems: "center", justifyContent: "center" };
+        return {};
 
       case "with_image":
-        return { display: "grid", alignItems: "center", gridTemplateColumns: "1fr 45%" };
+        return { display: "grid", gridTemplateColumns: "1fr 45%" };
 
       case "image_background":
         return {
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
@@ -85,13 +82,13 @@ const CompletionScreen: React.FC = React.memo(() => {
   const stylesContent = useMemo<CSSProperties>(() => {
     switch (form.design_settings.alignment) {
       case "left":
-        return { alignItems: "flex-start" };
+        return { justifyContent: "center", alignItems: "flex-start" };
 
       case "center":
-        return { alignItems: "center" };
+        return { justifyContent: "center", alignItems: "center" };
 
       case "right":
-        return { alignItems: "flex-end" };
+        return { justifyContent: "center", alignItems: "flex-end" };
 
       default:
         return {};

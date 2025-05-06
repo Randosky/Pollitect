@@ -24,6 +24,14 @@
   }
 }
 
+.header {
+  gap: 16px;
+  align-items: end;
+  justify-content: end;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+}
+
 .nav {
   display: flex;
   flex-wrap: wrap;

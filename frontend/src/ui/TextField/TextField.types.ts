@@ -12,6 +12,8 @@ export type TTextFieldProps = {
   icon?: ReactElement;
   /** Тип поля ввода */
   type?: TTextFieldType;
+  /** Нужно ли подстравить инпут по ширине */
+  autoWidth?: boolean;
 
   /** Конфигурация для подкомпонентов TextField */
   config?: {

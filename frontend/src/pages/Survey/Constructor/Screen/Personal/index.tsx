@@ -211,10 +211,9 @@ const PersonalScreen: React.FC = React.memo(() => {
           <TextField
             size="mobile"
             config={{
-              wrapperProps: { className: screenStyles.inputWrapper },
               inputProps: {
                 name: "image_url",
-                placeholder: "URL картинки",
+                placeholder: "URL картинки",
                 value: form.design_settings.image_url || "",
                 onChange: handleDesign,
               },
