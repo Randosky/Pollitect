@@ -15,14 +15,8 @@
     "lint": "eslint .",
     "prettier": "npx prettier frontend/src --write --cache"
   },
-  "dependencies": {
-    "http-server": "^14.1.1"
-  },
   "devDependencies": {
-    "@babel/preset-env": "^7.26.9",
-    "@babel/preset-typescript": "^7.26.0",
     "@eslint/js": "^9.21.0",
-    "@rollup/plugin-babel": "^6.0.4",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@typescript-eslint/parser": "^8.25.0",
     "core-js": "^3.41.0",
@@ -37,6 +31,7 @@
     "prettier": "3.5.2",
     "prettier-plugin-organize-imports": "^4.1.0",
     "regenerator-runtime": "^0.14.1",
+    "terser": "^5.39.0",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.25.0",
     "typescript-plugin-css-modules": "^5.1.0",

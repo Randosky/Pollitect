@@ -1,8 +1,16 @@
-import "core-js/stable";
+import "core-js";
 import "regenerator-runtime/runtime";
 
+import mockSurvey from "./mockSurvey";
 import Survey from "./widget/Survey";
 
-const survey = new Survey("Какие-то рандомные данные чисто для инициализации виджета");
+// Только при подключении через браузер:
+const container = document.getElementById("app");
 
-console.log(survey);
+if (container) {
+  const widget = new Survey(mockSurvey);
+
+  container.appendChild(widget);
+}
+
+export default Survey;

@@ -1,54 +1,30 @@
-import babel from "@rollup/plugin-babel";
 import path from "path";
 import { defineConfig } from "vite";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   resolve: {
-    extensions: [".ts", ".js"],
     alias: {
-      "@components": "src/widget/components",
-      "@services": "src/widget/services",
-      "@utils": "src/widget/utils",
-      "@widget": "src/widget",
-      "@": "src",
+      "@components": path.resolve(__dirname, "src/widget/components"),
+      "@services": path.resolve(__dirname, "src/widget/services"),
+      "@utils": path.resolve(__dirname, "src/widget/utils"),
+      "@widget": path.resolve(__dirname, "src/widget"),
+      "@": path.resolve(__dirname, "src"),
     },
   },
+  plugins: [tsconfigPaths()],
   build: {
-    target: ["es2015"], // Совместимость с браузерами, поддерживающими хотя бы ES2015
+    target: ["es2015"], // поддержка старых браузеров
+    outDir: "dist",
+    minify: "terser", // вместо esbuild для лучшей совместимости
     rollupOptions: {
       input: "src/index.ts",
       output: {
         entryFileNames: "pollitect.js",
+        format: "iife", // для встраивания в любые страницы
+        name: "PollitectWidget", // глобальное имя
       },
-      // input: {
-      //   survey: path.resolve(__dirname, "src/widget/Survey.ts"),
-      //   surveyExternal: path.resolve(__dirname, "src/widget/Survey.external.ts"),
-      // },
-      // output: {
-      //   // Для каждого entry файла будет создан свой js файл
-      //   entryFileNames: "[name].js", // Название файла будет таким же, как и у входного файла
-      //   chunkFileNames: "[name]-[hash].js", // Уникальные имена для чанков
-      //   inlineDynamicImports: false, // Отключаем динамические импорты
-      // },
     },
+    polyfillModulePreload: true, // для старых браузеров
   },
-  plugins: [
-    babel({
-      babelHelpers: "bundled", // Используем bundled для компактности
-      extensions: [".js", ".ts"],
-      include: "src/**/*", // Включаем все файлы в src
-      exclude: "node_modules/**", // Исключаем node_modules
-      presets: [
-        [
-          "@babel/preset-env",
-          {
-            targets: "> 0.25%, not dead", // Настройка для поддержки старых браузеров
-            useBuiltIns: "entry", // Включаем полифилы
-            corejs: 3, // Используем полифилы из core-js версии 3
-          },
-        ],
-        "@babel/preset-typescript", // Для работы с TypeScript
-      ],
-    }),
-  ],
 });

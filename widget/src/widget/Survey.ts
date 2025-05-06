@@ -1,31 +1,21 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { createWebComponent, registerWebComponent } from "@components/ComponentService";
+
+import type { ISurvey } from "./Survey.types";
+
+import { SurveyElement } from "./SurveyElement";
+
+registerWebComponent("survey-widget", SurveyElement);
+
 class Survey {
-  private data: any;
+  constructor(data: ISurvey) {
+    const element = createWebComponent("survey-widget");
 
-  constructor(data: any) {
-    this.data = data;
+    element.initialize(data);
 
-    this.init();
-  }
-
-  /**
-   * Инициализация виджета
-   *
-   * @returns {void}
-   */
-  init(): void {
-    console.log("Виджет инициализирован, мы на сайте пользователя");
-    console.log("Переданные данные", this.data);
-
-    this.dada();
-  }
-
-  async dada() {
-    // eslint-disable-next-line no-magic-numbers
-    await new Promise(resolve => setTimeout(() => resolve(console.log("таймер сработал")), 3000));
+    return element;
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 (globalThis as any).Survey = Survey;
-
-export default Survey;
+export default Survey as unknown as new (data: ISurvey) => SurveyElement;
