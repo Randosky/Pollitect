@@ -1,4 +1,4 @@
-import { colors } from "@widget/vars";
+/* eslint-disable */
 
 /**
  * Проверяет, является ли строка допустимым шестнадцатеричным цветом.
@@ -20,15 +20,10 @@ const convertHexUnitTo256 = (hexStr: string): number => parseInt(hexStr.repeat(2
  * @param {number} alpha - Значение альфа-канала в диапазоне от 0 до 1.
  * @returns {number} - Вычисленное значение альфа-канала в диапазоне от 0 до 1.
  */
-const getAlphaFloat = (a: number, alpha: number): number => {
-  if (typeof a !== "undefined") {
-    // eslint-disable-next-line no-magic-numbers
-    return a / 255;
-  } else if (typeof alpha === "number" && alpha >= 0 && alpha <= 1) {
-    return alpha;
-  }
-
-  return 1;
+const getAlphaFloat = (a: number | undefined, alpha: number | undefined): number => {
+  if (typeof a !== "undefined") return a / 255;
+  else if (typeof alpha === "number" && alpha >= 0 && alpha <= 1) return alpha;
+  else return 1;
 };
 
 /**
@@ -38,152 +33,73 @@ const getAlphaFloat = (a: number, alpha: number): number => {
  * @param {boolean} [returnArray=false] - Если true, вернет массив чисел, иначе строку RGBA. По умолчанию false.
  * @returns {(string | number[])} - Строка формата RGBA или массив чисел (в зависимости от параметра returnArray).
  */
-
-export const hexToRGBA = (hex: string, alpha: number = 1) => {
+export const hexToRGBA = (hex: string, alpha: number = 1, returnArray: boolean = false): string | number[] => {
   if (!isValidHex(hex)) return hex;
 
   /** Длина каждого фрагмента шестнадцатеричного значения. */
-  // eslint-disable-next-line no-magic-numbers
-  const chunkSize = Math.floor((hex.length - 1) / 3);
-  const matchReg = hex.slice(1).match(new RegExp(`.{${chunkSize}}`, "g"));
+  const chunkSize: number = Math.floor((hex.length - 1) / 3);
+  const [r, g, b, a] =
+    hex
+      .slice(1)
+      .match(new RegExp(`.{${chunkSize}}`, "g"))
+      ?.map(convertHexUnitTo256) ?? [];
 
-  if (!matchReg) return hex;
+  const alphaFloat: number = getAlphaFloat(a, alpha);
 
-  const [r, g, b, a] = matchReg.map(convertHexUnitTo256);
-
-  return [r, g, b, getAlphaFloat(a, alpha)];
+  return returnArray ? [r, g, b, alphaFloat] : `rgba(${r}, ${g}, ${b}, ${alphaFloat})`;
 };
 
 /**
- * Возвращает цвет текста на основе заданного цвета.
- * @param {string} color - Массив цвета в формате hex.
- * @returns {string} - Возвращает цвет текста (строку).
+ * Определяет контрастный цвет (светлый или тёмный) для заданного RGB цвета.
+ * @param {number[]} color - Массив из трёх чисел, представляющих RGB компоненты цвета [r, g, b]
+ * @returns {"light" | "dark"} - Возвращает "light" для светлых цветов и "dark" для тёмных
+ * @example
+ * getContrast([255, 255, 255]) // returns "light"
+ * getContrast([0, 0, 0]) // returns "dark"
  */
-export const getColorText = (color: string): string => {
-  const hex = hexToRGBA(color);
-  let b, g, r;
-
-  if (Array.isArray(hex)) [r, g, b] = hex;
+export const getContrast = (color: number[]): "light" | "dark" => {
+  const [r, g, b] = color;
 
   return typeof r === "undefined" ||
     typeof g === "undefined" ||
     typeof b === "undefined" ||
-    // eslint-disable-next-line no-magic-numbers
     1 - (0.299 * r + 0.587 * g + 0.114 * b) / 255 < 0.5
-    ? colors.light.text
-    : colors.dark.text;
+    ? "light"
+    : "dark";
 };
 
-export type TParsedColor = {
-  colors: string[];
-  angle?: number;
-  percentages?: number[];
+export const increaseBrightness = (hex: string, percent: number): string => {
+  hex = hex.replace(/^\s*#|\s*$/g, "");
+
+  if (hex.length === 3) hex = hex.replace(/(.)/g, "$1$1");
+
+  const r: number = parseInt(hex.substr(0, 2), 16);
+  const g: number = parseInt(hex.substr(2, 2), 16);
+  const b: number = parseInt(hex.substr(4, 2), 16);
+
+  return (
+    "#" +
+    (0 | ((1 << 8) + r + ((256 - r) * percent) / 100)).toString(16).substr(1) +
+    (0 | ((1 << 8) + g + ((256 - g) * percent) / 100)).toString(16).substr(1) +
+    (0 | ((1 << 8) + b + ((256 - b) * percent) / 100)).toString(16).substr(1)
+  );
 };
 
-/**
- * Парсит строку с цветами и возможным углом поворота и процентами.
- *
- * @param {string} input - Входная строка, содержащая один цвет в формате hex, rgba, или список цветов через запятую,
- *                         и опционально угол поворота и проценты.
- * @returns {TParsedColor} - Объект, содержащий массив цветов,
- * опционально угол поворота и массив процентов (если они присутствуют).
- */
-export function parseColorString(input: string): TParsedColor {
-  const colorRegex = /#(?:[0-9a-fA-F]{3}){1,2}(?:[0-9a-fA-F]{2})?/g;
-  const angleRegex = /(\d{1,3})deg/g;
-  const percentageRegex = /(\d{1,3}%)/g;
+export const componentToHex = (c: number): string => {
+  const hex: string = c.toString(16);
 
-  const angle = input.match(angleRegex)?.map(s => Number(s.replace(/deg$/, "")))[0] || 0;
-  const colors = input.match(colorRegex) || [];
-  const percentages = input.match(percentageRegex)?.map(s => Number(s.replace(/\%$/, ""))) || [];
-
-  return { colors, angle, percentages };
-}
-
-/** Опции для создания стиля заливки.*/
-type TFillStyleOptions = {
-  x: number;
-  y: number;
-  /** Угол на который повернут изначальный объект */
-  rad: number;
-  /** Цвета */
-  color: TParsedColor;
-  /** Ширина прямоугольника в который вписывается заливка */
-  width: number;
+  return hex.length === 1 ? "0" + hex : hex;
 };
-/**
- * Создает стиль заливки для рисования на canvas, это может быть либо градиент, либо сплошной цвет.
- * @param {CanvasRenderingContext2D} ctx - Контекст рендеринга canvas.
- * @param {TFillStyleOptions} options - опции заливки.
- * @returns {CanvasGradient | string} - Стиль заливки, это может быть либо градиент, либо цветом.
- */
-export function createFillStyle(ctx: CanvasRenderingContext2D, options: TFillStyleOptions): CanvasGradient | string {
-  const { x, y, rad, color, width } = options;
-  const startX = x;
-  const startY = y;
 
-  if (color.angle !== undefined && color.colors.length >= 2) {
-    // eslint-disable-next-line no-magic-numbers
-    const rotationAngle = (color.angle * Math.PI) / 180;
-    const endX = rad ? width * Math.cos(rad + width / 2) : x + width;
-    const endY = rad ? width * Math.sin(rad + width / 2) : y;
-
-    // Рассчитываем центр линии (середина отрезка)
-    const centerX = (startX + endX) / 2;
-    const centerY = (startY + endY) / 2;
-
-    const rotatedStart = rotatePoint({ x: startX, y: startY, centerX, centerY, angle: rotationAngle });
-    const rotatedEnd = rotatePoint({ x: endX, y: endY, centerX, centerY, angle: rotationAngle });
-    const gradient = ctx.createLinearGradient(rotatedStart.x, rotatedStart.y, rotatedEnd.x, rotatedEnd.y);
-    const step = 1 / (color.colors.length - 1);
-
-    color.colors.forEach((_color, index) => {
-      const maxPersantage = 100;
-
-      gradient.addColorStop(
-        color.percentages && color.percentages.length > 0 ? color.percentages[index] / maxPersantage : step * index,
-        _color
-      );
-    });
-
-    return gradient;
-  }
-
-  // Если нет угла, просто используем первый цвет
-  return color.colors[0];
-}
-
-type TRotatePointParams = {
-  /** X-начальной точки, которую нужно вращать. */
-  x: number;
-  /** Y-начальной точки, которую нужно вращать. */
-  y: number;
-  /** X-центра вокруг которого происходит поворот. */
-  centerX: number;
-  /** Y-центра вокруг которого происходит поворот. */
-  centerY: number;
-  /** Угол вращения в радианах. */
-  angle: number;
+export const rgbToHex = (color: [number, number, number]): string => {
+  return "#" + componentToHex(color[0]) + componentToHex(color[1]) + componentToHex(color[2]);
 };
 
 /**
- * Вращает точку вокруг другой точки на заданный угол.
- *
- * @param {TRotatePointParams} params - Параметры для функции вращения точки.
- *
- * @returns {{ x: number, y: number }} Новые координаты точки после вращения.
+ * Проверяет, является ли цвет белым.
+ * @param {string} color - Цвет в формате RGB.
+ * @returns {boolean} - Возвращает true, если цвет белый, иначе false.
  */
-function rotatePoint(params: TRotatePointParams): { x: number; y: number } {
-  const { x, y, centerX: cx, centerY: cy, angle } = params;
-  const dx = x - cx;
-  const dy = y - cy;
-
-  return {
-    x: cx + dx * Math.cos(angle) - dy * Math.sin(angle),
-    y: cy + dx * Math.sin(angle) + dy * Math.cos(angle),
-  };
-}
-
-export function getGradientColor(color: string): string {
-  return color.includes("deg") ? `linear-gradient(${color})` : color;
-}
+export const isWhiteColor = (color: string): boolean => {
+  return ["#fff", "#ffffff"].includes(color.toLocaleLowerCase());
+};

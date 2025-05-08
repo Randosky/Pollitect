@@ -1,3 +1,5 @@
+/* eslint-disable no-magic-numbers */
+/* eslint-disable camelcase */
 import { ISurvey } from "./widget/Survey.types";
 
 const mockSurvey: ISurvey = {
@@ -119,7 +121,7 @@ const mockSurvey: ISurvey = {
     padding: [24, 24, 24, 24],
   },
   display_settings: {
-    target_id: "survey-container",
+    target_id: "app",
     block_scroll: false,
     prevent_repeat: false,
     timer_sec: 0,

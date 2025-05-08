@@ -1,10 +1,20 @@
-import { SurveyElement } from "@widget/SurveyElement";
+import { SurveyElement } from "@components/Page";
+import CompletionScreen from "@components/Page/Screen/Completion";
+import PersonalScreen from "@components/Page/Screen/Personal";
+import WelcomeScreen from "@components/Page/Screen/Welcome";
 import { OWNER } from "@widget/vars";
 
-// Финальный список селекторов (включая survey-widget)
-type TSelectorCreate = {
-  "survey-widget": SurveyElement;
+/** Экраны */
+export type TScreenComponents = {
+  "welcome-screen": WelcomeScreen;
+  "personal-screen": PersonalScreen;
+  "completion-screen": CompletionScreen;
 };
+
+// Финальный список селекторов (включая survey-widget)
+export type TSelectorCreate = {
+  "survey-widget": SurveyElement;
+} & TScreenComponents;
 
 // Кастомный тип конструктора HTMLElement
 type CustomElementConstructor<T = HTMLElement> = {
