@@ -29,7 +29,7 @@ const SettingsView: React.FC<TSettingsViewProps> = ({ settings, onChange }) => {
         <TextField
           size="mobile"
           config={{
-            labelProps: { value: "Идентификатор контейнера" },
+            labelProps: { value: "Идентификатор контейнера (куда вставить опрос)" },
             wrapperProps: { className: classNames(styles.input, styles.targetId) },
             inputProps: {
               id: "target_id",

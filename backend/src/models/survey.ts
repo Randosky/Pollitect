@@ -24,26 +24,21 @@ export class Survey
   extends Model<SurveyAttributes, SurveyCreationAttributes>
   implements SurveyAttributes
 {
-  public id!: number;
-  public user_id!: number;
-  public title!: string;
-  public active!: boolean;
-  public questions!: object[];
-  public welcomeScreen!: object;
-  public personalScreen!: object;
-  public completionScreen!: object;
-  public design_settings!: object;
-  public display_settings!: object;
-  public responses!: object[];
-  public statistics!: object;
-  public readonly createdAt?: Date;
-  public readonly updatedAt?: Date;
+  declare id: number;
+  declare user_id: number;
+  declare title: string;
+  declare active: boolean;
+  declare questions: object[];
+  declare welcomeScreen: object;
+  declare personalScreen: object;
+  declare completionScreen: object;
+  declare design_settings: object;
+  declare display_settings: object;
+  declare responses: object[];
+  declare statistics: object;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 
-  /**
-   * Установка ассоциаций модели
-   *
-   * @param {any} models - объект с моделями
-   */
   static associate(models: any) {
     Survey.belongsTo(models.User, { foreignKey: "user_id", as: "author" });
   }
@@ -102,6 +97,5 @@ export default (sequelize: Sequelize) => {
       timestamps: true,
     }
   );
-
   return Survey;
 };

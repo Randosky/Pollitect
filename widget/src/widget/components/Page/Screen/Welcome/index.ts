@@ -27,9 +27,7 @@ export default class WelcomeScreen extends Screen {
     this.shadow.innerHTML = "";
 
     /** Стили */
-    const style = this.styleElement();
-
-    this.shadow.appendChild(style);
+    this.shadow.appendChild(this.styleElement());
 
     const container = document.createElement("div");
 

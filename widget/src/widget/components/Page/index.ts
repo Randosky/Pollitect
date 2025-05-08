@@ -1,8 +1,20 @@
 import { createWebComponent, registerWebComponent } from "@services/ComponentService";
 
-import type { ISurvey } from "../../Survey.types";
-import type { TScreenComponent, TScreenComponentsData, TScreenComponentsType } from "./SurveyElement.types";
+import type { ISurvey, TQuestion } from "../../Survey.types";
+import type {
+  TQuestionComponent,
+  TScreenComponent,
+  TScreenComponentsData,
+  TScreenComponentsType,
+} from "./SurveyElement.types";
 
+import BinaryQuestion from "./Question/Binary";
+import DateQuestion from "./Question/Date";
+import DropdownQuestion from "./Question/Dropdown";
+import MultiQuestion from "./Question/Multi";
+import SingleQuestion from "./Question/Single";
+import TextQuestion from "./Question/Text";
+import TextareaQuestion from "./Question/Textarea";
 import CompletionScreen from "./Screen/Completion";
 import PersonalScreen from "./Screen/Personal";
 import WelcomeScreen from "./Screen/Welcome";
@@ -15,13 +27,19 @@ export class SurveyElement extends HTMLElement {
   /** Текущий шаг */
   private currentStep: number = -1;
   /** Массив шагов */
-  private steps: TScreenComponent[] = [];
+  private steps: (TScreenComponent | TQuestionComponent)[] = [];
 
   constructor() {
     super();
     this.shadow = this.attachShadow({ mode: "open" });
 
-    // registerWebComponent("questions", Questions);
+    registerWebComponent("binary-question", BinaryQuestion);
+    registerWebComponent("date-question", DateQuestion);
+    registerWebComponent("dropdown-question", DropdownQuestion);
+    registerWebComponent("multi-question", MultiQuestion);
+    registerWebComponent("single-question", SingleQuestion);
+    registerWebComponent("text-question", TextQuestion);
+    registerWebComponent("textarea-question", TextareaQuestion);
     registerWebComponent("welcome-screen", WelcomeScreen);
     registerWebComponent("personal-screen", PersonalScreen);
     registerWebComponent("completion-screen", CompletionScreen);
@@ -54,7 +72,7 @@ export class SurveyElement extends HTMLElement {
   private init(): void {
     if (!this.externalData) return;
 
-    const { welcomeScreen, personalScreen, completionScreen } = this.externalData;
+    const { questions, welcomeScreen, personalScreen, completionScreen } = this.externalData;
 
     /** Добавляем экран приветствия */
     if (welcomeScreen.active) {
@@ -64,7 +82,7 @@ export class SurveyElement extends HTMLElement {
     }
 
     /** Добавляем вопросы */
-    // this.steps.push(...questions.map(q => createQuestionComponent(q)));
+    this.steps.push(...questions.map(q => this.createQuestionComponent(q)));
 
     /** Добавляем экран персональных данных */
     if (personalScreen.active) {
@@ -105,6 +123,19 @@ export class SurveyElement extends HTMLElement {
     const component = createWebComponent(type);
 
     component.data = data;
+
+    return component;
+  };
+
+  /**
+   * Создает экземпляр вопроса
+   * @param {TQuestion} question - данные вопроса
+   * @returns {TQuestionComponent} массив веб-компонентов вопросов
+   */
+  private createQuestionComponent = (question: TQuestion): TQuestionComponent => {
+    const component = createWebComponent(`${question.type}-question`);
+
+    component.data = question;
 
     return component;
   };
