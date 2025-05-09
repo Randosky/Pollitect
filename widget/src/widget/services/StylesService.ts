@@ -1,7 +1,9 @@
 /* eslint-disable no-magic-numbers */
+import { isDarkColor } from "@utils/isDarkColor";
+
 import { TDesignSettings, TFontFamily } from "@/widget/Survey.types";
 
-import { OWNER } from "@/widget/vars";
+import { MOBILE_WIDTH, OWNER } from "@/widget/vars";
 
 const STYLE_ID = `${OWNER}-style`;
 const FONT_STYLE_ID = `${OWNER}-fonts`;
@@ -47,7 +49,22 @@ function injectColorVariables(settings: TDesignSettings): void {
       --${OWNER}-font-family: '${settings.font_family}', sans-serif;
       --${OWNER}-text-color: ${settings.text_color};
       --${OWNER}-bg-color: ${settings.background_color};
-      --${OWNER}-btn-color: ${settings.button_color};
+      --${OWNER}-btn-bg-color: ${settings.button_color};
+      --${OWNER}-btn-color: ${isDarkColor(settings.button_color) ? "#fcfcfc" : "#222"};
+
+      --${OWNER}-font-size-hint: 12px;
+      --${OWNER}-font-size-header: 20px;
+      --${OWNER}-font-size-description: 14px;
+      --${OWNER}-font-size-button: 14px;
+      --${OWNER}-font-size-legal-info: 12px;
+    }
+
+    @media (min-width: ${MOBILE_WIDTH}px) {
+      :root {
+        --${OWNER}-font-size-header: 22px;
+        --${OWNER}-font-size-description: 15px;
+        --${OWNER}-font-size-button: 15px;
+      }
     }
   `;
 

@@ -24,66 +24,58 @@ export default class WelcomeScreen extends Screen {
   render(): void {
     if (!this.data) return;
 
+    const { hint, title, description, button_text, legal_info, design_settings } = this.data;
+
+    /** Очищаем элемент перед новым рендером */
     this.shadow.innerHTML = "";
 
     /** Стили */
     this.shadow.appendChild(this.styleElement());
+    this.shadow.appendChild(this.styleScreenElement(design_settings));
 
-    const container = document.createElement("div");
+    /** Корневой контейнер */
+    const container = this.createScreenContainer();
+    /** Изображение */
+    const imageEl = this.createImage(design_settings?.image_url);
+    /** Контент */
+    const contentEl = this.createContent();
+    /** Подсказка */
+    const hintEl = this.createHint(hint);
+    /** Заголовок и описание в общей шапке */
+    const header = this.createHeader();
+    /** Заголовок */
+    const titleEl = this.createTitle(title);
+    /** Описание */
+    const descriptionEl = this.createDescription(description);
+    /** Юридическая информация */
+    const legalEl = this.createLegalInfo(legal_info);
+    /** Кнопка «Далее» */
+    const btn = this.createButton(button_text);
 
-    container.className = "survey-screen";
+    if (imageEl) container.appendChild(imageEl);
 
-    const title = document.createElement("h1");
-    const desc = document.createElement("p");
+    container.appendChild(contentEl);
 
-    title.textContent = this.data.title ?? "Добро пожаловать!";
-    desc.textContent = this.data.description ?? "";
+    if (hintEl) contentEl.appendChild(hintEl);
 
-    const button = document.createElement("button");
+    if (titleEl) header.appendChild(titleEl);
 
-    button.textContent = this.data.button_text;
-    button.onclick = () => this.onNext?.();
-    button.className = "survey-button";
+    if (descriptionEl) header.appendChild(descriptionEl);
 
-    container.append(title, desc, button);
+    contentEl.appendChild(header);
 
-    this.shadow.innerHTML = "";
-    this.shadow.append(container);
+    if (btn) contentEl.appendChild(btn);
+
+    if (legalEl) contentEl.appendChild(legalEl);
+
+    this.shadow.appendChild(container);
   }
 
   styleElement() {
     const styleElement = document.createElement("style");
 
     styleElement.textContent += `
-      .survey-screen {
-        padding: 32px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 16px;
-        background-color: var(--survey-bg-color);
-        border-radius: 16px;
-      }
 
-      h1 {
-        margin: 0;
-        font-size: 24px;
-      }
-
-      p {
-        font-size: 16px;
-        color: var(--survey-text-color);
-      }
-
-      .survey-button {
-        background-color: var(--survey-btn-color);
-        color: white;
-        padding: 10px 24px;
-        font-size: 16px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-      }
     `;
 
     return styleElement;

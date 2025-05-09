@@ -1,11 +1,5 @@
+/** Универсальная переменная для определения пренодлежности элементов и стилей к опросу */
 export const OWNER = "pollitect-survey";
 
-/** Цвета темы */
-export const colors: Record<"dark" | "light", Record<string, string>> = {
-  light: {
-    text: "#333",
-  },
-  dark: {
-    text: "#fff",
-  },
-};
+/** Ширина на мобилке */
+export const MOBILE_WIDTH = 768;

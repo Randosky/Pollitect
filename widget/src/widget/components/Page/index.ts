@@ -1,4 +1,5 @@
 import { createWebComponent, registerWebComponent } from "@services/ComponentService";
+import { OWNER } from "@widget/vars";
 
 import type { ISurvey, TQuestion } from "../../Survey.types";
 import type {
@@ -28,6 +29,9 @@ export class SurveyElement extends HTMLElement {
   private currentStep: number = -1;
   /** Массив шагов */
   private steps: (TScreenComponent | TQuestionComponent)[] = [];
+
+  /** Элемент контейнера */
+  public container?: HTMLDivElement;
 
   constructor() {
     super();
@@ -104,9 +108,24 @@ export class SurveyElement extends HTMLElement {
   /** Рендерим компонент */
   private render(): void {
     this.shadow.innerHTML = "";
+    this.shadow.appendChild(this.styleElement());
+
+    this.createContainer();
 
     this.next();
   }
+
+  /**
+   * Функция для создания контейнера опроса
+   * @returns {void}
+   */
+  private createContainer = (): void => {
+    this.container = document.createElement("div");
+
+    this.container.classList.add("container");
+
+    this.shadow.appendChild(this.container);
+  };
 
   /**
    * Создает экземпляр экрана
@@ -123,6 +142,7 @@ export class SurveyElement extends HTMLElement {
     const component = createWebComponent(type);
 
     component.data = data;
+    component.onNext = () => this.next();
 
     return component;
   };
@@ -142,18 +162,48 @@ export class SurveyElement extends HTMLElement {
 
   /** Переходим к следующему шагу */
   public next(): void {
+    if (!this.container) return;
+
     this.currentStep++;
 
     const currentComponent = this.steps[this.currentStep];
 
     if (!currentComponent) {
-      this.shadow.innerHTML = "<p>Опрос завершён</p>";
+      this.container.innerHTML = "<p>Опрос завершён</p>";
 
       return;
     }
 
-    this.shadow.innerHTML = "";
-    currentComponent.onNext = () => this.next();
-    this.shadow.appendChild(currentComponent);
+    this.container.innerHTML = "";
+    this.container.appendChild(currentComponent);
+  }
+
+  private styleElement(): HTMLStyleElement {
+    const style = document.createElement("style");
+
+    const { width, width_unit, height, height_unit, borderRadius, margin, padding } =
+      this.externalData!.design_settings;
+
+    style.textContent = `
+        .container {
+          position: relative;
+          box-sizing: border-box;
+          width: ${width}${width_unit};
+          height: ${height}${height_unit};
+          background: var(--${OWNER}-bg-color);
+          margin: ${margin.map(px => px + "px").join(" ")};
+          padding: ${padding.map(px => px + "px").join(" ")};
+          border-radius: ${borderRadius.map(px => px + "px").join(" ")};
+        }
+
+        .container * {
+          box-sizing: border-box;
+          border-radius: inherit;
+          color: var(--${OWNER}-text-color);
+          font-family: var(--${OWNER}-font-family);
+        }
+      `;
+
+    return style;
   }
 }

@@ -81,7 +81,7 @@ export default class CompletionScreen extends Screen {
       }
       .survey-button {
         margin-top: 20px;
-        background-color: var(--${OWNER}-btn-color);
+        background-color: var(--${OWNER}-btn-bg-color);
         color: white;
         padding: 10px 24px;
         font-size: 16px;

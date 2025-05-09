@@ -105,7 +105,7 @@ export default class BinaryQuestion extends Question {
         border: none;
         border-radius: 8px;
         cursor: pointer;
-        background-color: var(--${OWNER}-btn-color);
+        background-color: var(--${OWNER}-btn-bg-color);
         color: #fff;
         transition: filter 0.2s;
       }

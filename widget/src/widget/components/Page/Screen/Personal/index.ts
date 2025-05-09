@@ -122,7 +122,7 @@ export default class PersonalScreen extends Screen {
       }
       .survey-button {
         margin-top: 16px;
-        background-color: var(--${OWNER}-btn-color);
+        background-color: var(--${OWNER}-btn-bg-color);
         color: white;
         padding: 10px 24px;
         font-size: 16px;

@@ -18,55 +18,15 @@
         height: 100vh;
       }
 
-      body > div {
-        margin-bottom: 10px;
-        position: relative;
-        width: fit-content;
+      html * {
+        box-sizing: border-box;
       }
 
-      body > div::after {
-        content: "";
-        display: block;
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        position: absolute;
-        top: 50%;
-        right: -30px;
-        transform: translate(-50%, -50%);
-      }
-
-      .ready::after {
-        background-color: lightgreen;
-      }
-
-      .not_ready::after {
-        background-color: lightcoral;
-      }
-
-      input[type="number"] {
-        width: 50px;
-      }
-
-      .big-div {
-        height: 6000px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      .button {
-        position: fixed;
-        right: 50px;
-        top: 50px;
-      }
-
-      .button button {
-        font-size: 45px;
-      }
-
-      .hide {
-        display: none;
+      #app {
+        padding: 32px;
+        width: 100%;
+        height: fit-content;
+        background-color: aqua;
       }
     </style>
   </head>
@@ -75,18 +35,38 @@
     <div id="app"></div>
 
     <!-- Локальное тестирование -->
-    <!-- <script
+
+    <script
       type="module"
-      src="./src/index.ts"
-    ></script> -->
+      src="./src/mockSurvey.ts"
+    ></script>
+
+    <script
+      type="module"
+      src="./src/widget/Survey.ts"
+    ></script>
+
+    <script type="module">
+      const container = document.getElementById("app");
+
+      /** Инициализируем опрос */
+      const surveyInstance = new Survey(window.mockSurvey);
+
+      window._pollitect = surveyInstance;
+
+      /** Добавляем опрос в контейнер */
+      if (surveyInstance.surveyElement) {
+        container.appendChild(surveyInstance.surveyElement);
+      }
+    </script>
 
     <!-- Тестирование с запросом -->
-    <script
+    <!-- <script
       src="http://localhost:3000/pollitect.js"
       type="text/javascript"
       charset="utf-8"
       data-user="1"
       defer
-    ></script>
+    ></script> -->
   </body>
 </html>

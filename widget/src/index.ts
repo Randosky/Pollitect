@@ -34,7 +34,6 @@ async function initSurvey() {
       { method: "GET" }
     );
     const data = await response.json();
-    // const data = mockSurvey;
 
     const containerId = data?.display_settings?.target_id;
     const container = document.getElementById(containerId);
