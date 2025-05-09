@@ -82,11 +82,11 @@ export class SurveyElement extends HTMLElement {
     if (welcomeScreen.active) {
       const screen = this.createScreenComponent("welcome-screen", welcomeScreen);
 
-      if (screen) this.steps.push(screen);
+      // if (screen) this.steps.push(screen);
     }
 
     /** Добавляем вопросы */
-    this.steps.push(...questions.map(q => this.createQuestionComponent(q)));
+    // this.steps.push(...questions.map(q => this.createQuestionComponent(q)));
 
     /** Добавляем экран персональных данных */
     if (personalScreen.active) {

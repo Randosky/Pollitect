@@ -30,7 +30,6 @@ export default class WelcomeScreen extends Screen {
     this.shadow.innerHTML = "";
 
     /** Стили */
-    this.shadow.appendChild(this.styleElement());
     this.shadow.appendChild(this.styleScreenElement(design_settings));
 
     /** Корневой контейнер */
@@ -69,15 +68,5 @@ export default class WelcomeScreen extends Screen {
     if (legalEl) contentEl.appendChild(legalEl);
 
     this.shadow.appendChild(container);
-  }
-
-  styleElement() {
-    const styleElement = document.createElement("style");
-
-    styleElement.textContent += `
-
-    `;
-
-    return styleElement;
   }
 }

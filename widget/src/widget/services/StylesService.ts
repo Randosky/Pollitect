@@ -46,6 +46,8 @@ function injectColorVariables(settings: TDesignSettings): void {
 
   style.innerHTML = `
     :root {
+      --${OWNER}-secondary-bg-color: #f2f0f0;
+
       --${OWNER}-font-family: '${settings.font_family}', sans-serif;
       --${OWNER}-text-color: ${settings.text_color};
       --${OWNER}-bg-color: ${settings.background_color};

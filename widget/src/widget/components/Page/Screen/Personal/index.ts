@@ -1,6 +1,6 @@
 import { OWNER } from "@widget/vars";
 
-import type { TPersonalScreen } from "@/widget/Survey.types";
+import type { TPersonalScreen, TScreenPersonalField } from "@/widget/Survey.types";
 
 import Screen from "../index";
 
@@ -26,110 +26,218 @@ export default class PersonalScreen extends Screen {
   render(): void {
     if (!this.data) return;
 
+    const { title, description, design_settings } = this.data;
+
+    /** Сброс перед новым рендером */
     this.shadow.innerHTML = "";
+
+    /** Подключаем стили из Screen и свои */
+    this.shadow.appendChild(this.styleScreenElement(design_settings));
     this.shadow.appendChild(this.styleElement());
 
-    const container = document.createElement("div");
+    /** Корневой контейнер экрана */
+    const container = this.createScreenContainer();
+    /** Изображение */
+    const imageEl = this.createImage(design_settings.image_url);
+    /** Блок контента */
+    const contentEl = this.createContent();
+    /** Хедер с заголовком и описанием */
+    const header = this.createHeader();
+    /** Заголовок */
+    const titleEl = this.createTitle(title);
+    /** Описание */
+    const descEl = this.createDescription(description);
 
-    container.className = "survey-screen";
-
-    // Заголовок
-    const title = document.createElement("h2");
-
-    title.textContent = this.data.title ?? "О вас";
-    container.appendChild(title);
-
-    // Описание
-    if (this.data.description) {
-      const desc = document.createElement("p");
-
-      desc.textContent = this.data.description;
-      container.appendChild(desc);
-    }
-
-    // Форма полей
+    /** Форма персональных полей + кнопки */
     const form = document.createElement("form");
 
-    form.className = "personal-form";
+    form.className = "screen-form";
+    this.renderFields(form);
 
-    this.data.personal_fields?.forEach(field => {
-      const label = document.createElement("label");
+    /** Юридическая информация */
+    const legalHtml = `
+      Отправляя форму, я принимаю условия
+      <a href="/" target="_blank">политики конфиденциальности</a>
+      и даю согласие на обработку моих
+      <a href="/" target="_blank">персональных данных</a>
+    `;
+    const legalEl = this.createLegalInfo(legalHtml);
 
-      label.textContent = field.label;
+    /** Структура */
 
-      const input = document.createElement("input");
+    if (titleEl) header.appendChild(titleEl);
 
-      input.type = "text";
-      input.placeholder = field.placeholder;
-      input.required = field.required;
+    if (descEl) header.appendChild(descEl);
 
-      label.appendChild(input);
-      form.appendChild(label);
-    });
+    contentEl.appendChild(header);
 
-    // Кнопка отправки
-    const submit = document.createElement("button");
+    if (legalEl) form.appendChild(legalEl);
 
-    submit.type = "submit";
-    submit.textContent = this.data.button_text;
-    submit.className = "survey-button";
-    form.appendChild(submit);
-
-    form.addEventListener("submit", e => {
-      e.preventDefault();
-      this.onNext?.();
-    });
-
+    if (imageEl) container.appendChild(imageEl);
+    container.appendChild(contentEl);
     container.appendChild(form);
+
     this.shadow.appendChild(container);
   }
 
+  /**
+   * Рендерит все поля personal_fields и кнопки внутрь формы,
+   * а также вешает валидацию обязательных полей
+   * @param form — HTMLFormElement, в который добавляются поля
+   */
+  private renderFields(form: HTMLFormElement): void {
+    const requiredInputs: HTMLInputElement[] = [];
+
+    this.data?.personal_fields?.forEach((field: TScreenPersonalField) => {
+      const wrapper = document.createElement("div");
+
+      wrapper.className = "form-field";
+
+      const label = document.createElement("label");
+
+      label.htmlFor = `personal-${field.type}`;
+      label.textContent = field.label;
+
+      // маленький кружочек для обязательного поля
+      if (field.required) {
+        const dot = document.createElement("span");
+
+        dot.className = "required-dot";
+        label.appendChild(dot);
+      }
+
+      const input = document.createElement("input");
+
+      input.id = `personal-${field.type}`;
+      input.name = field.type;
+      input.required = field.required;
+      input.placeholder = field.placeholder;
+
+      switch (field.type) {
+        case "email":
+          input.type = "email";
+          break;
+
+        case "phone":
+          input.type = "tel";
+          break;
+
+        default:
+          input.type = "text";
+      }
+
+      if (field.required) {
+        requiredInputs.push(input);
+      }
+
+      wrapper.append(label, input);
+      form.appendChild(wrapper);
+    });
+
+    /** Кнопка «Отправить» */
+    const submitBtn = this.createButton(this.data!.button_text, () => {
+      this.onNext?.();
+    });
+
+    submitBtn.type = "submit";
+    submitBtn.disabled = true;
+    form.appendChild(submitBtn);
+
+    /** Кнопка «Пропустить» */
+    const skipBtn = this.createButton("Пропустить", () => {
+      this.onNext?.();
+    });
+
+    skipBtn.classList.add("screen-skip-button");
+    form.appendChild(skipBtn);
+
+    /** Проверка валидности всех обязательных полей */
+    const updateSubmitState = () => {
+      const allFilled = requiredInputs.every(i => i.value.trim().length > 0);
+
+      submitBtn.disabled = !allFilled;
+    };
+
+    // при вводе в любом поле — обновляем состояние кнопки
+    requiredInputs.forEach(input => {
+      input.addEventListener("input", updateSubmitState);
+    });
+
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+
+      if (!submitBtn.disabled) {
+        this.onNext?.();
+      }
+    });
+  }
+
+  /** Собственные стили для полей формы и маркера обязательности */
   private styleElement(): HTMLStyleElement {
     const style = document.createElement("style");
 
     style.textContent = `
-      .survey-screen {
-        padding: 32px;
-        background-color: var(--${OWNER}-bg-color);
-        border-radius: 16px;
-        display: flex;
-        flex-direction: column;
+      .screen-form {
+        z-index: 3;
         gap: 16px;
-      }
-      h2 {
-        margin: 0;
-        font-size: 20px;
-      }
-      p {
-        font-size: 16px;
-        color: var(--survey-text-color);
-      }
-      .personal-form {
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        padding: 16px;
+        max-width: 400px;
+        align-items: flex-end;
+        background-color: var(--${OWNER}-secondary-bg-color);
       }
-      label {
+
+      .form-field {
+        width: 100%;
         display: flex;
         flex-direction: column;
-        font-size: 14px;
-        gap: 4px;
       }
-      input {
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
+
+      .form-field label {
+        width: fit-content;
+        margin-bottom: 6px;
+        font-size: var(--${OWNER}-font-size-description);
+        color: var(--${OWNER}-text-color);
+        position: relative;
       }
-      .survey-button {
-        margin-top: 16px;
+
+      .required-dot {
+        position: absolute;
+        top: 0;
+        right: -16px;
+        width: 8px;
+        height: 8px;
         background-color: var(--${OWNER}-btn-bg-color);
-        color: white;
-        padding: 10px 24px;
-        font-size: 16px;
-        border-radius: 8px;
-        border: none;
+        border-radius: 50%;
+      }
+
+      .form-field input {
+        padding: 8px 12px;
+        font-size: var(--${OWNER}-font-size-description);
+        border: 1px solid var(--${OWNER}-btn-bg-color);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--${OWNER}-text-color);
+      }
+
+      .form-field input:focus {
+        outline: none;
+        box-shadow: 0 0 0 1px var(--${OWNER}-btn-bg-color);
+      }
+
+      .screen-skip-button {
+        margin-top: 8px;
         cursor: pointer;
-        align-self: center;
+        background: transparent;
+        color: var(--${OWNER}-text-color);
+        border: 1px solid var(--${OWNER}-btn-bg-color);
+        font-size: var(--${OWNER}-font-size-description);
+      }
+
+      .screen-form button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
       }
     `;
 

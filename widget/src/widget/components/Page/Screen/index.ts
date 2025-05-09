@@ -60,7 +60,7 @@ export default abstract class Screen extends HTMLElement {
     const hint = document.createElement("p");
 
     hint.className = "screen-hint";
-    hint.textContent = text;
+    hint.innerHTML = text;
 
     return hint;
   }
@@ -84,7 +84,7 @@ export default abstract class Screen extends HTMLElement {
     const title = document.createElement("h1");
 
     title.className = "screen-title";
-    title.textContent = text;
+    title.innerHTML = text;
 
     return title;
   }
@@ -96,7 +96,7 @@ export default abstract class Screen extends HTMLElement {
     const desc = document.createElement("p");
 
     desc.className = "screen-description";
-    desc.textContent = text;
+    desc.innerHTML = text;
 
     return desc;
   }
@@ -108,7 +108,7 @@ export default abstract class Screen extends HTMLElement {
     const legal = document.createElement("p");
 
     legal.className = "screen-legal-info";
-    legal.textContent = text;
+    legal.innerHTML = text;
 
     return legal;
   }
@@ -121,7 +121,7 @@ export default abstract class Screen extends HTMLElement {
     const button = document.createElement("button");
 
     button.className = "screen-button";
-    button.textContent = text;
+    button.innerHTML = text;
     button.onclick = onClick ?? this.onNext ?? null;
 
     return button;
@@ -156,7 +156,6 @@ export default abstract class Screen extends HTMLElement {
       case "with_image":
         layoutStyles = `
           .screen-container {
-            gap: 16px;
             display: grid;
             grid-template-columns: 1fr 45%;
           }
@@ -169,7 +168,7 @@ export default abstract class Screen extends HTMLElement {
             justify-content: center;
             object-fit: cover;
             object-position: center;
-            background: #f2f0f0;
+            background: var(--${OWNER}-secondary-bg-color);
             overflow: hidden;
           }
         `;
@@ -209,6 +208,7 @@ export default abstract class Screen extends HTMLElement {
 
     style.textContent = `
       .screen-container {
+        gap: 16px;
         width: 100%;
         height: 100%;
         display: flex;

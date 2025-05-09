@@ -1,6 +1,7 @@
 @import "@styles/breakpoints";
 
 .container {
+  min-height: 100%;
   row-gap: 32px;
   display: grid;
   flex: 1 1 auto;

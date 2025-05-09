@@ -86,14 +86,14 @@ import type { ISurvey } from "@widget/Survey.types";
       },
       {
         type: "phone",
-        required: false,
+        required: true,
         label: "Телефон",
         placeholder: "+7 (___) ___-__-__",
       },
     ],
     design_settings: {
-      image_url: undefined,
-      layout: "without_image",
+      image_url: "https://cs5.pikabu.ru/post_img/big/2015/06/04/11/1433446202_1725992411.jpg",
+      layout: "image_background",
       alignment: "left",
     },
   },
@@ -104,9 +104,9 @@ import type { ISurvey } from "@widget/Survey.types";
     button_text: "Перейти на главную",
     button_url: "https://example.com",
     design_settings: {
-      image_url: undefined,
+      image_url: "https://cs5.pikabu.ru/post_img/big/2015/06/04/11/1433446202_1725992411.jpg",
       layout: "without_image",
-      alignment: "center",
+      alignment: "left",
     },
   },
   design_settings: {
