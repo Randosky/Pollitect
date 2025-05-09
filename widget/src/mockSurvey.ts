@@ -128,8 +128,8 @@ import type { ISurvey } from "@widget/Survey.types";
     button_text: "Перейти на главную",
     button_url: "https://example.com",
     design_settings: {
-      image_url: "https://cs5.pikabu.ru/post_img/big/2015/06/04/11/1433446202_1725992411.jpg",
-      layout: "with_image",
+      image_url: "https://img.freepik.com/premium-photo/premium-quality-background-texture_599236-376.jpg",
+      layout: "image_background",
       alignment: "center",
     },
   },
