@@ -82,17 +82,17 @@ export class SurveyElement extends HTMLElement {
     if (welcomeScreen.active) {
       const screen = this.createScreenComponent("welcome-screen", welcomeScreen);
 
-      // if (screen) this.steps.push(screen);
+      if (screen) this.steps.push(screen);
     }
 
     /** Добавляем вопросы */
-    // this.steps.push(...questions.map(q => this.createQuestionComponent(q)));
+    this.steps.push(...questions.sort((a, b) => a.order - b.order).map(q => this.createQuestionComponent(q)));
 
     /** Добавляем экран персональных данных */
     if (personalScreen.active) {
       const screen = this.createScreenComponent("personal-screen", personalScreen);
 
-      // if (screen) this.steps.push(screen);
+      if (screen) this.steps.push(screen);
     }
 
     /** Добавляем экран завершения */
@@ -156,6 +156,7 @@ export class SurveyElement extends HTMLElement {
     const component = createWebComponent(`${question.type}-question`);
 
     component.data = question;
+    component.onNext = () => this.next();
 
     return component;
   };

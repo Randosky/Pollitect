@@ -1,86 +1,198 @@
-/* eslint-disable camelcase */
 import Question from "..";
 import { OWNER } from "@widget/vars";
 
+import type { TAnswer } from "@widget/Survey.types";
+
+/**
+ * Вопрос «Одиночный выбор».
+ */
 export default class SingleQuestion extends Question {
+  /** Контейнер с опциями */
+  private optionsContainer!: HTMLDivElement;
+  /** Кнопка «Ответить» */
+  private sendButton!: HTMLButtonElement;
+  /** Кнопка «Пропустить» */
+  private skipButton?: HTMLButtonElement;
+
   constructor() {
     super();
   }
 
   connectedCallback() {
-    if (this.data) this.render();
+    if (this.data) {
+      this.render();
+    }
   }
 
   protected render(): void {
     if (!this.data) return;
+
+    /** Очистка предыдущего рендера */
     this.shadow.innerHTML = "";
+
+    /** Общие стили из базового класса */
+    this.shadow.appendChild(this.styleQuestionElement());
+    /** Стили для single-выбора */
     this.shadow.appendChild(this.styleElement());
 
+    /** Корневой контейнер вопроса */
     const container = this.createContainer();
-    const title = document.createElement("h2");
 
-    title.textContent = this.data.title;
-    container.appendChild(title);
+    /** Заголовок + описание */
+    const header = this.createHeader();
 
-    if (this.data.description) {
-      const desc = document.createElement("p");
+    container.appendChild(header);
 
-      desc.textContent = this.data.description;
-      desc.className = "description";
-      container.appendChild(desc);
+    /** Форма с радио-опциями */
+    const form = this.createForm();
+
+    this.optionsContainer = this.createOptions();
+    form.appendChild(this.optionsContainer);
+    container.appendChild(form);
+
+    /** Контейнер кнопок */
+    const buttonContainer = this.createButtonContainer();
+
+    if (!this.data.required) {
+      this.skipButton = this.createSkipButton();
+      buttonContainer.appendChild(this.skipButton);
     }
 
+    this.sendButton = this.createSendButton();
+    this.sendButton.disabled = true;
+    buttonContainer.appendChild(this.sendButton);
+
+    container.appendChild(buttonContainer);
+    this.shadow.appendChild(container);
+
+    /** Навешиваем события */
+    this.initEvents();
+  }
+
+  /**
+   * Создаёт контейнер grid с кастомными радио-кнопками
+   */
+  private createOptions(): HTMLDivElement {
     const opts = document.createElement("div");
 
-    opts.className = "options";
-    this.data.options?.forEach(opt => {
-      const label = document.createElement("label");
+    opts.className = "question-options";
 
-      label.className = "option-label";
-      const r = document.createElement("input");
+    this.data!.options!.forEach((opt, idx) => {
+      const id = `single-${this.data!.id}-${idx}`;
+      const wrapper = document.createElement("label");
 
-      r.type = "radio";
-      r.name = `q-${this.data!.id}`;
-      r.value = opt;
-      label.append(r, document.createTextNode(" " + opt));
-      opts.appendChild(label);
+      wrapper.className = "question-option";
+      wrapper.htmlFor = id;
+
+      const input = document.createElement("input");
+
+      input.type = "radio";
+      input.name = `single-${this.data!.id}`;
+      input.id = id;
+      input.value = opt;
+
+      const fake = document.createElement("span");
+
+      fake.className = "fake";
+
+      const text = document.createElement("span");
+
+      text.className = "text";
+      text.textContent = opt;
+
+      wrapper.append(input, fake, text);
+      opts.append(wrapper);
     });
-    container.appendChild(opts);
 
-    const btn = this.createButton("Next");
-
-    btn.onclick = () => {
-      const sel = opts.querySelector<HTMLInputElement>(`input[name="q-${this.data!.id}"]:checked`);
-
-      this.handleAnswer(sel?.value ?? "");
-    };
-    container.appendChild(btn);
-
-    this.shadow.appendChild(container);
+    return opts;
   }
 
-  private handleAnswer(value: string): void {
-    this.dispatchEvent(
-      new CustomEvent("answer", {
-        detail: { question_id: this.data!.id, value },
-        bubbles: true,
-        composed: true,
-      })
-    );
-    this.onNext?.();
+  /**
+   * Навешивает слушатели на опции и кнопки
+   */
+  private initEvents(): void {
+    /** Активируем кнопку, когда выбран любой radio */
+    this.optionsContainer.addEventListener("change", () => {
+      const any = !!this.optionsContainer.querySelector('input[type="radio"]:checked');
+
+      this.sendButton.disabled = !any;
+    });
+
+    /** Обработка ответа */
+    this.sendButton.addEventListener("click", e => {
+      e.preventDefault();
+      const checked = this.optionsContainer.querySelector('input[type="radio"]:checked') as HTMLInputElement | null;
+
+      if (!checked) return;
+
+      const answer: TAnswer = {
+        question_id: this.data!.id!,
+        value: checked.value,
+      };
+
+      this.sendAnswer(answer);
+    });
   }
 
+  /**
+   * Стили для SingleQuestion (grid + кастомные радио)
+   */
   private styleElement(): HTMLStyleElement {
-    const s = document.createElement("style");
+    const style = document.createElement("style");
 
-    s.textContent = `
-        .question-container { padding:24px; }
-        h2,p{margin:0;color:var(--${OWNER}-text-color)} .description{font-size:14px;}
-        .options { display:flex;flex-direction:column;gap:8px; }
-        .option-label { font-size:14px; }
-        .survey-button { margin-top:16px; }
-      `;
+    style.textContent = `
+      .question-options {
+        width: 100%;
+        display: grid;
+        row-gap: 24px;
+        column-gap: 32px;
+        grid-auto-flow: column;
+        grid-auto-columns: max-content;
+        grid-template-rows: repeat(4, auto);
+      }
 
-    return s;
+      .question-option {
+        width: fit-content;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        user-select: none;
+        position: relative;
+      }
+
+      .question-option input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .question-option .fake {
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--${OWNER}-btn-bg-color);
+        border-radius: 50%;
+        position: relative;
+        transition: border-color 0.2s;
+      }
+      .question-option .fake:after {
+        content: "";
+        position: absolute;
+        inset: 4px;
+        border-radius: 50%;
+        background: var(--${OWNER}-btn-bg-color);
+        transform: scale(0);
+        transition: transform 0.2s;
+      }
+      .question-option input:checked + .fake:after {
+        transform: scale(1);
+      }
+      .question-option .text {
+        font-size: var(--${OWNER}-font-size-button);
+        line-height: 140%;
+      }
+    `;
+
+    return style;
   }
 }

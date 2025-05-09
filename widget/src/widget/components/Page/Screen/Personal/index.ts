@@ -184,6 +184,7 @@ export default class PersonalScreen extends Screen {
         flex-direction: column;
         padding: 16px;
         max-width: 400px;
+        overflow-y: auto;
         align-items: flex-end;
         background-color: var(--${OWNER}-secondary-bg-color);
       }
@@ -214,9 +215,9 @@ export default class PersonalScreen extends Screen {
 
       .form-field input {
         padding: 8px 12px;
-        font-size: var(--${OWNER}-font-size-description);
+        font-size: var(--${OWNER}-font-size-button);
         border: 1px solid var(--${OWNER}-btn-bg-color);
-        border-radius: 6px;
+        border-radius: 5px;
         background: #fff;
         color: var(--${OWNER}-text-color);
       }

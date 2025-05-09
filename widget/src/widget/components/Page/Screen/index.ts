@@ -224,15 +224,12 @@ export default abstract class Screen extends HTMLElement {
         font-family: var(--${OWNER}-font-family);
       }
 
-      .screen-image {
-      
-      }
-
       .screen-content {
         gap: 32px;
         width: 100%;
         height: 100%;
         display: flex;
+        overflow-y: auto;
         flex-direction: column;
         text-align: ${alignment};
         align-items: ${alignItems};
