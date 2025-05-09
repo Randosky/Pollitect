@@ -1,7 +1,6 @@
 import type { TCompletionScreen } from "@/widget/Survey.types";
 
 import Screen from "../index";
-import { OWNER } from "@widget/vars";
 
 export default class CompletionScreen extends Screen {
   private externalData?: TCompletionScreen;
@@ -25,68 +24,63 @@ export default class CompletionScreen extends Screen {
   render(): void {
     if (!this.data) return;
 
+    const { title, description, button_text, button_url, design_settings } = this.data;
+
+    /** Сброс перед рендером */
     this.shadow.innerHTML = "";
+
+    /** Базовые стили экрана */
+    this.shadow.appendChild(this.styleScreenElement(design_settings));
+    /** Стили для completionScreen */
     this.shadow.appendChild(this.styleElement());
 
-    const container = document.createElement("div");
+    /** Корневой контейнер экрана */
+    const container = this.createScreenContainer();
 
-    container.className = "survey-screen";
+    /** Картинка (если указано) */
+    const imageEl = this.createImage(design_settings.image_url);
 
-    // Заголовок и описание
-    const title = document.createElement("h2");
-
-    title.textContent = this.data.title ?? "Спасибо!";
-    container.appendChild(title);
-
-    const desc = document.createElement("p");
-
-    desc.textContent = this.data.description ?? "Ваши ответы отправлены.";
-    container.appendChild(desc);
-
-    // Кнопка-ссылка, если есть
-    if (this.data.button_text && this.data.button_url) {
-      const link = document.createElement("a");
-
-      link.textContent = this.data.button_text;
-      link.href = this.data.button_url;
-      link.target = "_blank";
-      link.className = "survey-button";
-      container.appendChild(link);
+    if (imageEl) {
+      container.appendChild(imageEl);
     }
 
+    /** Блок контента с дополнительным классом */
+    const contentEl = this.createContent();
+
+    contentEl.classList.add("completion-content");
+
+    /** Хедер */
+    const header = this.createHeader();
+    const titleEl = this.createTitle(title);
+    const descEl = this.createDescription(description);
+
+    if (titleEl) header.appendChild(titleEl);
+
+    if (descEl) header.appendChild(descEl);
+    contentEl.appendChild(header);
+
+    /** Кнопка-ссылка, если есть */
+    if (button_text && button_url) {
+      const link = document.createElement("a");
+
+      link.className = "screen-button";
+      link.textContent = button_text;
+      link.href = button_url;
+      link.target = "_blank";
+      contentEl.appendChild(link);
+    }
+
+    container.appendChild(contentEl);
     this.shadow.appendChild(container);
   }
 
+  /** Собственные стили для CompletionScreen */
   private styleElement(): HTMLStyleElement {
     const style = document.createElement("style");
 
     style.textContent = `
-      .survey-screen {
-        padding: 32px;
-        background-color: var(--${OWNER}-bg-color);
-        border-radius: 16px;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        align-items: center;
-      }
-      h2 {
-        margin: 0;
-        font-size: 22px;
-      }
-      p {
-        font-size: 16px;
-        color: var(--survey-text-color);
-      }
-      .survey-button {
-        margin-top: 20px;
-        background-color: var(--${OWNER}-btn-bg-color);
-        color: white;
-        padding: 10px 24px;
-        font-size: 16px;
-        border-radius: 8px;
-        text-decoration: none;
+      .completion-content {
+        justify-content: center;
       }
     `;
 

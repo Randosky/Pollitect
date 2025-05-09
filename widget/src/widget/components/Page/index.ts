@@ -92,7 +92,7 @@ export class SurveyElement extends HTMLElement {
     if (personalScreen.active) {
       const screen = this.createScreenComponent("personal-screen", personalScreen);
 
-      if (screen) this.steps.push(screen);
+      // if (screen) this.steps.push(screen);
     }
 
     /** Добавляем экран завершения */
