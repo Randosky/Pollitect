@@ -87,7 +87,12 @@ export default class CompletionScreen extends Screen {
 
       /** Устанавливаем куки о прохождении */
       setCookie(`survey_${this.surveyId}_completed`, "true", { maxAge: Infinity, domain: window.location.origin });
-  });
+
+      /** Меняем текст кнопки */
+      this.finishBtn!.onclick = null;
+      this.finishBtn!.disabled = true;
+      this.finishBtn!.textContent = "Ответы сохранены!";
+    });
   }
 
   /** Собственные стили для CompletionScreen */
