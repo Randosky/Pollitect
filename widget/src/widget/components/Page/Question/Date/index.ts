@@ -77,14 +77,12 @@ export default class DateQuestion extends Question {
       this.sendButton.disabled = !this.dateInput.value;
     });
 
-    /** Открываем календарь при клике и фокусе */
-    ["click", "focus"].forEach(evt =>
-      this.dateInput.addEventListener(evt, () => {
-        if (typeof this.dateInput.showPicker === "function") {
-          this.dateInput.showPicker();
-        }
-      })
-    );
+    /** Открываем календарь при клике */
+    this.dateInput.addEventListener("click", () => {
+      if (typeof this.dateInput.showPicker === "function") {
+        this.dateInput.showPicker();
+      }
+    });
 
     /** Обработка отправки */
     this.sendButton.addEventListener("click", e => {

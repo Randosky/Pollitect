@@ -130,8 +130,6 @@ export type TCompletionScreen = {
   description?: string;
   /** Текст кнопки перехода (например, «Перейти на сайт» ) */
   button_text?: string;
-  /** Ссылка для кнопки */
-  button_url?: string;
   /** Настройки дизайна для экрана */
   design_settings: TScreenDesignSettings;
 };

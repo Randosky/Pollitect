@@ -176,18 +176,6 @@ const CompletionScreen: React.FC = React.memo(() => {
       </div>
 
       <div className={screenStyles.footer}>
-        <TextField
-          size="mobile"
-          config={{
-            inputProps: {
-              name: "button_url",
-              placeholder: "URL кнопки",
-              value: form.button_url,
-              onChange: handleField,
-            },
-          }}
-        />
-
         <Select
           size="mobile"
           name="layout"

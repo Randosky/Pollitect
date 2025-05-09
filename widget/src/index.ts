@@ -1,5 +1,8 @@
+import { getCookie } from "@services/CookieService";
 import "core-js";
 import "regenerator-runtime/runtime";
+
+import { ISurvey } from "@widget/Survey.types";
 
 // import mockSurvey from "./mockSurvey";
 import Survey from "./widget/Survey";
@@ -33,9 +36,20 @@ async function initSurvey() {
       "http://localhost:3000/api/widget?userId=" + userId + "&url=" + window.location.origin,
       { method: "GET" }
     );
-    const data = await response.json();
+    const data = (await response.json()) as ISurvey;
 
-    const containerId = data?.display_settings?.target_id;
+    if (!data) return;
+
+    const surveyId = data.id;
+    const containerId = data.display_settings.target_id;
+    const preventRepeat = data.display_settings.prevent_repeat;
+
+    /** Запрещаем прохождение опроса, если уже проходили */
+    const isSurveyComplete = getCookie(`survey_${surveyId}_completed`) === "true";
+
+    if (isSurveyComplete && preventRepeat) return;
+
+    /** Ищем контейнер */
     const container = document.getElementById(containerId);
 
     if (!container) {

@@ -76,7 +76,12 @@ export class SurveyElement extends HTMLElement {
   private init(): void {
     if (!this.externalData) return;
 
-    const { questions, welcomeScreen, personalScreen, completionScreen } = this.externalData;
+    const { questions, welcomeScreen, personalScreen, completionScreen, display_settings } = this.externalData;
+
+    /** Блокируем прокрутку страницы */
+    if (display_settings.block_scroll) {
+      document.body.style.overflow = "hidden";
+    }
 
     /** Добавляем экран приветствия */
     if (welcomeScreen.active) {
@@ -142,6 +147,7 @@ export class SurveyElement extends HTMLElement {
     const component = createWebComponent(type);
 
     component.data = data;
+    component.surveyId = this.data!.id!;
     component.onNext = () => this.next();
 
     return component;
@@ -156,6 +162,7 @@ export class SurveyElement extends HTMLElement {
     const component = createWebComponent(`${question.type}-question`);
 
     component.data = question;
+    component.surveyId = this.data!.id!;
     component.onNext = () => this.next();
 
     return component;

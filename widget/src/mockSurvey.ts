@@ -149,7 +149,7 @@ import type { ISurvey } from "@widget/Survey.types";
   },
   display_settings: {
     target_id: "app",
-    block_scroll: false,
+    block_scroll: true,
     prevent_repeat: false,
     timer_sec: 0,
     url_match_mode: "contains",

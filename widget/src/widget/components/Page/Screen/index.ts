@@ -3,8 +3,12 @@ import { OWNER } from "@widget/vars";
 import type { TScreenDesignSettings } from "@widget/Survey.types";
 
 export default abstract class Screen extends HTMLElement {
+  /** Shadow root для рендера */
   protected shadow: ShadowRoot;
+  /** Колбек перехода к следующему шагу */
   private _onNext?: () => void;
+  /** Идентификатор текущего опроса */
+  private _surveyId?: number;
 
   constructor() {
     super();
@@ -17,6 +21,14 @@ export default abstract class Screen extends HTMLElement {
 
   get onNext(): (() => void) | undefined {
     return this._onNext;
+  }
+
+  set surveyId(newVal: number) {
+    this._surveyId = newVal;
+  }
+
+  get surveyId(): number | undefined {
+    return this._surveyId;
   }
 
   /** Каждый потомок должен реализовать render(): void */

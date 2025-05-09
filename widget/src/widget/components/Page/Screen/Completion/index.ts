@@ -1,9 +1,12 @@
+import { setCookie } from "@services/CookieService";
+
 import type { TCompletionScreen } from "@/widget/Survey.types";
 
 import Screen from "../index";
 
 export default class CompletionScreen extends Screen {
   private externalData?: TCompletionScreen;
+  private finishBtn?: HTMLButtonElement;
 
   constructor() {
     super();
@@ -24,7 +27,7 @@ export default class CompletionScreen extends Screen {
   render(): void {
     if (!this.data) return;
 
-    const { title, description, button_text, button_url, design_settings } = this.data;
+    const { title, description, button_text, design_settings } = this.data;
 
     /** Сброс перед рендером */
     this.shadow.innerHTML = "";
@@ -59,19 +62,32 @@ export default class CompletionScreen extends Screen {
     if (descEl) header.appendChild(descEl);
     contentEl.appendChild(header);
 
-    /** Кнопка-ссылка, если есть */
-    if (button_text && button_url) {
-      const link = document.createElement("a");
+    /** Кнопка завершения, если есть */
+    if (button_text) {
+      this.finishBtn = document.createElement("button");
 
-      link.className = "screen-button";
-      link.textContent = button_text;
-      link.href = button_url;
-      link.target = "_blank";
-      contentEl.appendChild(link);
+      this.finishBtn.className = "screen-button";
+      this.finishBtn.textContent = button_text;
+      contentEl.appendChild(this.finishBtn);
     }
 
     container.appendChild(contentEl);
+
+    this.initEvents();
+
     this.shadow.appendChild(container);
+  }
+
+  private initEvents(): void {
+    if (!this.finishBtn) return;
+
+    this.finishBtn.addEventListener("click", () => {
+      /** Возвращаем скролл */
+      document.body.style.removeProperty("overflow");
+
+      /** Устанавливаем куки о прохождении */
+      setCookie(`survey_${this.surveyId}_completed`, "true", { maxAge: Infinity, domain: window.location.origin });
+  });
   }
 
   /** Собственные стили для CompletionScreen */

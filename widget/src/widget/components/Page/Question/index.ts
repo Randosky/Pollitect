@@ -13,6 +13,8 @@ export default abstract class Question extends HTMLElement {
   protected externalData?: TQuestion;
   /** Колбек перехода к следующему шагу */
   public onNext?: () => void;
+  /** Идентификатор текущего опроса */
+  private _surveyId?: number;
 
   constructor() {
     super();
@@ -28,6 +30,14 @@ export default abstract class Question extends HTMLElement {
 
   get data(): TQuestion | undefined {
     return this.externalData;
+  }
+
+  set surveyId(newVal: number) {
+    this._surveyId = newVal;
+  }
+
+  get surveyId(): number | undefined {
+    return this._surveyId;
   }
 
   /** Каждый потомок обязан реализовать рендер */
