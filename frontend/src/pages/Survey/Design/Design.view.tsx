@@ -21,7 +21,7 @@ const DesignView: React.FC<TDesignViewProps> = ({
   setSiteBg,
   setSiteElementBg,
 }) => (
-  <div className={pageStyles.page}>
+  <div className={classNames(pageStyles.page, styles.page)}>
     <h1 className={pageStyles.title}>Настройки дизайна</h1>
 
     <div className={classNames(pageStyles.container, styles.container)}>

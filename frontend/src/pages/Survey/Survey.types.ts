@@ -206,6 +206,14 @@ export type TSessionResponse = {
   sessionId: number;
   /** Завершен ли опрос */
   isCompleted: boolean;
+  /** Имя пользователя */
+  name?: string;
+  /** Email пользователя */
+  email?: string;
+  /** Телефон пользователя */
+  phone?: string;
+  /** Адрес пользователя */
+  address?: string;
   /** Ответы в текущей сессии */
   answers: TAnswer[];
 };

@@ -10,8 +10,19 @@ interface IAnswerItem {
 
 /** Структура одной сессии в responses */
 interface ISessionResponse {
+  /** Идентификатор сессии */
   sessionId: number;
+  /** Флаг завершения сессии */
   isCompleted: boolean;
+  /** Имя пользователя */
+  name?: string;
+  /** Email пользователя */
+  email?: string;
+  /** Телефон пользователя */
+  phone?: string;
+  /** Адрес пользователя */
+  address?: string;
+  /** Ответы пользователя */
   answers: IAnswerItem[];
 }
 
@@ -222,6 +233,95 @@ export async function completeSurvey(
     res.status(200).json({ message: "Опрос завершён" });
   } catch (err) {
     console.error("completeSurvey error:", err);
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
+}
+
+/**
+ * POST /api/widget/personal
+ * Body JSON:
+ *   {
+ *     surveyId: number,
+ *     sessionId: number,
+ *     personal: { name?: string; email?: string; phone?: string; address?: string }
+ *   }
+ *
+ * Сохраняет персональные данные (name, email, phone, address)
+ * в объект сессии в поле responses.
+ */
+export async function savePersonalData(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const { surveyId, sessionId, personal } = req.body as {
+    surveyId: number;
+    sessionId: number;
+    personal: {
+      name?: string;
+      email?: string;
+      phone?: string;
+      address?: string;
+    };
+  };
+
+  // Валидация
+  if (
+    typeof surveyId !== "number" ||
+    typeof sessionId !== "number" ||
+    typeof personal !== "object"
+  ) {
+    res
+      .status(400)
+      .json({ message: "Нужны surveyId, sessionId и персональные данные" });
+    return;
+  }
+
+  try {
+    const survey = await Survey.findByPk(surveyId);
+    if (!survey) {
+      res.status(404).json({ message: "Опрос не найден" });
+      return;
+    }
+
+    // Читаем текущие сессии
+    const raw = (survey.get("responses") as ISessionResponse[]) || [];
+    const sessions: ISessionResponse[] = Array.isArray(raw) ? raw : [];
+
+    // Статистика (если первый раз создаётся сессия — увеличиваем incompleteCount)
+    const stats: any = (survey.get("statistics") as any) || {};
+    if (typeof stats.incompleteCount !== "number") stats.incompleteCount = 0;
+    if (typeof stats.completedCount !== "number") stats.completedCount = 0;
+
+    // Ищем или создаём объект текущей сессии
+    let sess = sessions.find((s) => s.sessionId === sessionId);
+    if (!sess) {
+      sess = {
+        sessionId,
+        isCompleted: false,
+        answers: [],
+      };
+      sessions.push(sess);
+      stats.incompleteCount += 1;
+    }
+
+    // Сохраняем персональные поля
+    if (personal.name != null) sess.name = personal.name;
+    if (personal.email != null) sess.email = personal.email;
+    if (personal.phone != null) sess.phone = personal.phone;
+    if (personal.address != null) sess.address = personal.address;
+
+    // Пишем в базу
+    await Survey.update(
+      {
+        responses: sessions,
+        statistics: stats,
+      },
+      { where: { id: surveyId } }
+    );
+
+    res.status(200).json({ message: "Персональные данные сохранены" });
+  } catch (err) {
+    console.error("savePersonalData error:", err);
     res.status(500).json({ message: "Ошибка сервера" });
   }
 }

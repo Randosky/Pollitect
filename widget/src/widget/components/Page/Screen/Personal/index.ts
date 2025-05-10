@@ -1,4 +1,4 @@
-import { OWNER } from "@widget/vars";
+import { OWNER, SERVER_URL } from "@widget/vars";
 
 import type { TPersonalScreen, TScreenPersonalField } from "@/widget/Survey.types";
 
@@ -8,6 +8,7 @@ type TPersonalScreenData = TScreenExternalData<TPersonalScreen>;
 
 export default class PersonalScreen extends Screen {
   private externalData?: TPersonalScreenData;
+  private form?: HTMLFormElement;
 
   constructor() {
     super();
@@ -51,10 +52,9 @@ export default class PersonalScreen extends Screen {
     const descEl = this.createDescription(description);
 
     /** Форма персональных полей + кнопки */
-    const form = document.createElement("form");
-
-    form.className = "screen-form";
-    this.renderFields(form);
+    this.form = document.createElement("form");
+    this.form.className = "screen-form";
+    this.renderFields(this.form);
 
     /** Юридическая информация */
     const legalHtml = `
@@ -73,11 +73,13 @@ export default class PersonalScreen extends Screen {
 
     contentEl.appendChild(header);
 
-    if (legalEl) form.appendChild(legalEl);
+    if (legalEl) this.form.appendChild(legalEl);
 
     if (imageEl) container.appendChild(imageEl);
     container.appendChild(contentEl);
-    container.appendChild(form);
+    container.appendChild(this.form);
+
+    this.initEvents();
 
     this.shadow.appendChild(container);
   }
@@ -137,7 +139,7 @@ export default class PersonalScreen extends Screen {
     });
 
     /** Кнопка «Отправить» */
-    const submitBtn = this.createButton(this.data!.screen.button_text, this.data!.onNext);
+    const submitBtn = this.createButton(this.data!.screen.button_text);
 
     submitBtn.type = "submit";
     submitBtn.disabled = true;
@@ -160,12 +162,38 @@ export default class PersonalScreen extends Screen {
     requiredInputs.forEach(input => {
       input.addEventListener("input", updateSubmitState);
     });
+  }
 
-    form.addEventListener("submit", e => {
+  private initEvents(): void {
+    if (!this.form) return;
+
+    this.form.addEventListener("submit", async e => {
       e.preventDefault();
 
-      if (!submitBtn.disabled) {
-        this.data!.onNext?.();
+      const surveyId = this.data?.surveyData.id;
+      const sessionId = this.store?.getStateByKey("sessionId");
+
+      if (!surveyId || !sessionId) return;
+
+      /** собираем personal */
+      const personal: Record<string, string> = {};
+
+      this.data!.screen.personal_fields?.forEach(field => {
+        const input = this.form!.elements.namedItem(field.type) as HTMLInputElement;
+
+        if (input) personal[field.type] = input.value.trim();
+      });
+
+      try {
+        await fetch(`${SERVER_URL}/personal`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ surveyId, sessionId, personal }),
+        });
+
+        this.data?.onNext?.();
+      } catch (error) {
+        console.error(error);
       }
     });
   }

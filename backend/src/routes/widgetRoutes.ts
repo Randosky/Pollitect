@@ -4,6 +4,7 @@ import {
   addAnswer,
   completeSurvey,
   getWidget,
+  savePersonalData,
 } from "../controllers/widgetController";
 
 const router = express.Router();
@@ -32,5 +33,12 @@ router.post("/answer", express.json(), addAnswer);
  *   { surveyId: number }
  */
 router.post("/complete", express.json(), completeSurvey);
+
+/**
+ * POST /api/widget/personal
+ * Body JSON:
+ *   { surveyId: number, sessionId: number, personal: { name, email, phone, address } }
+ */
+router.post("/personal", express.json(), savePersonalData);
 
 export default router;

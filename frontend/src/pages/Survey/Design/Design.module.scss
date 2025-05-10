@@ -1,5 +1,9 @@
 @import "@styles/breakpoints";
 
+.page {
+  max-height: 100%;
+}
+
 .container {
   min-height: 100%;
   row-gap: 32px;

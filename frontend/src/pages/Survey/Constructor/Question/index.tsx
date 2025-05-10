@@ -49,15 +49,16 @@ const Question: React.FC<IQuestionProps> = React.memo(({ item, onChange }) => {
       </div>
       <textarea
         className={styles.descInput}
-        value={item.description}
+        value={item.description || ""}
         placeholder="Описание (опционально)"
         onChange={e => onChange({ description: e.target.value })}
       />
-
-      <QuestionComponent
-        item={item}
-        onChange={onChange}
-      />
+      <div className={styles.options}>
+        <QuestionComponent
+          item={item}
+          onChange={onChange}
+        />
+      </div>
     </div>
   );
 });

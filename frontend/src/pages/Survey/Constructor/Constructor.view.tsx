@@ -29,7 +29,7 @@ const ConstructorView: React.FC<TConstuctorViewProps> = ({ currentTab, setCurren
   const ActiveComponent = TAB_COMPONENTS[currentTab];
 
   return (
-    <div className={classNames(pageStyles.page, styles.page)}>
+    <div className={classNames(pageStyles.page, styles.page, styles[currentTab])}>
       <div className={styles.header}>
         <TitleEditor />
 
