@@ -223,4 +223,6 @@ export type TSurveyStats = {
   completionRate: number;
   /** Среднее время прохождения опроса в секундах */
   averageTimeSec?: number;
+  /** Сессии, завершившие прохождение  */
+  completedSessions?: number[];
 };

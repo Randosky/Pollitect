@@ -1,5 +1,5 @@
 import Store from "@widget/store/Store";
-import { OWNER } from "@widget/vars";
+import { OWNER, SERVER_URL } from "@widget/vars";
 
 import type { ISurvey, TAnswer, TQuestion } from "@widget/Survey.types";
 
@@ -123,13 +123,22 @@ export default abstract class Question extends HTMLElement {
   }
 
   /** Отправляем запрос на отправку ответа */
-  protected sendAnswer(answer: TAnswer): void {
+  protected async sendAnswer(answer: TAnswer): Promise<void> {
     const { onNext } = this.data || {};
 
-    console.log(answer);
-    console.log(this.store?.getStateByKey("sessionId"));
+    const fullAnswer: TAnswer = { ...answer, sessionId: this.store?.getStateByKey("sessionId") };
 
-    onNext?.();
+    try {
+      await fetch(`${SERVER_URL}/answer`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ surveyId: this.data?.surveyData.id, answer: fullAnswer }),
+      });
+
+      onNext?.();
+    } catch {
+      onNext?.();
+    }
   }
 
   /** Общие стили для вопросов */

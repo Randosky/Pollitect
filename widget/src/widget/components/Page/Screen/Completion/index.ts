@@ -1,4 +1,5 @@
 import { setCookie } from "@services/CookieService";
+import { SERVER_URL } from "@widget/vars";
 
 import type { TCompletionScreen } from "@/widget/Survey.types";
 
@@ -83,20 +84,38 @@ export default class CompletionScreen extends Screen {
   private initEvents(): void {
     if (!this.finishBtn) return;
 
-    this.finishBtn.addEventListener("click", () => {
-      /** Возвращаем скролл */
-      document.body.style.removeProperty("overflow");
+    this.finishBtn.addEventListener("click", async () => {
+      try {
+        await fetch(`${SERVER_URL}/complete`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            surveyId: this.data?.surveyData.id,
+            sessionId: this.store?.getStateByKey("sessionId"),
+          }),
+        });
 
-      /** Устанавливаем куки о прохождении */
-      setCookie(`survey_${this.data?.surveyData?.id}_completed`, "true", {
-        maxAge: Infinity,
-        domain: window.location.origin,
-      });
+        /** Возвращаем скролл */
+        document.body.style.removeProperty("overflow");
 
-      /** Меняем текст кнопки */
-      this.finishBtn!.onclick = null;
-      this.finishBtn!.disabled = true;
-      this.finishBtn!.textContent = "Ответы сохранены!";
+        /** Устанавливаем куки о прохождении */
+        setCookie(`survey_${this.data?.surveyData?.id}_completed`, "true", {
+          maxAge: Infinity,
+          domain: window.location.origin,
+        });
+
+        /** Меняем текст кнопки */
+        this.finishBtn!.onclick = null;
+        this.finishBtn!.disabled = true;
+        this.finishBtn!.textContent = "Ответы сохранены!";
+      } catch (error) {
+        /** Меняем текст кнопки */
+        this.finishBtn!.onclick = null;
+        this.finishBtn!.disabled = true;
+        this.finishBtn!.textContent = "Что-то пошло не так";
+
+        console.error(error);
+      }
     });
   }
 

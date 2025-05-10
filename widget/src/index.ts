@@ -1,5 +1,6 @@
 import { getCookie } from "@services/CookieService";
 import randomId from "@utils/getRandomId";
+import { SERVER_URL } from "@widget/vars";
 import "core-js";
 import "regenerator-runtime/runtime";
 
@@ -33,10 +34,9 @@ async function initSurvey() {
   }
 
   try {
-    const response = await fetch(
-      "http://localhost:3000/api/widget?userId=" + userId + "&url=" + window.location.origin,
-      { method: "GET" }
-    );
+    const response = await fetch(`${SERVER_URL}?userId=` + userId + "&url=" + window.location.origin, {
+      method: "GET",
+    });
     const data = (await response.json()) as ISurvey;
 
     if (!data) return;
