@@ -53,7 +53,7 @@ export default class TextQuestion extends Question {
     /** Контейнер кнопок */
     const buttonContainer = this.createButtonContainer();
 
-    if (!this.data.required) {
+    if (!this.data.question.required) {
       this.skipButton = this.createSkipButton();
       buttonContainer.appendChild(this.skipButton);
     }
@@ -76,9 +76,9 @@ export default class TextQuestion extends Question {
 
     input.type = "text";
     input.className = "question-text-input";
-    input.placeholder = this.data?.title ?? "";
+    input.placeholder = this.data?.question.title ?? "";
 
-    if (this.data?.required) input.required = true;
+    if (this.data?.question.required) input.required = true;
 
     return input;
   }
@@ -100,7 +100,7 @@ export default class TextQuestion extends Question {
       if (!val) return;
 
       const answer: TAnswer = {
-        question_id: this.data!.id!,
+        question_id: this.data!.question.id!,
         value: val,
       };
 

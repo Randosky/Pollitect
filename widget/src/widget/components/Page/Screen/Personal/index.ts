@@ -2,20 +2,22 @@ import { OWNER } from "@widget/vars";
 
 import type { TPersonalScreen, TScreenPersonalField } from "@/widget/Survey.types";
 
-import Screen from "../index";
+import Screen, { type TScreenExternalData } from "../index";
+
+type TPersonalScreenData = TScreenExternalData<TPersonalScreen>;
 
 export default class PersonalScreen extends Screen {
-  private externalData?: TPersonalScreen;
+  private externalData?: TPersonalScreenData;
 
   constructor() {
     super();
   }
 
-  set data(newVal: TPersonalScreen) {
+  set data(newVal: TPersonalScreenData) {
     this.externalData = newVal;
   }
 
-  get data(): TPersonalScreen | undefined {
+  get data(): TPersonalScreenData | undefined {
     return this.externalData;
   }
 
@@ -26,7 +28,7 @@ export default class PersonalScreen extends Screen {
   render(): void {
     if (!this.data) return;
 
-    const { title, description, design_settings } = this.data;
+    const { title, description, design_settings } = this.data.screen;
 
     /** Сброс перед новым рендером */
     this.shadow.innerHTML = "";
@@ -88,7 +90,7 @@ export default class PersonalScreen extends Screen {
   private renderFields(form: HTMLFormElement): void {
     const requiredInputs: HTMLInputElement[] = [];
 
-    this.data?.personal_fields?.forEach((field: TScreenPersonalField) => {
+    this.data?.screen?.personal_fields?.forEach((field: TScreenPersonalField) => {
       const wrapper = document.createElement("div");
 
       wrapper.className = "form-field";
@@ -135,18 +137,14 @@ export default class PersonalScreen extends Screen {
     });
 
     /** Кнопка «Отправить» */
-    const submitBtn = this.createButton(this.data!.button_text, () => {
-      this.onNext?.();
-    });
+    const submitBtn = this.createButton(this.data!.screen.button_text, this.data!.onNext);
 
     submitBtn.type = "submit";
     submitBtn.disabled = true;
     form.appendChild(submitBtn);
 
     /** Кнопка «Пропустить» */
-    const skipBtn = this.createButton("Пропустить", () => {
-      this.onNext?.();
-    });
+    const skipBtn = this.createButton("Пропустить", this.data!.onNext);
 
     skipBtn.classList.add("screen-skip-button");
     form.appendChild(skipBtn);
@@ -167,7 +165,7 @@ export default class PersonalScreen extends Screen {
       e.preventDefault();
 
       if (!submitBtn.disabled) {
-        this.onNext?.();
+        this.data!.onNext?.();
       }
     });
   }

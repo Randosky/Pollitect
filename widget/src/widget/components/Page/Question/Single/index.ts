@@ -53,7 +53,7 @@ export default class SingleQuestion extends Question {
     /** Контейнер кнопок */
     const buttonContainer = this.createButtonContainer();
 
-    if (!this.data.required) {
+    if (!this.data.question.required) {
       this.skipButton = this.createSkipButton();
       buttonContainer.appendChild(this.skipButton);
     }
@@ -77,8 +77,8 @@ export default class SingleQuestion extends Question {
 
     opts.className = "question-options";
 
-    this.data!.options!.forEach((opt, idx) => {
-      const id = `single-${this.data!.id}-${idx}`;
+    this.data!.question.options!.forEach((opt, idx) => {
+      const id = `single-${this.data!.question.id}-${idx}`;
       const wrapper = document.createElement("label");
 
       wrapper.className = "question-option";
@@ -87,7 +87,7 @@ export default class SingleQuestion extends Question {
       const input = document.createElement("input");
 
       input.type = "radio";
-      input.name = `single-${this.data!.id}`;
+      input.name = `single-${this.data!.question.id}`;
       input.id = id;
       input.value = opt;
 
@@ -126,7 +126,7 @@ export default class SingleQuestion extends Question {
       if (!checked) return;
 
       const answer: TAnswer = {
-        question_id: this.data!.id!,
+        question_id: this.data!.question.id!,
         value: checked.value,
       };
 

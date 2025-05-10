@@ -52,7 +52,7 @@ export default class DateQuestion extends Question {
     /** Контейнер кнопок */
     const buttonContainer = this.createButtonContainer();
 
-    if (!this.data.required) {
+    if (!this.data.question.required) {
       this.skipButton = this.createSkipButton();
       buttonContainer.appendChild(this.skipButton);
     }
@@ -91,7 +91,7 @@ export default class DateQuestion extends Question {
       if (!this.dateInput.value) return;
 
       const answer: TAnswer = {
-        question_id: this.data!.id!,
+        question_id: this.data!.question.id!,
         value: this.dateInput.value,
       };
 
@@ -108,7 +108,7 @@ export default class DateQuestion extends Question {
     input.type = "date";
     input.className = "question-date-input";
 
-    if (this.data?.required) {
+    if (this.data?.question.required) {
       input.required = true;
     }
 

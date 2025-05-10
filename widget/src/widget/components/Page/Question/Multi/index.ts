@@ -53,7 +53,7 @@ export default class MultiQuestion extends Question {
     /** Контейнер кнопок */
     const buttonContainer = this.createButtonContainer();
 
-    if (!this.data.required) {
+    if (!this.data.question.required) {
       this.skipButton = this.createSkipButton();
       buttonContainer.appendChild(this.skipButton);
     }
@@ -77,8 +77,8 @@ export default class MultiQuestion extends Question {
 
     opts.classList.add("question-options");
 
-    this.data!.options!.forEach((opt, idx) => {
-      const id = `multi-${this.data!.id}-${idx}`;
+    this.data!.question.options!.forEach((opt, idx) => {
+      const id = `multi-${this.data!.question.id}-${idx}`;
       const wrapper = document.createElement("label");
 
       wrapper.className = "checkbox";
@@ -88,10 +88,10 @@ export default class MultiQuestion extends Question {
 
       input.type = "checkbox";
       input.id = id;
-      input.name = `multi-${this.data!.id}`;
+      input.name = `multi-${this.data!.question.id}`;
       input.value = opt;
 
-      if (this.data!.required) {
+      if (this.data!.question.required) {
         input.required = false;
         // required не работает для множественного выбора, проверяем вручную
       }
@@ -134,7 +134,7 @@ export default class MultiQuestion extends Question {
 
       const values = checked.map(i => i.value);
       const answer: TAnswer = {
-        question_id: this.data!.id!,
+        question_id: this.data!.question.id!,
         value: values,
       };
 

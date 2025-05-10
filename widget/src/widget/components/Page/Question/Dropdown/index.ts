@@ -53,7 +53,7 @@ export default class DropdownQuestion extends Question {
     /** Контейнер кнопок */
     const buttonContainer = this.createButtonContainer();
 
-    if (!this.data.required) {
+    if (!this.data.question.required) {
       this.skipButton = this.createSkipButton();
       buttonContainer.appendChild(this.skipButton);
     }
@@ -76,19 +76,19 @@ export default class DropdownQuestion extends Question {
     const sel = document.createElement("select");
 
     sel.className = "question-select";
-    sel.required = !!this.data?.required;
+    sel.required = !!this.data?.question.required;
 
     // Пустой пункт для выбора по умолчанию
     const placeholder = document.createElement("option");
 
     placeholder.value = "";
     placeholder.textContent = "— выберите —";
-    placeholder.disabled = !!this.data?.required;
+    placeholder.disabled = !!this.data?.question.required;
     placeholder.selected = true;
     sel.appendChild(placeholder);
 
     // Собираем опции
-    this.data?.options?.forEach(opt => {
+    this.data?.question.options?.forEach(opt => {
       const o = document.createElement("option");
 
       o.value = opt;
@@ -116,7 +116,7 @@ export default class DropdownQuestion extends Question {
       if (!val) return;
 
       const answer: TAnswer = {
-        question_id: this.data!.id!,
+        question_id: this.data!.question.id!,
         value: val,
       };
 

@@ -46,7 +46,7 @@ export default class BinaryQuestion extends Question {
     /** Кнопки */
     const buttonContainer = this.createButtonContainer();
 
-    if (!this.data.required) {
+    if (!this.data.question.required) {
       this.skipButton = this.createSkipButton();
       buttonContainer.appendChild(this.skipButton);
     }
@@ -76,7 +76,7 @@ export default class BinaryQuestion extends Question {
     opts.className = "question-options";
 
     ["Да", "Нет"].forEach((label, idx) => {
-      const id = `bin-${this.data!.id}-${idx}`;
+      const id = `bin-${this.data!.question.id}-${idx}`;
       const wrapper = document.createElement("label");
 
       wrapper.className = "question-option";
@@ -85,7 +85,7 @@ export default class BinaryQuestion extends Question {
       const input = document.createElement("input");
 
       input.type = "radio";
-      input.name = `bin-${this.data!.id}`;
+      input.name = `bin-${this.data!.question.id}`;
       input.id = id;
       input.value = idx === 0 ? "true" : "false";
 
@@ -122,7 +122,7 @@ export default class BinaryQuestion extends Question {
 
       if (!checked) return;
 
-      this.sendAnswer({ question_id: this.data!.id!, value: checked.checked });
+      this.sendAnswer({ question_id: this.data!.question.id!, value: checked.checked });
     });
   }
 

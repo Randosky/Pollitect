@@ -1,4 +1,5 @@
 import { createWebComponent, registerWebComponent } from "@services/ComponentService";
+import Store from "@widget/store/Store";
 import { OWNER } from "@widget/vars";
 
 import type { ISurvey, TQuestion } from "../../Survey.types";
@@ -23,6 +24,8 @@ import WelcomeScreen from "./Screen/Welcome";
 export class SurveyElement extends HTMLElement {
   /** Дерево компонентов */
   private shadow: ShadowRoot;
+  /** Хранилище данных в виджете */
+  private store?: typeof Store;
   /** Данные опроса */
   private externalData?: ISurvey;
   /** Текущий шаг */
@@ -36,6 +39,7 @@ export class SurveyElement extends HTMLElement {
   constructor() {
     super();
     this.shadow = this.attachShadow({ mode: "open" });
+    this.store = Store;
 
     registerWebComponent("binary-question", BinaryQuestion);
     registerWebComponent("date-question", DateQuestion);
@@ -76,12 +80,7 @@ export class SurveyElement extends HTMLElement {
   private init(): void {
     if (!this.externalData) return;
 
-    const { questions, welcomeScreen, personalScreen, completionScreen, display_settings } = this.externalData;
-
-    /** Блокируем прокрутку страницы */
-    if (display_settings.block_scroll) {
-      document.body.style.overflow = "hidden";
-    }
+    const { questions, welcomeScreen, personalScreen, completionScreen } = this.externalData;
 
     /** Добавляем экран приветствия */
     if (welcomeScreen.active) {
@@ -146,9 +145,11 @@ export class SurveyElement extends HTMLElement {
 
     const component = createWebComponent(type);
 
-    component.data = data;
-    component.surveyId = this.data!.id!;
-    component.onNext = () => this.next();
+    component.data = {
+      screen: data,
+      surveyData: this.data!,
+      onNext: () => this.next(),
+    };
 
     return component;
   };
@@ -161,9 +162,11 @@ export class SurveyElement extends HTMLElement {
   private createQuestionComponent = (question: TQuestion): TQuestionComponent => {
     const component = createWebComponent(`${question.type}-question`);
 
-    component.data = question;
-    component.surveyId = this.data!.id!;
-    component.onNext = () => this.next();
+    component.data = {
+      question,
+      surveyData: this.data!,
+      onNext: () => this.next(),
+    };
 
     return component;
   };

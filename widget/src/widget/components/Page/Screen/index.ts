@@ -1,34 +1,25 @@
+import Store from "@widget/store/Store";
 import { OWNER } from "@widget/vars";
 
-import type { TScreenDesignSettings } from "@widget/Survey.types";
+import type { TScreenComponentsData } from "../SurveyElement.types";
+import type { ISurvey, TScreenDesignSettings } from "@widget/Survey.types";
+
+export type TScreenExternalData<T extends TScreenComponentsData> = {
+  screen: T;
+  surveyData: ISurvey;
+  onNext: () => void;
+};
 
 export default abstract class Screen extends HTMLElement {
   /** Shadow root для рендера */
   protected shadow: ShadowRoot;
-  /** Колбек перехода к следующему шагу */
-  private _onNext?: () => void;
-  /** Идентификатор текущего опроса */
-  private _surveyId?: number;
+  /** Хранилище данных в виджете */
+  protected store?: typeof Store;
 
   constructor() {
     super();
     this.shadow = this.attachShadow({ mode: "open" });
-  }
-
-  set onNext(newVal: () => void) {
-    this._onNext = newVal;
-  }
-
-  get onNext(): (() => void) | undefined {
-    return this._onNext;
-  }
-
-  set surveyId(newVal: number) {
-    this._surveyId = newVal;
-  }
-
-  get surveyId(): number | undefined {
-    return this._surveyId;
+    this.store = Store;
   }
 
   /** Каждый потомок должен реализовать render(): void */
@@ -134,7 +125,7 @@ export default abstract class Screen extends HTMLElement {
 
     button.className = "screen-button";
     button.innerHTML = text;
-    button.onclick = onClick ?? this.onNext ?? null;
+    button.onclick = onClick ?? null;
 
     return button;
   }

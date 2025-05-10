@@ -1,4 +1,5 @@
 import { getCookie } from "@services/CookieService";
+import randomId from "@utils/getRandomId";
 import "core-js";
 import "regenerator-runtime/runtime";
 
@@ -49,6 +50,15 @@ async function initSurvey() {
 
     if (isSurveyComplete && preventRepeat) return;
 
+    /** Генерируем или читаем sessionId для этого survey */
+    const key = `survey_${surveyId}_session`;
+
+    let sessionId = Number(sessionStorage.getItem(key));
+
+    if (!sessionId || isNaN(sessionId)) {
+      sessionStorage.setItem(key, randomId().toString());
+    }
+
     /** Ищем контейнер */
     const container = document.getElementById(containerId);
 
@@ -59,7 +69,7 @@ async function initSurvey() {
     }
 
     /** Инициализируем опрос */
-    const surveyInstance = new Survey(data);
+    const surveyInstance = new Survey(data, sessionId);
 
     window._pollitect = surveyInstance;
 

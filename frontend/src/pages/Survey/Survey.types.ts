@@ -202,6 +202,8 @@ export type TDisplaySettings = {
 
 /** Тип ответа на один вопрос */
 export type TAnswer = {
+  /** Идентификатор сессии */
+  sessionId: number;
   /** Идентификатор вопроса, к которому относится ответ */
   question_id: number;
   /** Значение ответа.

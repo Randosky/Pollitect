@@ -2,21 +2,23 @@ import { setCookie } from "@services/CookieService";
 
 import type { TCompletionScreen } from "@/widget/Survey.types";
 
-import Screen from "../index";
+import Screen, { type TScreenExternalData } from "../index";
+
+type TCompletionScreenData = TScreenExternalData<TCompletionScreen>;
 
 export default class CompletionScreen extends Screen {
-  private externalData?: TCompletionScreen;
+  private externalData?: TCompletionScreenData;
   private finishBtn?: HTMLButtonElement;
 
   constructor() {
     super();
   }
 
-  set data(newVal: TCompletionScreen) {
+  set data(newVal: TCompletionScreenData) {
     this.externalData = newVal;
   }
 
-  get data(): TCompletionScreen | undefined {
+  get data(): TCompletionScreenData | undefined {
     return this.externalData;
   }
 
@@ -27,7 +29,7 @@ export default class CompletionScreen extends Screen {
   render(): void {
     if (!this.data) return;
 
-    const { title, description, button_text, design_settings } = this.data;
+    const { title, description, button_text, design_settings } = this.data.screen;
 
     /** Сброс перед рендером */
     this.shadow.innerHTML = "";
@@ -86,7 +88,10 @@ export default class CompletionScreen extends Screen {
       document.body.style.removeProperty("overflow");
 
       /** Устанавливаем куки о прохождении */
-      setCookie(`survey_${this.surveyId}_completed`, "true", { maxAge: Infinity, domain: window.location.origin });
+      setCookie(`survey_${this.data?.surveyData?.id}_completed`, "true", {
+        maxAge: Infinity,
+        domain: window.location.origin,
+      });
 
       /** Меняем текст кнопки */
       this.finishBtn!.onclick = null;

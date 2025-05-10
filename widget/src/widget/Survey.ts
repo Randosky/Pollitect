@@ -18,10 +18,12 @@ class Survey {
   /** Элемент опроса */
   public surveyElement?: SurveyElement;
 
-  constructor(data: ISurvey) {
+  constructor(data: ISurvey, sessionId: number) {
     this.data = data;
     this.store = Store;
     this.deviceService = new DeviceService();
+
+    this.store.updateState("sessionId", sessionId);
 
     registerWebComponent("survey-widget", SurveyElement);
 

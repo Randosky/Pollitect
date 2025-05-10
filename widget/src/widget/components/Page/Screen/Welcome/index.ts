@@ -1,19 +1,21 @@
 import type { TWelcomeScreen } from "@/widget/Survey.types";
 
-import Screen from "../index";
+import Screen, { type TScreenExternalData } from "../index";
+
+type TWelcomeScreenData = TScreenExternalData<TWelcomeScreen>;
 
 export default class WelcomeScreen extends Screen {
-  private externalData?: TWelcomeScreen;
+  private externalData?: TWelcomeScreenData;
 
   constructor() {
     super();
   }
 
-  set data(newVal: TWelcomeScreen) {
+  set data(newVal: TWelcomeScreenData) {
     this.externalData = newVal;
   }
 
-  get data(): TWelcomeScreen | undefined {
+  get data(): TWelcomeScreenData | undefined {
     return this.externalData;
   }
 
@@ -24,7 +26,7 @@ export default class WelcomeScreen extends Screen {
   render(): void {
     if (!this.data) return;
 
-    const { hint, title, description, button_text, legal_info, design_settings } = this.data;
+    const { hint, title, description, button_text, legal_info, design_settings } = this.data.screen;
 
     /** Очищаем элемент перед новым рендером */
     this.shadow.innerHTML = "";
@@ -49,7 +51,7 @@ export default class WelcomeScreen extends Screen {
     /** Юридическая информация */
     const legalEl = this.createLegalInfo(legal_info);
     /** Кнопка «Далее» */
-    const btn = this.createButton(button_text);
+    const btn = this.createButton(button_text, this.data.onNext);
 
     if (imageEl) container.appendChild(imageEl);
 

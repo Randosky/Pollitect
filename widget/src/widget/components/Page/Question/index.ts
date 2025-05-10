@@ -1,6 +1,13 @@
+import Store from "@widget/store/Store";
 import { OWNER } from "@widget/vars";
 
-import type { TAnswer, TQuestion } from "@widget/Survey.types";
+import type { ISurvey, TAnswer, TQuestion } from "@widget/Survey.types";
+
+export type TQuestionExternalData = {
+  question: TQuestion;
+  surveyData: ISurvey;
+  onNext: () => void;
+};
 
 /**
  * Базовый класс для всех вопросов.
@@ -10,34 +17,25 @@ export default abstract class Question extends HTMLElement {
   /** Shadow root для рендера */
   protected shadow: ShadowRoot;
   /** Данные вопроса */
-  protected externalData?: TQuestion;
-  /** Колбек перехода к следующему шагу */
-  public onNext?: () => void;
-  /** Идентификатор текущего опроса */
-  private _surveyId?: number;
+  protected externalData?: TQuestionExternalData;
+  /** Хранилище данных в виджете */
+  protected store?: typeof Store;
 
   constructor() {
     super();
     this.shadow = this.attachShadow({ mode: "open" });
+    this.store = Store;
   }
 
   /**
    * Устанавливаем данные
    */
-  set data(value: TQuestion) {
+  set data(value: TQuestionExternalData) {
     this.externalData = value;
   }
 
-  get data(): TQuestion | undefined {
+  get data(): TQuestionExternalData | undefined {
     return this.externalData;
-  }
-
-  set surveyId(newVal: number) {
-    this._surveyId = newVal;
-  }
-
-  get surveyId(): number | undefined {
-    return this._surveyId;
   }
 
   /** Каждый потомок обязан реализовать рендер */
@@ -54,25 +52,27 @@ export default abstract class Question extends HTMLElement {
 
   /** Создаёт блок с заголовком+описанием */
   protected createHeader(): HTMLDivElement {
+    const { question } = this.data || {};
+
     const header = document.createElement("div");
 
     header.className = "question-header";
 
-    if (!this.data) return header;
+    if (!question) return header;
 
-    if (this.data.title) {
+    if (question.title) {
       const h = document.createElement("h1");
 
       h.className = "question-title";
-      h.innerHTML = this.data.title;
+      h.innerHTML = question.title;
       header.appendChild(h);
     }
 
-    if (this.data.description) {
+    if (question.description) {
       const p = document.createElement("p");
 
       p.className = "question-description";
-      p.innerHTML = this.data.description;
+      p.innerHTML = question.description;
       header.appendChild(p);
     }
 
@@ -110,21 +110,26 @@ export default abstract class Question extends HTMLElement {
 
   /** Кнопка действия */
   protected createSkipButton(): HTMLButtonElement {
+    const { onNext } = this.data || {};
+
     const btn = document.createElement("button");
 
     btn.type = "button";
     btn.className = "question-skip-button";
     btn.innerHTML = "Пропустить";
-    btn.onclick = () => this.onNext?.();
+    btn.onclick = () => onNext?.();
 
     return btn;
   }
 
   /** Отправляем запрос на отправку ответа */
   protected sendAnswer(answer: TAnswer): void {
-    console.log(answer);
+    const { onNext } = this.data || {};
 
-    this.onNext?.();
+    console.log(answer);
+    console.log(this.store?.getStateByKey("sessionId"));
+
+    onNext?.();
   }
 
   /** Общие стили для вопросов */

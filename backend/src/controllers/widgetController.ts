@@ -3,6 +3,7 @@ import db from "../models";
 const { User, Survey } = db;
 
 interface TAnswer {
+  session_id: number;
   question_id: number;
   value: string | string[] | boolean;
 }
