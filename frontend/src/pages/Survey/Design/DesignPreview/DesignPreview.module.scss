@@ -24,16 +24,19 @@
 .header {
   gap: 12px;
   display: flex;
+  color: inherit;
   flex-direction: column;
 
   .heading {
+    margin: 0;
+    color: inherit;
     font-size: 20px;
     font-weight: 600;
-    margin: 0;
   }
 
   .description {
     margin: 0;
+    color: inherit;
     font-size: 14px;
     line-height: 140%;
   }
@@ -41,9 +44,11 @@
 
 .fieldWrap {
   width: 50%;
+  color: inherit;
 }
 
 .button {
+  color: inherit;
   margin-top: auto;
   align-self: flex-end;
 }

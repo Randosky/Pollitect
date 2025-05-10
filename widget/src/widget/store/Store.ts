@@ -99,6 +99,7 @@ class Store {
 
 /** Изначальные данные для Store */
 const initialState: TState = {
+  sessionId: undefined,
   device: DeviceOS.Mobile,
 };
 

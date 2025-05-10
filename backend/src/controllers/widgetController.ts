@@ -2,11 +2,17 @@ import { Request, Response } from "express";
 import db from "../models";
 const { User, Survey } = db;
 
-/** Ответ от виджета */
-interface TAnswer {
-  session_id: number;
+/** Один ответ внутри сессии */
+interface IAnswerItem {
   question_id: number;
   value: string | string[] | boolean;
+}
+
+/** Структура одной сессии в responses */
+interface ISessionResponse {
+  sessionId: number;
+  isCompleted: boolean;
+  answers: IAnswerItem[];
 }
 
 /**
@@ -76,50 +82,91 @@ export async function getWidget(req: Request, res: Response): Promise<void> {
 }
 
 /**
- * POST /api/widget/addAnswer
- * Добавляет или обновляет ответ в массиве responses
+ * POST /api/widget/answer
  * Body JSON:
- *   { surveyId, answer: { session_id, question_id, value } }
+ *   {
+ *     surveyId: number,
+ *     sessionId: number,
+ *     answer: { question_id: number; value: string|boolean|string[] }
+ *   }
+ *
+ * Обновляет или создаёт запись сессии в responses,
+ * при создании новой — увеличивает statistics.incompleteCount
  */
 export async function addAnswer(req: Request, res: Response): Promise<void> {
-  const { surveyId, answer } = req.body as {
+  const { surveyId, sessionId, answer } = req.body as {
     surveyId: number;
-    answer: TAnswer;
+    sessionId: number;
+    answer: { question_id: number; value: any };
   };
+
+  /** Валидация входных данных */
   if (
     typeof surveyId !== "number" ||
+    typeof sessionId !== "number" ||
     !answer ||
-    typeof answer.session_id !== "number" ||
     typeof answer.question_id !== "number"
   ) {
-    res.status(400).json({ message: "Нужны surveyId и корректный answer" });
+    res
+      .status(400)
+      .json({ message: "Нужны surveyId, sessionId и корректный answer" });
     return;
   }
+
   try {
+    /** Достаём опрос */
     const survey = await Survey.findByPk(surveyId);
     if (!survey) {
       res.status(404).json({ message: "Опрос не найден" });
       return;
     }
 
-    // Получаем прошлые ответы
-    const oldResponses: TAnswer[] =
-      (survey.get("responses") as TAnswer[]) || [];
+    /** Читаем текущие сессии */
+    const raw = (survey.get("responses") as ISessionResponse[]) || [];
+    const sessions: ISessionResponse[] = Array.isArray(raw) ? raw : [];
 
-    // Убираем старый ответ этого session_id + question_id
-    const filtered = oldResponses.filter(
-      (r) =>
-        !(
-          r.session_id === answer.session_id &&
-          r.question_id === answer.question_id
-        )
+    /** Статистика по опросу */
+    const stats: any = (survey.get("statistics") as any) || {};
+    if (typeof stats.incompleteCount !== "number") stats.incompleteCount = 0;
+    if (typeof stats.completedCount !== "number") stats.completedCount = 0;
+
+    /** Ищем или создаём объект текущей сессии */
+    let sess = sessions.find((s) => s.sessionId === sessionId);
+    if (!sess) {
+      sess = {
+        sessionId,
+        isCompleted: false,
+        answers: [],
+      };
+      sessions.push(sess);
+      stats.incompleteCount += 1;
+    }
+
+    /** Обновляем/добавляем ответ внутри этой сессии */
+    const idx = sess.answers.findIndex(
+      (a) => a.question_id === answer.question_id
+    );
+    const item: IAnswerItem = {
+      question_id: answer.question_id,
+      value: answer.value,
+    };
+    if (idx >= 0) {
+      sess.answers[idx] = item;
+    } else {
+      sess.answers.push(item);
+    }
+
+    /** Сохраняем обе колонки: responses и statistics */
+    await Survey.update(
+      {
+        responses: sessions,
+        statistics: stats,
+      },
+      { where: { id: surveyId } }
     );
 
-    // Добавляем новый
-    const updated = [...filtered, answer];
-
-    await survey.update({ responses: updated });
-    res.status(200).json({ message: "Ответ добавлен", responses: updated });
+    /** Отдаём обновлённые данные, чтобы клиент сразу их увидел */
+    res.status(200).json({ message: "Ответ сохранён" });
   } catch (err) {
     console.error("addAnswer error:", err);
     res.status(500).json({ message: "Ошибка сервера" });
@@ -127,10 +174,8 @@ export async function addAnswer(req: Request, res: Response): Promise<void> {
 }
 
 /**
- * POST /api/widget/completeSurvey
- * Отмечает завершение опроса для sessionId и обновляет statistics.responsesCount и statistics.completedSessions
- * Body JSON:
- *   { surveyId, sessionId }
+ * POST /api/widget/complete
+ * Body: { surveyId: number, sessionId: number }
  */
 export async function completeSurvey(
   req: Request,
@@ -144,6 +189,7 @@ export async function completeSurvey(
     res.status(400).json({ message: "Нужны surveyId и sessionId" });
     return;
   }
+
   try {
     const survey = await Survey.findByPk(surveyId);
     if (!survey) {
@@ -151,27 +197,29 @@ export async function completeSurvey(
       return;
     }
 
-    // получаем статистику
+    const raw = (survey.get("responses") as ISessionResponse[]) || [];
+    const sessions: ISessionResponse[] = Array.isArray(raw) ? raw : [];
+
     const stats: any = (survey.get("statistics") as any) || {};
+    stats.completedCount = stats.completedCount ?? 0;
+    stats.incompleteCount = stats.incompleteCount ?? 0;
 
-    const prevCount =
-      typeof stats.responsesCount === "number" ? stats.responsesCount : 0;
-
-    const completed: number[] = Array.isArray(stats.completedSessions)
-      ? stats.completedSessions
-      : [];
-
-    // если ещё не засчитали эту сессию
-    if (!completed.includes(sessionId)) {
-      stats.responsesCount = prevCount + 1;
-      completed.push(sessionId);
-      stats.completedSessions = completed;
+    const sess = sessions.find((s) => s.sessionId === sessionId);
+    if (sess && !sess.isCompleted) {
+      sess.isCompleted = true;
+      stats.completedCount += 1;
+      stats.incompleteCount = Math.max(0, stats.incompleteCount - 1);
     }
 
-    // обновляем только statistics
-    await survey.update({ statistics: stats });
+    await Survey.update(
+      {
+        responses: sessions,
+        statistics: stats,
+      },
+      { where: { id: surveyId } }
+    );
 
-    res.status(200).json({ message: "Опрос завершён", statistics: stats });
+    res.status(200).json({ message: "Опрос завершён" });
   } catch (err) {
     console.error("completeSurvey error:", err);
     res.status(500).json({ message: "Ошибка сервера" });

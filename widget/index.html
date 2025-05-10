@@ -47,10 +47,11 @@
     ></script>
 
     <script type="module">
+      /** Ищем контейнер */
       const container = document.getElementById("app");
 
       /** Инициализируем опрос */
-      const surveyInstance = new Survey(window.mockSurvey);
+      const surveyInstance = new Survey(window.mockSurvey, Date.now());
 
       window._pollitect = surveyInstance;
 

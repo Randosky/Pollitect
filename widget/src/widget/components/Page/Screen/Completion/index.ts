@@ -1,5 +1,6 @@
+// CompletionScreen.ts
 import { setCookie } from "@services/CookieService";
-import { SERVER_URL } from "@widget/vars";
+import { OWNER, SERVER_URL } from "@widget/vars";
 
 import type { TCompletionScreen } from "@/widget/Survey.types";
 
@@ -46,9 +47,7 @@ export default class CompletionScreen extends Screen {
     /** Картинка (если указано) */
     const imageEl = this.createImage(design_settings.image_url);
 
-    if (imageEl) {
-      container.appendChild(imageEl);
-    }
+    if (imageEl) container.appendChild(imageEl);
 
     /** Блок контента с дополнительным классом */
     const contentEl = this.createContent();
@@ -85,47 +84,129 @@ export default class CompletionScreen extends Screen {
     if (!this.finishBtn) return;
 
     this.finishBtn.addEventListener("click", async () => {
+      const surveyId = this.data?.surveyData.id;
+      const sessionId = this.store?.getStateByKey("sessionId");
+
+      if (!sessionId || !surveyId) return;
+
       try {
         await fetch(`${SERVER_URL}/complete`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            surveyId: this.data?.surveyData.id,
-            sessionId: this.store?.getStateByKey("sessionId"),
-          }),
+          body: JSON.stringify({ sessionId, surveyId }),
         });
 
         /** Возвращаем скролл */
         document.body.style.removeProperty("overflow");
 
         /** Устанавливаем куки о прохождении */
-        setCookie(`survey_${this.data?.surveyData?.id}_completed`, "true", {
-          maxAge: Infinity,
-          domain: window.location.origin,
-        });
+        setCookie(`survey_${this.data?.surveyData?.id}_completed`, "true");
 
-        /** Меняем текст кнопки */
-        this.finishBtn!.onclick = null;
-        this.finishBtn!.disabled = true;
-        this.finishBtn!.textContent = "Ответы сохранены!";
+        /** Очищаем sessionId для этого survey */
+        sessionStorage.removeItem(`survey_${surveyId}_session`);
+
+        this.showSuccess();
       } catch (error) {
-        /** Меняем текст кнопки */
-        this.finishBtn!.onclick = null;
         this.finishBtn!.disabled = true;
-        this.finishBtn!.textContent = "Что-то пошло не так";
-
+        this.finishBtn!.textContent = "Ошибка, попробуйте позже";
         console.error(error);
       }
     });
   }
 
-  /** Собственные стили для CompletionScreen */
+  /**
+   * Заменяет содержимое на красивую анимацию успеха
+   */
+  private showSuccess(): void {
+    const { design_settings } = this.data!.screen;
+
+    /** Сброс перед рендером */
+    this.shadow.innerHTML = "";
+
+    /** Базовые стили экрана */
+    this.shadow.appendChild(this.styleScreenElement(design_settings));
+    /** Стили для completionScreen */
+    this.shadow.appendChild(this.styleElement());
+
+    const successContainer = document.createElement("div");
+
+    successContainer.className = "success-container";
+
+    // SVG-галочка
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+
+    svg.setAttribute("viewBox", "0 0 52 52");
+    svg.classList.add("success-icon");
+    svg.innerHTML = `
+      <circle cx="26" cy="26" r="25" fill="none" stroke-width="2"/>
+      <path fill="none" stroke-width="3" d="M14 24 l10 10 l14 -14"/>
+    `;
+
+    const msg = document.createElement("p");
+
+    msg.className = "success-text";
+    msg.textContent = "Ваши ответы сохранены";
+
+    successContainer.append(svg, msg);
+    this.shadow.appendChild(successContainer);
+  }
+
   private styleElement(): HTMLStyleElement {
     const style = document.createElement("style");
 
     style.textContent = `
       .completion-content {
         justify-content: center;
+      }
+
+      .success-container {
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        animation: fadeIn 0.5s ease-out forwards;
+      }
+
+      .success-icon {
+        width: 80px;
+        height: 80px;
+        stroke: var(--${OWNER}-btn-bg-color);
+        stroke-dasharray: 166;
+        stroke-dashoffset: 166;
+        animation: draw 0.7s ease-out forwards;
+      }
+
+      .success-icon circle {
+        stroke-opacity: 0.3;
+        animation: circleFade 0.7s ease-out forwards;
+      }
+
+      .success-text {
+        font-size: 1.2rem;
+        color: var(--${OWNER}-text-color);
+        text-align: center;
+      }
+
+      @keyframes draw {
+        0% {
+          stroke-dashoffset: 166;
+        }
+        100% {
+          stroke-dashoffset: 0;
+        }
+      }
+
+      @keyframes circleFade {
+        0% { stroke-dashoffset: 166; }
+        100% { stroke-dashoffset: 0; }
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translate(-50%, -60%); }
+        to   { opacity: 1; transform: translate(-50%, -50%); }
       }
     `;
 

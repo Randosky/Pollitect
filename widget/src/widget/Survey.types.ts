@@ -26,7 +26,7 @@ export interface ISurvey {
   /** Настройки отображения (поведение, таймер, условия) */
   display_settings: TDisplaySettings;
   /** Ответы, собранные в ходе прохождения опроса */
-  responses: TAnswer[];
+  responses: TSessionResponse[];
   /** Статистическая информация по опросу */
   statistics: TSurveyStats;
 }
@@ -201,9 +201,17 @@ export type TDisplaySettings = {
 };
 
 /** Тип ответа на один вопрос */
-export type TAnswer = {
+export type TSessionResponse = {
   /** Идентификатор сессии */
-  sessionId?: number;
+  sessionId: number;
+  /** Завершен ли опрос */
+  isCompleted: boolean;
+  /** Ответы в текущей сессии */
+  answers: TAnswer[];
+};
+
+/** Тип ответа на вопрос */
+export type TAnswer = {
   /** Идентификатор вопроса, к которому относится ответ */
   question_id: number;
   /** Значение ответа.

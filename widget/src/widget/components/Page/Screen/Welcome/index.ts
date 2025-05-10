@@ -6,6 +6,7 @@ type TWelcomeScreenData = TScreenExternalData<TWelcomeScreen>;
 
 export default class WelcomeScreen extends Screen {
   private externalData?: TWelcomeScreenData;
+  private nextButton?: HTMLButtonElement;
 
   constructor() {
     super();
@@ -50,8 +51,9 @@ export default class WelcomeScreen extends Screen {
     const descriptionEl = this.createDescription(description);
     /** Юридическая информация */
     const legalEl = this.createLegalInfo(legal_info);
+
     /** Кнопка «Далее» */
-    const btn = this.createButton(button_text, this.data.onNext);
+    this.nextButton = this.createButton(button_text);
 
     if (imageEl) container.appendChild(imageEl);
 
@@ -65,10 +67,23 @@ export default class WelcomeScreen extends Screen {
 
     contentEl.appendChild(header);
 
-    if (btn) contentEl.appendChild(btn);
+    if (this.nextButton) contentEl.appendChild(this.nextButton);
 
     if (legalEl) contentEl.appendChild(legalEl);
 
+    this.initEvents();
+
     this.shadow.appendChild(container);
+  }
+
+  initEvents(): void {
+    if (!this.nextButton) return;
+
+    /** Кнпока далее */
+    this.nextButton.addEventListener("click", () => {
+      if (this.data?.surveyData.display_settings.block_scroll) document.body.style.overflow = "hidden";
+
+      this.data?.onNext();
+    });
   }
 }

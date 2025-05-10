@@ -217,7 +217,7 @@ export default class PersonalScreen extends Screen {
         border: 1px solid var(--${OWNER}-btn-bg-color);
         border-radius: 5px;
         background: #fff;
-        color: var(--${OWNER}-text-color);
+        color: #222;
       }
 
       .form-field input:focus {

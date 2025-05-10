@@ -126,13 +126,15 @@ export default abstract class Question extends HTMLElement {
   protected async sendAnswer(answer: TAnswer): Promise<void> {
     const { onNext } = this.data || {};
 
-    const fullAnswer: TAnswer = { ...answer, sessionId: this.store?.getStateByKey("sessionId") };
+    const sessionId = this.store?.getStateByKey("sessionId");
+
+    if (!sessionId) return;
 
     try {
       await fetch(`${SERVER_URL}/answer`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ surveyId: this.data?.surveyData.id, answer: fullAnswer }),
+        body: JSON.stringify({ sessionId, surveyId: this.data?.surveyData.id, answer }),
       });
 
       onNext?.();

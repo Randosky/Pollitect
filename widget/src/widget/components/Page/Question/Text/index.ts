@@ -123,7 +123,7 @@ export default class TextQuestion extends Question {
         border: 1px solid var(--${OWNER}-btn-bg-color);
         border-radius: 5px;
         background: #fff;
-        color: var(--${OWNER}-text-color);
+        color: #222;
       }
       .question-text-input:focus {
         outline: none;

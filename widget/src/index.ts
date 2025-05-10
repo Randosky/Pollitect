@@ -56,7 +56,8 @@ async function initSurvey() {
     let sessionId = Number(sessionStorage.getItem(key));
 
     if (!sessionId || isNaN(sessionId)) {
-      sessionStorage.setItem(key, randomId().toString());
+      sessionId = randomId();
+      sessionStorage.setItem(key, sessionId.toString());
     }
 
     /** Ищем контейнер */
