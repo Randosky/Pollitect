@@ -14,6 +14,8 @@ export default class CompletionScreen extends Screen {
 
   constructor() {
     super();
+
+    this.store?.subscribe("surveyTimer", this.handleChangeSurveyTimer);
   }
 
   set data(newVal: TCompletionScreenData) {
@@ -27,6 +29,14 @@ export default class CompletionScreen extends Screen {
   connectedCallback() {
     this.render();
   }
+
+  handleChangeSurveyTimer = (prev: number, next: number): void => {
+    if (next !== 0) return;
+
+    console.log(next);
+
+    this.finishSurvey();
+  };
 
   render(): void {
     if (!this.data) return;
@@ -83,35 +93,38 @@ export default class CompletionScreen extends Screen {
   private initEvents(): void {
     if (!this.finishBtn) return;
 
-    this.finishBtn.addEventListener("click", async () => {
-      const surveyId = this.data?.surveyData.id;
-      const sessionId = this.store?.getStateByKey("sessionId");
+    this.finishBtn.addEventListener("click", this.finishSurvey);
+  }
 
-      if (!sessionId || !surveyId) return;
+  /** Функция завершения опроса */
+  private async finishSurvey(): Promise<void> {
+    const surveyId = this.data?.surveyData.id;
+    const sessionId = this.store?.getStateByKey("sessionId");
 
-      try {
-        await fetch(`${SERVER_URL}/complete`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sessionId, surveyId }),
-        });
+    if (!sessionId || !surveyId) return;
 
-        /** Возвращаем скролл */
-        document.body.style.removeProperty("overflow");
+    try {
+      await fetch(`${SERVER_URL}/complete`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId, surveyId }),
+      });
 
-        /** Устанавливаем куки о прохождении */
-        setCookie(`survey_${this.data?.surveyData?.id}_completed`, "true");
+      /** Возвращаем скролл */
+      document.body.style.removeProperty("overflow");
 
-        /** Очищаем sessionId для этого survey */
-        sessionStorage.removeItem(`survey_${surveyId}_session`);
+      /** Устанавливаем куки о прохождении */
+      setCookie(`survey_${this.data?.surveyData?.id}_completed`, "true");
 
-        this.showSuccess();
-      } catch (error) {
-        this.finishBtn!.disabled = true;
-        this.finishBtn!.textContent = "Ошибка, попробуйте позже";
-        console.error(error);
-      }
-    });
+      /** Очищаем sessionId для этого survey */
+      sessionStorage.removeItem(`survey_${surveyId}_session`);
+
+      this.showSuccess();
+    } catch (error) {
+      this.finishBtn!.disabled = true;
+      this.finishBtn!.textContent = "Ошибка, попробуйте позже";
+      console.error(error);
+    }
   }
 
   /**

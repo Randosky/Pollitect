@@ -9,11 +9,11 @@ import Store from "./store/Store";
 
 class Survey {
   /** Данные опроса */
-  private data?: ISurvey;
+  private data: ISurvey;
   /** Хранилище данных в виджете */
-  private store?: typeof Store;
+  private store: typeof Store;
   /** Сервис для работы с устройствами */
-  private deviceService?: DeviceService;
+  private deviceService: DeviceService;
 
   /** Элемент опроса */
   public surveyElement?: SurveyElement;
@@ -24,6 +24,8 @@ class Survey {
     this.deviceService = new DeviceService();
 
     this.store.updateState("sessionId", sessionId);
+    /** инициализируем таймер в сторе */
+    this.store.updateState("surveyTimer", data.display_settings.timer_sec);
 
     registerWebComponent("survey-widget", SurveyElement);
 

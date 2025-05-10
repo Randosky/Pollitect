@@ -1,6 +1,6 @@
 import { createWebComponent, registerWebComponent } from "@services/ComponentService";
 import Store from "@widget/store/Store";
-import { OWNER } from "@widget/vars";
+import { MS_IN_SECOND, OWNER, SECONDS_IN_MIN } from "@widget/vars";
 
 import type { ISurvey, TQuestion } from "../../Survey.types";
 import type {
@@ -21,6 +21,10 @@ import CompletionScreen from "./Screen/Completion";
 import PersonalScreen from "./Screen/Personal";
 import WelcomeScreen from "./Screen/Welcome";
 
+const TIMER_MARGIN = 8;
+const TIMER_WIDTH = 52;
+const TIMER_HEIGHT = 28;
+
 export class SurveyElement extends HTMLElement {
   /** Дерево компонентов */
   private shadow: ShadowRoot;
@@ -35,6 +39,10 @@ export class SurveyElement extends HTMLElement {
 
   /** Элемент контейнера */
   public container?: HTMLDivElement;
+  /** Элемент таймера */
+  private timerEl?: HTMLDivElement;
+  /** Интервал таймера */
+  private timerInterval?: number;
 
   constructor() {
     super();
@@ -115,6 +123,7 @@ export class SurveyElement extends HTMLElement {
     this.shadow.appendChild(this.styleElement());
 
     this.createContainer();
+    this.createTimer();
 
     this.next();
   }
@@ -125,11 +134,27 @@ export class SurveyElement extends HTMLElement {
    */
   private createContainer = (): void => {
     this.container = document.createElement("div");
-
     this.container.classList.add("container");
 
     this.shadow.appendChild(this.container);
   };
+
+  /** Добавляем элемент таймера в правый верхний угол */
+  private createTimer() {
+    if (!this.container) return;
+
+    const containerRects = this.container.getBoundingClientRect();
+
+    const left = containerRects.left + containerRects.width - TIMER_WIDTH - TIMER_MARGIN + window.scrollX;
+    const top = containerRects.top - TIMER_HEIGHT - TIMER_MARGIN + window.scrollX;
+
+    this.timerEl = document.createElement("div");
+    this.timerEl.classList.add("timer");
+    this.timerEl.style.left = `${left}px`;
+    this.timerEl.style.top = `${top}px`;
+
+    this.shadow.appendChild(this.timerEl);
+  }
 
   /**
    * Создает экземпляр экрана
@@ -177,6 +202,11 @@ export class SurveyElement extends HTMLElement {
 
     this.currentStep++;
 
+    /** Если перешли на первый вопрос и есть таймер */
+    if (this.currentStep === 1 && (this.data?.display_settings.timer_sec || 0) > 0) {
+      this.startTimer();
+    }
+
     const currentComponent = this.steps[this.currentStep];
 
     if (!currentComponent) {
@@ -187,6 +217,61 @@ export class SurveyElement extends HTMLElement {
 
     this.container.innerHTML = "";
     this.container.appendChild(currentComponent);
+  }
+
+  /** Запускаем обратный отсчёт */
+  public startTimer(): void {
+    /** Не запускаем, если нет таймера */
+    if (!this.timerEl || !this.data || this.data.display_settings.timer_sec <= 0) return;
+
+    /** остановить прежний, если был */
+    this.stopTimer();
+
+    /** Начало таймера */
+    let remaining = this.data.display_settings.timer_sec;
+
+    this.updateTimerDisplay(remaining);
+    this.timerEl.classList.add("show");
+
+    /** Обновление таймера */
+    this.timerInterval = setInterval(() => {
+      remaining -= 1;
+      this.updateTimerDisplay(remaining);
+    }, MS_IN_SECOND);
+  }
+
+  /** Останавливаем таймер */
+  public stopTimer(): void {
+    if (this.timerInterval === null) return;
+
+    clearInterval(this.timerInterval);
+    this.timerInterval = undefined;
+  }
+
+  /** Обновляем текст таймера в формате MM:SS */
+  private updateTimerDisplay(sec: number) {
+    if (!this.timerEl) return;
+
+    /** Если таймер закончился переходим в конец */
+    if (sec <= 0 && this.container) {
+      this.stopTimer();
+
+      this.timerEl.classList.add("hidden");
+      this.container.innerHTML = "";
+      this.container.appendChild(this.steps[this.steps.length - 1]);
+    }
+
+    /** Отображаем новые минуты и секунды */
+    const rawMin = Math.floor(sec / SECONDS_IN_MIN);
+    const minutes = Math.min(rawMin, SECONDS_IN_MIN - 1);
+    const seconds = sec % SECONDS_IN_MIN;
+
+    const two = (n: number) => String(n).padStart(2, "0");
+
+    this.timerEl.textContent = `${two(minutes)}:${two(seconds)}`;
+
+    /** Обновляем время в сторе */
+    this.store?.updateState("surveyTimer", sec);
   }
 
   private styleElement(): HTMLStyleElement {
@@ -212,6 +297,32 @@ export class SurveyElement extends HTMLElement {
           border-radius: inherit;
           color: var(--${OWNER}-text-color);
           font-family: var(--${OWNER}-font-family);
+        }
+
+        .timer {
+          font-size: 14px;
+          line-height: 140%;
+          font-weight: bold;
+          font-family: var(--${OWNER}-font-family);
+          
+          z-index: 4;
+          display: none;
+          position: fixed;
+          padding: 4px 8px;
+          border-radius: 5px;
+          width: ${TIMER_WIDTH}px;
+          height: ${TIMER_HEIGHT}px;
+          box-sizing: border-box;
+          color: var(--${OWNER}-bg-color);
+          background: var(--${OWNER}-btn-bg-color);
+        }
+
+        .timer.show {
+          display: block;
+        }
+
+        .timer.hidden {
+          display: none;
         }
       `;
 

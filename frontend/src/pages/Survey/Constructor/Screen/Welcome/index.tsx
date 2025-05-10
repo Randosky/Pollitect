@@ -4,7 +4,6 @@ import React, { CSSProperties, useCallback, useMemo } from "react";
 import { useFormWithFooter } from "@hooks/useFormWithFooter";
 import { useSurveyController } from "@hooks/useSurveyController";
 import { useAppSelector } from "@store/hooks";
-import Checkbox from "@ui/Checkbox";
 import Select from "@ui/Select";
 import { TextField } from "@ui/TextField";
 
@@ -114,16 +113,6 @@ const WelcomeScreen: React.FC = React.memo((): React.ReactElement => {
 
   return (
     <article className={screenStyles.screen}>
-      <Checkbox
-        label={form.active ? "Активен" : "Выключен"}
-        inputProps={{
-          id: "active",
-          name: "active",
-          checked: form.active,
-          onChange: handleField,
-        }}
-      />
-
       <div
         style={stylesBody}
         className={screenStyles.body}

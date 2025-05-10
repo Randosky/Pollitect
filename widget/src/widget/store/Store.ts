@@ -99,6 +99,7 @@ class Store {
 
 /** Изначальные данные для Store */
 const initialState: TState = {
+  surveyTimer: -1,
   sessionId: undefined,
   device: DeviceOS.Mobile,
 };

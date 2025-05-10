@@ -22,6 +22,19 @@
         box-sizing: border-box;
       }
 
+      .container {
+        gap: 32px;
+        display: flex;
+        background-color: rgb(225, 255, 0);
+      }
+
+      #element {
+        padding: 32px;
+        width: 40%;
+        flex: 1 1 auto;
+        background-color: rgb(188, 188, 188);
+      }
+
       #app {
         padding: 32px;
         width: 100%;
@@ -32,7 +45,10 @@
   </head>
 
   <body>
-    <div id="app"></div>
+    <div class="container">
+      <!-- <div id="element"></div> -->
+      <div id="app"></div>
+    </div>
 
     <!-- Локальное тестирование -->
 
@@ -55,9 +71,25 @@
 
       window._pollitect = surveyInstance;
 
-      /** Добавляем опрос в контейнер */
-      if (surveyInstance.surveyElement) {
-        container.appendChild(surveyInstance.surveyElement);
+      const surveyEl = surveyInstance.surveyElement;
+
+      // определяем способ вставки
+      switch (window.mockSurvey.design_settings.placement) {
+        case "after":
+          /** после — ставим элемент сразу после контейнера */
+          container.insertAdjacentElement("afterend", surveyEl);
+          break;
+
+        case "before":
+          /** до — ставим элемент сразу перед контейнером */
+          container.insertAdjacentElement("beforebegin", surveyEl);
+          break;
+
+        case "inbuilt":
+
+        default:
+          /** встроенный — помещаем внутрь контейнера */
+          container.appendChild(surveyEl);
       }
     </script>
 
