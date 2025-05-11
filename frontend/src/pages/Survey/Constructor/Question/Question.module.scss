@@ -31,7 +31,9 @@
     color: var(--text);
     background: var(--bg-secondary-contrast);
 
-    &:hover {
+    &:hover,
+    &:focus,
+    &:active {
       color: var(--text-hover);
       background: var(--bg-secondary-contrast-hover);
     }
@@ -134,84 +136,55 @@
 }
 
 /* ----------------------------------
-   Варианты ответов
+   Стилистика внутренностей вопросов
 ----------------------------------- */
 .options {
+  margin-top: 16px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 8px;
+  gap: 32px;
 }
 
 /* Для grid-вопросов (single/multi/dropdown) */
 .question-options {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  column-gap: 16px;
-  row-gap: 16px;
+  gap: 16px;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Одна строка опции (radio+label+удалить) */
 .optionRow {
+  gap: 16px;
   display: flex;
   align-items: center;
-  gap: 8px;
 }
 
 /* Поле редактирования текста варианта */
 .optionInput {
-  flex: 1;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 6px 10px;
-  background: var(--bg);
-  font-size: 0.9rem;
-
-  &:focus {
-    outline: none;
-    border-color: var(--bg-contrast);
-  }
 }
 
-/* Кастомные чекбоксы/радио */
-.checkbox,
-.radio {
-  /* ваши компоненты уже подтягивают цвета из переменных */
+.optionRadio{ 
+  gap: 0;
 }
 
 /* Кнопка удаления варианта */
 .removeOption {
-  background: transparent;
-  border: none;
-  color: var(--text-secondary);
-  font-size: 1.2rem;
+  width: 20px;
+  height: 20px;
   cursor: pointer;
-  transition: color 0.2s;
+  transition: all 0.3s ease;
 
   &:hover {
-    color: var(--text);
+    background-color: var(--bg-error-hover);
   }
 }
 
 /* Кнопка “+ Добавить вариант” */
 .addOption {
-  align-self: flex-start;
-  background: var(--bg-contrast);
-  color: var(--text-success);
-  border: none;
-  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 400;
   padding: 8px 16px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background 0.2s;
-
-  &:hover {
-    background: var(--bg-contrast-hover);
-  }
-}
-
-@media (min-width: $sm) {
-  .optionInput {
-    padding: 10px 14px;
-  }
+  width: fit-content;
+  align-self: flex-end;
+  color: var(--text-secondary);
 }

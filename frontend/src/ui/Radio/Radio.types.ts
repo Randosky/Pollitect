@@ -2,7 +2,7 @@ import React from "react";
 
 export type TRadioProps = {
   /** подпись справа от метки */
-  label: string;
+  label?: string;
   /** desktop / mobile */
   size?: "desktop" | "mobile";
   /** кастомные классы враппера */

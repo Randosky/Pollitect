@@ -10,7 +10,7 @@ export const Binary: React.FC<TQuestionProps> = () => {
   const [yesNo, setYesNo] = React.useState<"yes" | "no">();
 
   return (
-    <div className={styles.row}>
+    <div className={styles["question-options"]}>
       <Radio
         label="Да"
         inputProps={{
