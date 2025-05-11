@@ -97,7 +97,7 @@ export default class CompletionScreen extends Screen {
   }
 
   /** Функция завершения опроса */
-  private async finishSurvey(): Promise<void> {
+  private finishSurvey = async (): Promise<void> => {
     const surveyId = this.data?.surveyData.id;
     const sessionId = this.store?.getStateByKey("sessionId");
 
@@ -125,7 +125,7 @@ export default class CompletionScreen extends Screen {
       this.finishBtn!.textContent = "Ошибка, попробуйте позже";
       console.error(error);
     }
-  }
+  };
 
   /**
    * Заменяет содержимое на красивую анимацию успеха
