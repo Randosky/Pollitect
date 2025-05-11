@@ -1,10 +1,10 @@
 import React from "react";
 
-import type { IQuestionProps } from "../Question.types";
+import type { TQuestionProps } from "../Question.types";
 
 import styles from "../Question.module.scss";
 
-export const Single: React.FC<IQuestionProps> = ({ item, onChange }) => (
+export const Single: React.FC<TQuestionProps> = ({ item, onChange }) => (
   <>
     {(item.options || []).map((opt, i) => (
       <div

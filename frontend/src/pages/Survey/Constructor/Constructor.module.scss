@@ -1,6 +1,10 @@
 @import "@styles/breakpoints";
 
 .page {
+  &.questions {
+    max-height: 100%;
+  }
+
   // переходы для react-transition-group
   .fadeEnter {
     opacity: 0;
@@ -20,7 +24,7 @@
   .tabContainer {
     display: flex;
     flex: 1 1 auto;
-    min-height: max-content;
+    min-height: 100%;
   }
 }
 

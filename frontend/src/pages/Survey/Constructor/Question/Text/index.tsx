@@ -1,10 +1,10 @@
 import React from "react";
 
-import type { IQuestionProps } from "../Question.types";
+import type { TQuestionProps } from "../Question.types";
 
 import styles from "../Question.module.scss";
 
-export const Text: React.FC<IQuestionProps> = () => (
+export const Text: React.FC<TQuestionProps> = () => (
   <input
     className={styles.responseInput}
     type="text"

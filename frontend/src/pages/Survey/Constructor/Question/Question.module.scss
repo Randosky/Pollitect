@@ -1,44 +1,39 @@
 @import "@styles/breakpoints";
 
 /* ----------------------------------
+   Страница с вопросами
+----------------------------------- */
+
+.questionPage {
+  gap: 32px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 200px 1fr;
+}
+
+/* ----------------------------------
    Панель действий сверху (добавить тип, сохранить)
 ----------------------------------- */
-.toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 16px;
 
-  button {
-    padding: 6px 16px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    background: var(--bg-secondary-contrast);
+.sidebar {
+  gap: 16px;
+  padding: 16px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--white);
+
+  .sidebar__button {
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 16px;
+    overflow-y: auto;
     color: var(--text);
-    cursor: pointer;
-    transition:
-      background 0.2s,
-      color 0.2s;
+    background: var(--bg-secondary-contrast);
 
     &:hover {
-      background: var(--bg-secondary-contrast-hover);
       color: var(--text-hover);
-    }
-
-    &.save {
-      margin-left: auto;
-      background: var(--bg-contrast);
-      color: var(--text-contrast);
-
-      &:hover {
-        background: var(--bg-contrast-hover);
-      }
-    }
-  }
-
-  @media (min-width: $sm) {
-    button {
-      padding: 8px 20px;
+      background: var(--bg-secondary-contrast-hover);
     }
   }
 }
@@ -47,99 +42,94 @@
    Список карточек вопросов
 ----------------------------------- */
 .questionList {
+  gap: 32px;
+  padding-bottom: 8px;
+  box-sizing: border-box;
   display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 100%;
+  flex-direction: row;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 /* ----------------------------------
    Одна карточка вопроса
 ----------------------------------- */
-.questionBlock {
+.question {
+  gap: 24px;
+  min-width: 500px;
+  max-width: 500px;
   display: flex;
   flex-direction: column;
+  transition: all 0.3s ease;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 
-  /* Кнопка удаления всей карточки */
-  .remove {
-    align-self: flex-end;
-    background: none;
-    border: none;
-    font-size: 20px;
-    line-height: 1;
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: color 0.2s;
-
-    &:hover {
-      color: var(--text);
-    }
+  &:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
   }
 
-  /* Собственно карточка */
-  .question {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    padding: 20px;
+  &__header {
+    gap: 16px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    transition:
-      border-color 0.2s,
-      box-shadow 0.2s;
+  }
+
+  &__actions {
+    gap: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__arrows {
+    gap: 8px;
+    display: flex;
+    align-items: center;
+  }
+
+  &__arrow {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
 
     &:hover {
-      border-color: var(--border-hover);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+      background: var(--text-hover);
     }
   }
-}
 
-/* ----------------------------------
-   Поля внутри карточки
------------------------------------ */
-.row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
+  &__remove {
+    cursor: pointer;
+    transition: all 0.3s ease;
 
-/* Заголовок */
-.titleInput {
-  flex: 1 1 60%;
-  font-size: 1.1rem;
-  font-weight: 600;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 8px 12px;
-  background: var(--bg);
-
-  &:focus {
-    outline: none;
-    border-color: var(--bg-contrast);
-    box-shadow: 0 0 0 2px rgba(var(--bg-contrast-hover-rgb, 0, 166, 107), 0.2);
+    &:hover {
+      background-color: var(--bg-error-hover);
+    }
   }
-}
 
-/* Описание */
-.descInput {
-  width: 100%;
-  min-height: 60px;
-  resize: vertical;
-  font-size: 0.95rem;
-  color: var(--text-secondary);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 8px 12px;
-  background: var(--bg);
+  &__head {
+    gap: 32px;
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+  }
 
-  &:focus {
-    outline: none;
-    border-color: var(--bg-contrast);
-    box-shadow: 0 0 0 2px rgba(var(--bg-contrast-hover-rgb, 0, 166, 107), 0.2);
+  &__title {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  &__body {
+    gap: 16px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__textarea {
+    height: 60px;
+    height: 3lh;
+    resize: none;
   }
 }
 
@@ -221,12 +211,7 @@
 }
 
 @media (min-width: $sm) {
-  .titleInput,
   .optionInput {
     padding: 10px 14px;
-  }
-  .question {
-    padding: 24px;
-    gap: 20px;
   }
 }

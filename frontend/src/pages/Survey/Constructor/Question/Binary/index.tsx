@@ -2,11 +2,11 @@ import React from "react";
 
 import Radio from "@ui/Radio";
 
-import type { IQuestionProps } from "../Question.types";
+import type { TQuestionProps } from "../Question.types";
 
 import styles from "../Question.module.scss";
 
-export const Binary: React.FC<IQuestionProps> = () => {
+export const Binary: React.FC<TQuestionProps> = () => {
   const [yesNo, setYesNo] = React.useState<"yes" | "no">();
 
   return (

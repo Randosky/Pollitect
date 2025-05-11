@@ -1,10 +1,10 @@
 import React from "react";
 
-import type { IQuestionProps } from "../Question.types";
+import type { TQuestionProps } from "../Question.types";
 
 import styles from "../Question.module.scss";
 
-export const Dropdown: React.FC<IQuestionProps> = ({ item, onChange }) => (
+export const Dropdown: React.FC<TQuestionProps> = ({ item, onChange }) => (
   <>
     <select
       className={styles.selectInput}
