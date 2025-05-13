@@ -21,7 +21,7 @@ app.use(express.json());
 
 // API с авторизацией (credentials: true) — только из localhost:7124
 const restrictedCors = cors({
-  origin: "http://localhost:7124",
+  origin: process.env.FRONTEND_URL,
   credentials: true,
 });
 app.options("/api/auth/*", restrictedCors);

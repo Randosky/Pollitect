@@ -2,7 +2,8 @@
 export const OWNER = "pollitect-survey";
 
 /** Адрес сервера */
-export const SERVER_URL = "http://localhost:3000/api/widget";
+// export const SERVER_URL = "http://localhost:3000/api/widget";
+export const SERVER_URL = "https://pollitect-backend.onrender.com:3000/api/widget";
 
 /** Ширина на мобилке */
 export const MOBILE_WIDTH = 768;

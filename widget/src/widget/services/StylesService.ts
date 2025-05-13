@@ -3,7 +3,7 @@ import { isDarkColor } from "@utils/isDarkColor";
 
 import { TDesignSettings, TFontFamily } from "@/widget/Survey.types";
 
-import { MOBILE_WIDTH, OWNER } from "@/widget/vars";
+import { MOBILE_WIDTH, OWNER, SERVER_URL } from "@/widget/vars";
 
 const STYLE_ID = `${OWNER}-style`;
 const FONT_STYLE_ID = `${OWNER}-fonts`;
@@ -93,7 +93,7 @@ function injectFontStyles(fontFamily: TFontFamily): void {
       return `
         @font-face {
           font-family: "${fontFamily}";
-          src: url("http://localhost:3000/fonts/${fontFamily.toLowerCase().replace(/\s/g, "-")}/${file}") format("truetype");
+          src: url("${SERVER_URL}/fonts/${fontFamily.toLowerCase().replace(/\s/g, "-")}/${file}") format("truetype");
           font-weight: ${weight};
           font-style: ${italic ? "italic" : "normal"};
           font-display: swap;
