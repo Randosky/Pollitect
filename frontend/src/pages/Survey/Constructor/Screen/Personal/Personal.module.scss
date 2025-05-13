@@ -21,6 +21,56 @@
   border-radius: 6px;
 }
 
+.field {
+  gap: 4px;
+  display: flex;
+  flex-direction: column;
+
+  &__label {
+    width: fit-content;
+    position: relative;
+  }
+
+  &__required {
+    position: absolute;
+    top: 0;
+    right: -16px;
+    width: 8px;
+    height: 8px;
+    background-color: var(--bg-contrast);
+    border-radius: 50%;
+  }
+
+  &__content {
+    gap: 16px;
+    display: flex;
+  }
+
+  &__actions {
+    gap: 8px;
+    display: flex;
+    align-items: center;
+  }
+
+  &__edit {
+    &:hover {
+      background-color: var(--text);
+    }
+  }
+
+  &__remove {
+    &:hover {
+      background-color: var(--bg-error-hover);
+    }
+  }
+
+  &__addButton {
+    font-size: 14px;
+    padding: 8px 16px;
+    color: var(--text);
+  }
+}
+
 .buttonContainer {
   width: 100%;
 

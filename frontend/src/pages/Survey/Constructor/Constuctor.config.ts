@@ -19,4 +19,13 @@ export const QUESTION_TYPES_MAP: Record<TQuestionType, string> = {
  */
 export const QUESTION_TYPES: TQuestionType[] = ["single", "multi", "binary", "dropdown", "text", "textarea", "date"];
 
+/** Поля персональных данных */
+export const PERSONAL_SCREEN_FIELDS_MAP: Record<TPersonalFieldType, string> = {
+  name: "Имя",
+  email: "Email",
+  phone: "Телефон",
+  address: "Адрес",
+};
+
+/** Поля персональных данных */
 export const PERSONAL_SCREEN_FIELDS: TPersonalFieldType[] = ["name", "email", "phone", "address"];

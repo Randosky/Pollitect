@@ -1,0 +1,35 @@
+@import "@styles/breakpoints";
+
+.modal {
+  background: var(--white);
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.title {
+  margin: 0;
+  margin-bottom: 16px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.labell {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}

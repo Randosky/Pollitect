@@ -1,20 +1,27 @@
-/* eslint-disable camelcase */
 import React, { CSSProperties, useCallback, useMemo } from "react";
 
 import { useFormWithFooter } from "@hooks/useFormWithFooter";
 import { useSurveyController } from "@hooks/useSurveyController";
-import { useAppSelector } from "@store/hooks";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
+import { closeModal, openModal } from "@store/slices/layout";
+import Button from "@ui/Button";
 import Checkbox from "@ui/Checkbox";
 import Select from "@ui/Select";
 import { TextField } from "@ui/TextField";
 import classNames from "classnames";
 
-import type { TPersonalScreen, TScreenDesignSettings } from "@pages/Survey/Survey.types";
+import { PERSONAL_SCREEN_FIELDS } from "../../Constuctor.config";
+
+import type { TPersonalScreen, TScreenDesignSettings, TScreenPersonalField } from "@pages/Survey/Survey.types";
 
 import screenStyles from "../Screen.module.scss";
 import styles from "./Personal.module.scss";
 
+import AddFieldModal from "./AddFieldModal";
+
 const PersonalScreen: React.FC = React.memo(() => {
+  const dispatch = useAppDispatch();
+
   const { id, personalScreen } = useAppSelector(s => s.survey.surveyForm);
   const { saveSurvey } = useSurveyController();
 
@@ -25,6 +32,8 @@ const PersonalScreen: React.FC = React.memo(() => {
   );
 
   const { form, setForm } = useFormWithFooter<TPersonalScreen>(personalScreen, saveForm);
+
+  const existing = form.personal_fields?.map(f => f.type) ?? [];
 
   /** обработка обычных полей */
   const handleField = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -48,6 +57,67 @@ const PersonalScreen: React.FC = React.memo(() => {
       },
     }));
   }, []);
+
+  /** Добавить новое */
+  const handleAdd = useCallback(() => {
+    dispatch(
+      openModal({
+        content: (
+          <AddFieldModal
+            existingTypes={existing}
+            onSave={field => {
+              setForm(prev => ({
+                ...prev,
+                personal_fields: [...(prev.personal_fields || []), field],
+              }));
+              dispatch(closeModal());
+            }}
+            onCancel={() => dispatch(closeModal())}
+          />
+        ),
+      })
+    );
+  }, [dispatch, existing, setForm]);
+
+  /** Редактировать */
+  const handleEdit = useCallback(
+    (field: TScreenPersonalField, idx: number) => {
+      dispatch(
+        openModal({
+          content: (
+            <AddFieldModal
+              existingTypes={existing}
+              initial={field}
+              index={idx}
+              onSave={(updated, index) => {
+                setForm(prev => {
+                  const pf = [...(prev.personal_fields || [])];
+
+                  pf[index!] = updated;
+
+                  return { ...prev, personal_fields: pf };
+                });
+                dispatch(closeModal());
+              }}
+              onCancel={() => dispatch(closeModal())}
+            />
+          ),
+        })
+      );
+    },
+    [dispatch, existing, setForm]
+  );
+
+  /** Удалить */
+  const handleRemove = useCallback(
+    (idx: number) => {
+      setForm(prev => ({
+        ...prev,
+        personal_fields: prev.personal_fields?.filter((_, i) => i !== idx),
+      }));
+    },
+    [setForm]
+  );
 
   /** стили для body */
   const stylesBody = useMemo<CSSProperties>(() => {
@@ -133,22 +203,57 @@ const PersonalScreen: React.FC = React.memo(() => {
         </div>
 
         <form className={styles.form}>
-          <TextField
-            size="mobile"
-            config={{ inputProps: { placeholder: "Имя" } }}
-          />
-          <TextField
-            size="mobile"
-            config={{ inputProps: { placeholder: "Email" } }}
-          />
-          <TextField
-            size="mobile"
-            config={{ inputProps: { placeholder: "Телефон" } }}
-          />
-          <TextField
-            size="mobile"
-            config={{ inputProps: { placeholder: "Комментарий" } }}
-          />
+          {form.personal_fields?.map((personal, index) => (
+            <div
+              key={personal.type}
+              className={styles.field}
+            >
+              <label
+                htmlFor={personal.type}
+                className={styles.field__label}
+              >
+                <span>
+                  {personal.label} <span className={personal.required ? styles.field__required : ""} />
+                </span>
+              </label>
+
+              <div className={styles.field__content}>
+                <TextField
+                  size="mobile"
+                  config={{ inputProps: { id: personal.type, disabled: true, placeholder: personal.placeholder } }}
+                />
+
+                <div className={styles.field__actions}>
+                  <span
+                    tabIndex={0}
+                    role="button"
+                    className={classNames("icon-edit", styles.field__edit)}
+                    onClick={() => handleEdit(personal, index)}
+                    onKeyDown={e => e.code === "Enter" && handleEdit(personal, index)}
+                  />
+
+                  <span
+                    tabIndex={0}
+                    role="button"
+                    className={classNames("icon-trash", styles.field__remove)}
+                    onClick={() => handleRemove(index)}
+                    onKeyDown={e => e.code === "Enter" && handleRemove(index)}
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {(form.personal_fields?.length || 0) < PERSONAL_SCREEN_FIELDS.length && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleAdd}
+              className={styles.field__addButton}
+            >
+              + Добавить поле
+            </Button>
+          )}
 
           <TextField
             size="mobile"
