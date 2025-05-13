@@ -4,6 +4,7 @@ import React from "react";
 import { useError } from "@hooks/useError";
 import { useSurveyController } from "@hooks/useSurveyController";
 import { useQueryClient } from "@tanstack/react-query";
+import pluralizeRu from "@utils/pluralizeRu";
 import classNames from "classnames";
 import { Link } from "react-router-dom";
 
@@ -12,6 +13,7 @@ import type { TSurveyCardProps } from "../Dashboard.types";
 import styles from "./SurveyCard.module.scss";
 
 const SEC_IN_MIN = 60;
+const SEC_IN_HOUR = 3600;
 
 const SurveyCard: React.FC<TSurveyCardProps> = ({ surveyCard }) => {
   const {
@@ -19,7 +21,7 @@ const SurveyCard: React.FC<TSurveyCardProps> = ({ surveyCard }) => {
     title,
     active,
     display_settings: displaySettings,
-    statistics: { responsesCount, completionRate, averageTimeSec } = {},
+    statistics: { completedCount = 0, incompleteCount = 0, averageTimeSec = 0 } = {},
   } = surveyCard;
 
   const processError = useError();
@@ -61,11 +63,33 @@ const SurveyCard: React.FC<TSurveyCardProps> = ({ surveyCard }) => {
   };
 
   const formatTime = (sec: number) => {
-    const m = Math.floor(sec / SEC_IN_MIN);
+    const h = Math.floor(sec / SEC_IN_HOUR);
+    const m = Math.floor((sec % SEC_IN_HOUR) / SEC_IN_MIN);
     const s = sec % SEC_IN_MIN;
 
-    return `${m} мин ${s} сек`;
+    return (
+      <span>
+        {h > 0 && (
+          <span>
+            <strong>{h}</strong>&nbsp;час
+          </span>
+        )}
+
+        {m > 0 && (
+          <span>
+            <strong>{m}</strong>&nbsp;мин
+          </span>
+        )}
+
+        <span>
+          <strong>{s}</strong>&nbsp;сек
+        </span>
+      </span>
+    );
   };
+
+  /** Процент полностью завершенных ответов */
+  const completedPercent = Math.round((completedCount / (completedCount + incompleteCount)) * 100);
 
   return (
     <article className={styles.card}>
@@ -102,16 +126,13 @@ const SurveyCard: React.FC<TSurveyCardProps> = ({ surveyCard }) => {
 
       <div className={styles.stats}>
         <div className={styles.statItem}>
-          <strong>{responsesCount}</strong> ответов
+          <strong>{completedCount + incompleteCount}</strong>{" "}
+          {pluralizeRu(completedCount, ["прохождение", "прохождения", "прохождений"])}
         </div>
         <div className={styles.statItem}>
-          <strong>{completionRate}%</strong> завершено
+          <strong>{completedPercent}%</strong> {pluralizeRu(completedPercent, ["завершен", "завершено", "завершено"])}
         </div>
-        {averageTimeSec !== undefined && (
-          <div className={styles.statItem}>
-            <strong>{formatTime(averageTimeSec)}</strong> в среднем
-          </div>
-        )}
+        {averageTimeSec !== undefined && <div className={styles.statItem}>{formatTime(averageTimeSec)} в среднем</div>}
       </div>
 
       <footer className={styles.actions}>

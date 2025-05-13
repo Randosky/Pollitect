@@ -181,7 +181,7 @@ export default class PersonalScreen extends Screen {
       this.data!.screen.personal_fields?.forEach(field => {
         const input = this.form!.elements.namedItem(field.type) as HTMLInputElement;
 
-        if (input) personal[field.type] = input.value.trim();
+        if (input) personal[field.type] = encodeURIComponent(input.value.trim());
       });
 
       try {

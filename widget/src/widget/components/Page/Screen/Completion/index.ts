@@ -100,6 +100,7 @@ export default class CompletionScreen extends Screen {
   private finishSurvey = async (): Promise<void> => {
     const surveyId = this.data?.surveyData.id;
     const sessionId = this.store?.getStateByKey("sessionId");
+    const timer = this.store?.getStateByKey("surveyTimer");
 
     if (!sessionId || !surveyId) return;
 
@@ -107,7 +108,7 @@ export default class CompletionScreen extends Screen {
       await fetch(`${SERVER_URL}/complete`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId, surveyId }),
+        body: JSON.stringify({ sessionId, surveyId, timer }),
       });
 
       /** Возвращаем скролл */

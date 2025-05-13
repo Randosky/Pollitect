@@ -138,8 +138,8 @@ export async function addAnswer(req: Request, res: Response): Promise<void> {
 
     /** Статистика по опросу */
     const stats: any = (survey.get("statistics") as any) || {};
-    if (typeof stats.incompleteCount !== "number") stats.incompleteCount = 0;
-    if (typeof stats.completedCount !== "number") stats.completedCount = 0;
+    stats.completedCount = stats.completedCount ?? 0;
+    stats.incompleteCount = stats.incompleteCount ?? 0;
 
     /** Ищем или создаём объект текущей сессии */
     let sess = sessions.find((s) => s.sessionId === sessionId);
@@ -161,6 +161,7 @@ export async function addAnswer(req: Request, res: Response): Promise<void> {
       question_id: answer.question_id,
       value: answer.value,
     };
+
     if (idx >= 0) {
       sess.answers[idx] = item;
     } else {
@@ -192,10 +193,12 @@ export async function completeSurvey(
   req: Request,
   res: Response
 ): Promise<void> {
-  const { surveyId, sessionId } = req.body as {
+  const { surveyId, sessionId, timer } = req.body as {
     surveyId: number;
     sessionId: number;
+    timer: number;
   };
+
   if (typeof surveyId !== "number" || typeof sessionId !== "number") {
     res.status(400).json({ message: "Нужны surveyId и sessionId" });
     return;
@@ -208,20 +211,46 @@ export async function completeSurvey(
       return;
     }
 
+    // Получаем все сессии
     const raw = (survey.get("responses") as ISessionResponse[]) || [];
     const sessions: ISessionResponse[] = Array.isArray(raw) ? raw : [];
 
+    // Статистика
     const stats: any = (survey.get("statistics") as any) || {};
     stats.completedCount = stats.completedCount ?? 0;
     stats.incompleteCount = stats.incompleteCount ?? 0;
+    stats.averageTimeSec = stats.averageTimeSec ?? 0;
 
+    // Находим сессию, если есть, и обновляем ее, иначе создается новая
     const sess = sessions.find((s) => s.sessionId === sessionId);
     if (sess && !sess.isCompleted) {
       sess.isCompleted = true;
       stats.completedCount += 1;
       stats.incompleteCount = Math.max(0, stats.incompleteCount - 1);
+
+      // Если пришёл валидный таймер — пересчитываем averageTimeSec
+      if (typeof timer === "number" && timer > 0) {
+        // Исходное время таймера (сек) хранится в display_settings
+        const ds: any = survey.get("display_settings");
+        const initial = typeof ds.timer_sec === "number" ? ds.timer_sec : 0;
+
+        // Если изначально таймер был включён
+        if (initial > 0) {
+          // сколько шло прохождение
+          const duration = initial - timer;
+          // скользящее среднее: (prevAvg * prevCount + duration) / newCount
+          const prevCount = stats.completedCount - 1;
+          const prevAvg = stats.averageTimeSec;
+          const newAvg = Math.round(
+            (prevAvg * prevCount + duration) / stats.completedCount
+          );
+
+          stats.averageTimeSec = newAvg;
+        }
+      }
     }
 
+    /** Сохраняем обе колонки: responses и statistics */
     await Survey.update(
       {
         responses: sessions,
@@ -289,8 +318,8 @@ export async function savePersonalData(
 
     // Статистика (если первый раз создаётся сессия — увеличиваем incompleteCount)
     const stats: any = (survey.get("statistics") as any) || {};
-    if (typeof stats.incompleteCount !== "number") stats.incompleteCount = 0;
-    if (typeof stats.completedCount !== "number") stats.completedCount = 0;
+    stats.completedCount = stats.completedCount ?? 0;
+    stats.incompleteCount = stats.incompleteCount ?? 0;
 
     // Ищем или создаём объект текущей сессии
     let sess = sessions.find((s) => s.sessionId === sessionId);
@@ -304,11 +333,26 @@ export async function savePersonalData(
       stats.incompleteCount += 1;
     }
 
-    // Сохраняем персональные поля
-    if (personal.name != null) sess.name = personal.name;
-    if (personal.email != null) sess.email = personal.email;
-    if (personal.phone != null) sess.phone = personal.phone;
-    if (personal.address != null) sess.address = personal.address;
+    // Функция для безопасного декодирования
+    const safeDecode = (v?: string): string | undefined => {
+      if (typeof v !== "string") return undefined;
+      try {
+        return decodeURIComponent(v);
+      } catch {
+        return v;
+      }
+    };
+
+    // Сохраняем персональные поля (декодируем)
+    const decodedName = safeDecode(personal.name);
+    const decodedEmail = safeDecode(personal.email);
+    const decodedPhone = safeDecode(personal.phone);
+    const decodedAddress = safeDecode(personal.address);
+
+    if (decodedName != null) sess.name = decodedName;
+    if (decodedEmail != null) sess.email = decodedEmail;
+    if (decodedPhone != null) sess.phone = decodedPhone;
+    if (decodedAddress != null) sess.address = decodedAddress;
 
     // Пишем в базу
     await Survey.update(

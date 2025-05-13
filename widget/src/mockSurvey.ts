@@ -157,8 +157,8 @@ import type { ISurvey } from "@widget/Survey.types";
   },
   responses: [],
   statistics: {
-    responsesCount: 0,
-    completionRate: 0,
+    completedCount: 0,
+    incompleteCount: 0,
     averageTimeSec: 0,
   },
 } as ISurvey;

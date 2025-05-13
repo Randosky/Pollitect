@@ -234,11 +234,9 @@ export type TAnswer = {
 /** Тип статистики по опросу */
 export type TSurveyStats = {
   /** Общее число отправленных ответов */
-  responsesCount: number;
-  /** Процент завершённых прохождений */
-  completionRate: number;
+  completedCount: number;
+  /** Число не завершённых прохождений */
+  incompleteCount: number;
   /** Среднее время прохождения опроса в секундах */
   averageTimeSec?: number;
-  /** Сессии, завершившие прохождение  */
-  completedSessions?: number[];
 };

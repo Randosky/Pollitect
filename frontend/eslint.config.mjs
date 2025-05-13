@@ -82,7 +82,7 @@ export default [
       "valid-typeof": 2,
       "no-unexpected-multiline": 2,
       "no-constant-binary-expression": "warn",
-      "no-magic-numbers": [2, { ignore: [0, 1, 2, -1], ignoreArrayIndexes: true }],
+      "no-magic-numbers": [2, { ignore: [0, 1, 2, -1, 100], ignoreArrayIndexes: true }],
 
       /** Best Practices */
       "jsx-a11y/role-supports-aria-props": 0,
@@ -154,7 +154,7 @@ export default [
       "array-bracket-spacing": [2, "never"],
       "block-spacing": [2, "never"],
       "brace-style": [2, "1tbs", { allowSingleLine: true }],
-      camelcase: [0, { ignoreDestructuring: true }],
+      camelcase: [0, { properties: "never", ignoreDestructuring: true }],
       "comma-spacing": [2, { before: false, after: true }],
       "comma-style": [2, "last"],
       "computed-property-spacing": [2, "never"],
