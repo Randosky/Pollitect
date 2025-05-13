@@ -126,13 +126,16 @@ const SurveyCard: React.FC<TSurveyCardProps> = ({ surveyCard }) => {
 
       <div className={styles.stats}>
         <div className={styles.statItem}>
-          <strong>{completedCount + incompleteCount}</strong>{" "}
+          <strong>{(completedCount || 0) + (incompleteCount || 0)}</strong>{" "}
           {pluralizeRu(completedCount, ["прохождение", "прохождения", "прохождений"])}
         </div>
         <div className={styles.statItem}>
-          <strong>{completedPercent}%</strong> {pluralizeRu(completedPercent, ["завершен", "завершено", "завершено"])}
+          <strong>{completedPercent || 0}%</strong>{" "}
+          {pluralizeRu(completedPercent || 0, ["завершен", "завершено", "завершено"])}
         </div>
-        {averageTimeSec !== undefined && <div className={styles.statItem}>{formatTime(averageTimeSec)} в среднем</div>}
+        {averageTimeSec !== undefined && (
+          <div className={styles.statItem}>{formatTime(averageTimeSec || 0)} в среднем</div>
+        )}
       </div>
 
       <footer className={styles.actions}>
