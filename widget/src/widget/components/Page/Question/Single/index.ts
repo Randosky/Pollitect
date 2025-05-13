@@ -77,7 +77,7 @@ export default class SingleQuestion extends Question {
 
     opts.className = "question-options";
 
-    this.data!.question.options!.forEach((opt, idx) => {
+    this.data!.question.options?.forEach((opt, idx) => {
       const id = `single-${this.data!.question.id}-${idx}`;
       const wrapper = document.createElement("label");
 

@@ -77,7 +77,7 @@ export default class MultiQuestion extends Question {
 
     opts.classList.add("question-options");
 
-    this.data!.question.options!.forEach((opt, idx) => {
+    this.data!.question.options?.forEach((opt, idx) => {
       const id = `multi-${this.data!.question.id}-${idx}`;
       const wrapper = document.createElement("label");
 
