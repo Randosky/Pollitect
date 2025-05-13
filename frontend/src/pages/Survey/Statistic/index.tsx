@@ -35,7 +35,7 @@ const formatTime = (sec: number) => {
       )}
 
       <span>
-        <strong>{s}</strong>&nbsp;сек
+        <strong>{s || 0}</strong>&nbsp;сек
       </span>
     </span>
   );
@@ -81,11 +81,11 @@ const Summary: React.FC = () => {
     <section className={styles.summary}>
       <div className={styles.stat}>
         <h2>Всего прохождений</h2>
-        <strong>{total}</strong>
+        <strong>{total || 0}</strong>
       </div>
       <div className={styles.stat}>
         <h2>Завершено</h2>
-        <strong>{percent}%</strong>
+        <strong>{percent || 0}%</strong>
       </div>
       <div className={styles.stat}>
         <h2>Среднее время</h2>
@@ -160,7 +160,7 @@ const ByUser: React.FC = () => {
                   key={idx}
                   className={styles.answerRow}
                 >
-                  <strong>{title}</strong>
+                  <strong>{String(title)}</strong>
                   <AnswerDisplay value={ans.value} />
                 </div>
               );
