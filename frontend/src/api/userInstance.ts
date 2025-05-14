@@ -62,9 +62,11 @@ userAxiosInstance.interceptors.response.use(
         // Повторно отправляем оригинальный запрос с обновленным токеном
         return await userAxiosInstance(originalRequest);
       } catch (refreshError) {
+        const { response } = refreshError as AxiosError;
+
         if (
-          (refreshError as AxiosError).status === FORBIDDEN_CODE ||
-          (refreshError instanceof Error && refreshError.message === "Токен отсутствует")
+          response?.status === FORBIDDEN_CODE ||
+          (response?.data as { message?: string })?.message === "Токен отсутствует"
         ) {
           sessionStorage.removeItem("user");
           sessionStorage.removeItem("accessToken");
