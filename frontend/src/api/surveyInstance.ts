@@ -49,7 +49,10 @@ surveyAxiosInstance.interceptors.response.use(
         // Повторно отправляем оригинальный запрос с обновленным токеном
         return await surveyAxiosInstance(originalRequest);
       } catch (refreshError) {
-        if ((refreshError as AxiosError).status === FORBIDDEN_CODE) {
+        if (
+          (refreshError as AxiosError).status === FORBIDDEN_CODE ||
+          (refreshError instanceof Error && refreshError.message === "Токен отсутствует")
+        ) {
           sessionStorage.removeItem("user");
           sessionStorage.removeItem("accessToken");
           window.location.reload();
