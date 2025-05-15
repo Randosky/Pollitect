@@ -88,7 +88,7 @@ export async function getWidget(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    res.status(200).json({ surveys: matchedSurveys });
+    res.status(200).json(matchedSurveys);
   } catch (error) {
     console.error("getWidget error:", error);
     res.status(500).json({ message: "Внутренняя ошибка сервера" });
