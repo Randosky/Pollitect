@@ -59,18 +59,20 @@ export async function getWidget(req: Request, res: Response): Promise<void> {
       order: [["createdAt", "ASC"]],
     });
 
-    // Фильтруем по URL
-    const widget = surveys.find((s) => {
+    // Функция нормализации URL (убирает http/https и завершающий слеш)
+    const normalizeUrl = (inputUrl: string) =>
+      inputUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
+
+    // Нормализованный URL страницы
+    const normalizedUrl = normalizeUrl(url);
+
+    // Фильтрация всех подходящих опросов
+    const matchedSurveys = surveys.filter((s) => {
       const ds: any = s.get("display_settings");
       const patterns: string[] = Array.isArray(ds.url_pattern)
         ? ds.url_pattern
         : [];
       const mode: "contains" | "equals" = ds.url_match_mode;
-
-      const normalizeUrl = (inputUrl: string) =>
-        inputUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
-
-      const normalizedUrl = normalizeUrl(url);
 
       return patterns.some((p) => {
         const normalizedPattern = normalizeUrl(p);
@@ -80,12 +82,13 @@ export async function getWidget(req: Request, res: Response): Promise<void> {
       });
     });
 
-    if (!widget) {
-      res.status(404).json({ message: "Опрос для этой страницы не найден" });
+    // Проверка наличия подходящих опросов
+    if (matchedSurveys.length === 0) {
+      res.status(404).json({ message: "Опросы для этой страницы не найдены" });
       return;
     }
 
-    res.status(200).json(widget);
+    res.status(200).json({ surveys: matchedSurveys });
   } catch (error) {
     console.error("getWidget error:", error);
     res.status(500).json({ message: "Внутренняя ошибка сервера" });

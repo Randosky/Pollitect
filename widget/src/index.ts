@@ -34,7 +34,7 @@ function getUserId(script: HTMLScriptElement): string {
 }
 
 /** Загружает JSON-описание опроса с бэка */
-async function loadSurveyData(userId: string): Promise<ISurvey> {
+async function loadSurveyData(userId: string): Promise<ISurvey[]> {
   const resp = await fetch(
     `${SERVER_URL}?userId=${encodeURIComponent(userId)}&url=${encodeURIComponent(window.location.origin)}`,
     { method: "GET" }
@@ -42,7 +42,7 @@ async function loadSurveyData(userId: string): Promise<ISurvey> {
 
   if (!resp.ok) throw new Error(`Ошибка при загрузке: ${resp.status}`);
 
-  return (await resp.json()) as ISurvey;
+  return (await resp.json()) as ISurvey[];
 }
 
 /** Проверяет, можно ли показывать опрос (по куке и настройке prevent_repeat) */
@@ -122,14 +122,16 @@ async function initSurvey() {
   try {
     const script = getPollitectScript();
     const userId = getUserId(script);
-    const survey = await loadSurveyData(userId);
+    const surveys = await loadSurveyData(userId);
 
-    if (shouldPrevent(survey)) return;
+    surveys.forEach(survey => {
+      if (shouldPrevent(survey)) return;
 
-    const sessionId = getSessionIdForSurvey(survey.id!);
-    const container = getContainer(survey.display_settings.target_id);
+      const sessionId = getSessionIdForSurvey(survey.id!);
+      const container = getContainer(survey.display_settings.target_id);
 
-    mountSurvey(survey, sessionId, container);
+      mountSurvey(survey, sessionId, container);
+    });
   } catch (err) {
     console.error("initSurvey error:", err);
   }
