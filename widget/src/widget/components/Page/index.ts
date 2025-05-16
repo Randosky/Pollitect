@@ -1,6 +1,6 @@
 import { createWebComponent, registerWebComponent } from "@services/ComponentService";
 import Store from "@widget/store/Store";
-import { MS_IN_SECOND, OWNER, SECONDS_IN_MIN } from "@widget/vars";
+import { MS_IN_SECOND, SECONDS_IN_MIN } from "@widget/vars";
 
 import type { ISurvey, TQuestion } from "../../Survey.types";
 import type {
@@ -49,16 +49,18 @@ export class SurveyElement extends HTMLElement {
     this.shadow = this.attachShadow({ mode: "open" });
     this.store = Store;
 
-    registerWebComponent("binary-question", BinaryQuestion);
-    registerWebComponent("date-question", DateQuestion);
-    registerWebComponent("dropdown-question", DropdownQuestion);
-    registerWebComponent("multi-question", MultiQuestion);
-    registerWebComponent("single-question", SingleQuestion);
-    registerWebComponent("text-question", TextQuestion);
-    registerWebComponent("textarea-question", TextareaQuestion);
-    registerWebComponent("welcome-screen", WelcomeScreen);
-    registerWebComponent("personal-screen", PersonalScreen);
-    registerWebComponent("completion-screen", CompletionScreen);
+    const owner = this.store!.getStateByKey("owner");
+
+    registerWebComponent(owner, "binary-question", BinaryQuestion);
+    registerWebComponent(owner, "date-question", DateQuestion);
+    registerWebComponent(owner, "dropdown-question", DropdownQuestion);
+    registerWebComponent(owner, "multi-question", MultiQuestion);
+    registerWebComponent(owner, "single-question", SingleQuestion);
+    registerWebComponent(owner, "text-question", TextQuestion);
+    registerWebComponent(owner, "textarea-question", TextareaQuestion);
+    registerWebComponent(owner, "welcome-screen", WelcomeScreen);
+    registerWebComponent(owner, "personal-screen", PersonalScreen);
+    registerWebComponent(owner, "completion-screen", CompletionScreen);
   }
 
   /**
@@ -168,7 +170,7 @@ export class SurveyElement extends HTMLElement {
   ): TScreenComponent | undefined => {
     if (!data.active) return;
 
-    const component = createWebComponent(type);
+    const component = createWebComponent(this.store!.getStateByKey("owner"), type);
 
     component.data = {
       screen: data,
@@ -185,7 +187,7 @@ export class SurveyElement extends HTMLElement {
    * @returns {TQuestionComponent} массив веб-компонентов вопросов
    */
   private createQuestionComponent = (question: TQuestion): TQuestionComponent => {
-    const component = createWebComponent(`${question.type}-question`);
+    const component = createWebComponent(this.store!.getStateByKey("owner"), `${question.type}-question`);
 
     component.data = {
       question,
@@ -277,6 +279,8 @@ export class SurveyElement extends HTMLElement {
   private styleElement(): HTMLStyleElement {
     const style = document.createElement("style");
 
+    const owner = this.store?.getStateByKey("owner");
+
     const { width, width_unit, height, height_unit, borderRadius, margin, padding } =
       this.externalData!.design_settings;
 
@@ -286,7 +290,7 @@ export class SurveyElement extends HTMLElement {
           box-sizing: border-box;
           width: ${width}${width_unit};
           height: ${height}${height_unit};
-          background: var(--${OWNER}-bg-color);
+          background: var(--${owner}-bg-color);
           margin: ${margin.map(px => px + "px").join(" ")};
           padding: ${padding.map(px => px + "px").join(" ")};
           border-radius: ${borderRadius.map(px => px + "px").join(" ")};
@@ -295,15 +299,15 @@ export class SurveyElement extends HTMLElement {
         .container * {
           box-sizing: border-box;
           border-radius: inherit;
-          color: var(--${OWNER}-text-color);
-          font-family: var(--${OWNER}-font-family);
+          color: var(--${owner}-text-color);
+          font-family: var(--${owner}-font-family);
         }
 
         .timer {
           font-size: 14px;
           line-height: 140%;
           font-weight: bold;
-          font-family: var(--${OWNER}-font-family);
+          font-family: var(--${owner}-font-family);
           
           z-index: 4;
           display: none;
@@ -313,8 +317,8 @@ export class SurveyElement extends HTMLElement {
           width: ${TIMER_WIDTH}px;
           height: ${TIMER_HEIGHT}px;
           box-sizing: border-box;
-          color: var(--${OWNER}-bg-color);
-          background: var(--${OWNER}-btn-bg-color);
+          color: var(--${owner}-bg-color);
+          background: var(--${owner}-btn-bg-color);
         }
 
         .timer.show {

@@ -1,4 +1,4 @@
-import { OWNER, SERVER_URL } from "@widget/vars";
+import { SERVER_URL } from "@widget/vars";
 
 import type { TPersonalScreen, TScreenPersonalField } from "@/widget/Survey.types";
 
@@ -202,6 +202,8 @@ export default class PersonalScreen extends Screen {
   private styleElement(): HTMLStyleElement {
     const style = document.createElement("style");
 
+    const owner = this.store?.getStateByKey("owner");
+
     style.textContent = `
       .screen-form {
         z-index: 3;
@@ -212,7 +214,7 @@ export default class PersonalScreen extends Screen {
         max-width: 400px;
         overflow-y: auto;
         align-items: flex-end;
-        background-color: var(--${OWNER}-secondary-bg-color);
+        background-color: var(--${owner}-secondary-bg-color);
       }
 
       .form-field {
@@ -224,8 +226,8 @@ export default class PersonalScreen extends Screen {
       .form-field label {
         width: fit-content;
         margin-bottom: 6px;
-        font-size: var(--${OWNER}-font-size-description);
-        color: var(--${OWNER}-text-color);
+        font-size: var(--${owner}-font-size-description);
+        color: var(--${owner}-text-color);
         position: relative;
       }
 
@@ -235,14 +237,14 @@ export default class PersonalScreen extends Screen {
         right: -16px;
         width: 8px;
         height: 8px;
-        background-color: var(--${OWNER}-btn-bg-color);
+        background-color: var(--${owner}-btn-bg-color);
         border-radius: 50%;
       }
 
       .form-field input {
         padding: 8px 12px;
-        font-size: var(--${OWNER}-font-size-button);
-        border: 1px solid var(--${OWNER}-btn-bg-color);
+        font-size: var(--${owner}-font-size-button);
+        border: 1px solid var(--${owner}-btn-bg-color);
         border-radius: 5px;
         background: #fff;
         color: #222;
@@ -250,16 +252,16 @@ export default class PersonalScreen extends Screen {
 
       .form-field input:focus {
         outline: none;
-        box-shadow: 0 0 0 1px var(--${OWNER}-btn-bg-color);
+        box-shadow: 0 0 0 1px var(--${owner}-btn-bg-color);
       }
 
       .screen-skip-button {
         margin-top: 8px;
         cursor: pointer;
         background: transparent;
-        color: var(--${OWNER}-text-color);
-        border: 1px solid var(--${OWNER}-btn-bg-color);
-        font-size: var(--${OWNER}-font-size-description);
+        color: var(--${owner}-text-color);
+        border: 1px solid var(--${owner}-btn-bg-color);
+        font-size: var(--${owner}-font-size-description);
       }
 
       .screen-form button:disabled {

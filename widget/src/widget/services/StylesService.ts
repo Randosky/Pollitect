@@ -3,10 +3,7 @@ import { isDarkColor } from "@utils/isDarkColor";
 
 import { TDesignSettings, TFontFamily } from "@/widget/Survey.types";
 
-import { MOBILE_WIDTH, OWNER, SERVER_URL } from "@/widget/vars";
-
-const STYLE_ID = `${OWNER}-style`;
-const FONT_STYLE_ID = `${OWNER}-fonts`;
+import { MOBILE_WIDTH, SERVER_URL } from "@/widget/vars";
 
 const FONT_FILES: Record<TFontFamily, string[]> = {
   Arial: ["ARIAL.TTF", "ARIALI.TTF", "ARIALBD.TTF", "ARIALBI.TTF"],
@@ -28,16 +25,18 @@ const FONT_FILES: Record<TFontFamily, string[]> = {
  * @param {TDesignSettings} settings - Дизайн настройки виджета
  * @returns {void}
  */
-export function injectWidgetStyles(settings: TDesignSettings): void {
-  injectColorVariables(settings);
-  injectFontStyles(settings.font_family);
+export function injectWidgetStyles(owner: string, settings: TDesignSettings): void {
+  injectColorVariables(owner, settings);
+  injectFontStyles(owner, settings.font_family);
 }
 
 /**
  * Добавляет в document глобальные переменные цветов
  * @param {TDesignSettings} settings
  */
-function injectColorVariables(settings: TDesignSettings): void {
+function injectColorVariables(owner: string, settings: TDesignSettings): void {
+  const STYLE_ID = `${owner}-style`;
+
   if (document.getElementById(STYLE_ID)) return;
 
   const style = document.createElement("style");
@@ -46,26 +45,26 @@ function injectColorVariables(settings: TDesignSettings): void {
 
   style.innerHTML = `
     :root {
-      --${OWNER}-secondary-bg-color: #f2f0f0;
+      --${owner}-secondary-bg-color: #f2f0f0;
 
-      --${OWNER}-font-family: '${settings.font_family}', sans-serif;
-      --${OWNER}-text-color: ${settings.text_color};
-      --${OWNER}-bg-color: ${settings.background_color};
-      --${OWNER}-btn-bg-color: ${settings.button_color};
-      --${OWNER}-btn-color: ${isDarkColor(settings.button_color) ? "#fcfcfc" : "#222"};
+      --${owner}-font-family: '${settings.font_family}', sans-serif;
+      --${owner}-text-color: ${settings.text_color};
+      --${owner}-bg-color: ${settings.background_color};
+      --${owner}-btn-bg-color: ${settings.button_color};
+      --${owner}-btn-color: ${isDarkColor(settings.button_color) ? "#fcfcfc" : "#222"};
 
-      --${OWNER}-font-size-hint: 12px;
-      --${OWNER}-font-size-header: 20px;
-      --${OWNER}-font-size-description: 14px;
-      --${OWNER}-font-size-button: 14px;
-      --${OWNER}-font-size-legal-info: 12px;
+      --${owner}-font-size-hint: 12px;
+      --${owner}-font-size-header: 20px;
+      --${owner}-font-size-description: 14px;
+      --${owner}-font-size-button: 14px;
+      --${owner}-font-size-legal-info: 12px;
     }
 
     @media (min-width: ${MOBILE_WIDTH}px) {
       :root {
-        --${OWNER}-font-size-header: 22px;
-        --${OWNER}-font-size-description: 15px;
-        --${OWNER}-font-size-button: 15px;
+        --${owner}-font-size-header: 22px;
+        --${owner}-font-size-description: 15px;
+        --${owner}-font-size-button: 15px;
       }
     }
   `;
@@ -77,7 +76,9 @@ function injectColorVariables(settings: TDesignSettings): void {
  * Добавляет @font-face для выбранного шрифта
  * @param {TFontFamily} fontFamily
  */
-function injectFontStyles(fontFamily: TFontFamily): void {
+function injectFontStyles(owner: string, fontFamily: TFontFamily): void {
+  const FONT_STYLE_ID = `${owner}-fonts`;
+
   if (document.getElementById(FONT_STYLE_ID)) return;
 
   const fonts = FONT_FILES[fontFamily];

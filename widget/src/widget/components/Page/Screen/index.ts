@@ -1,5 +1,4 @@
 import Store from "@widget/store/Store";
-import { OWNER } from "@widget/vars";
 
 import type { TScreenComponentsData } from "../SurveyElement.types";
 import type { ISurvey, TScreenDesignSettings } from "@widget/Survey.types";
@@ -134,6 +133,8 @@ export default abstract class Screen extends HTMLElement {
   protected styleScreenElement(screenDesignSettings: TScreenDesignSettings): HTMLStyleElement {
     const style = document.createElement("style");
 
+    const owner = this.store?.getStateByKey("owner");
+
     const { layout, alignment, image_url } = screenDesignSettings;
 
     /** Стили для выравнивания */
@@ -171,7 +172,7 @@ export default abstract class Screen extends HTMLElement {
             justify-content: center;
             object-fit: cover;
             object-position: center;
-            background: var(--${OWNER}-secondary-bg-color);
+            background: var(--${owner}-secondary-bg-color);
             overflow: hidden;
           }
         `;
@@ -223,8 +224,8 @@ export default abstract class Screen extends HTMLElement {
       .screen-container * {
         box-sizing: border-box;
         border-radius: inherit;
-        color: var(--${OWNER}-text-color);
-        font-family: var(--${OWNER}-font-family);
+        color: var(--${owner}-text-color);
+        font-family: var(--${owner}-font-family);
       }
 
       .screen-content {
@@ -244,8 +245,8 @@ export default abstract class Screen extends HTMLElement {
         margin: 0;
         line-height: 140%;
         overflow-wrap: break-word;
-        color: var(--${OWNER}-text-color);
-        font-size: var(--${OWNER}-font-size-hint);
+        color: var(--${owner}-text-color);
+        font-size: var(--${owner}-font-size-hint);
       }
 
       .screen-header {
@@ -259,15 +260,15 @@ export default abstract class Screen extends HTMLElement {
       .screen-title {
         margin: 0;
         overflow-wrap: break-word;
-        color: var(--${OWNER}-text-color);
-        font-size: var(--${OWNER}-font-size-header);
+        color: var(--${owner}-text-color);
+        font-size: var(--${owner}-font-size-header);
       }
 
       .screen-description {
         margin: 0;
         overflow-wrap: break-word;
-        color: var(--${OWNER}-text-color);
-        font-size: var(--${OWNER}-font-size-description);
+        color: var(--${owner}-text-color);
+        font-size: var(--${owner}-font-size-description);
       }
 
       .screen-legal-info {
@@ -275,8 +276,8 @@ export default abstract class Screen extends HTMLElement {
         margin-top: auto;
         line-height: 140%;
         overflow-wrap: break-word;
-        color: var(--${OWNER}-text-color);
-        font-size: var(--${OWNER}-font-size-legal-info);
+        color: var(--${owner}-text-color);
+        font-size: var(--${owner}-font-size-legal-info);
       }
 
       .screen-button {
@@ -288,9 +289,9 @@ export default abstract class Screen extends HTMLElement {
         border-radius: 5px;
         width: fit-content;
         height: fit-content;
-        color: var(--${OWNER}-btn-color);
-        font-size: var(--${OWNER}-font-size-button);
-        background-color: var(--${OWNER}-btn-bg-color);
+        color: var(--${owner}-btn-color);
+        font-size: var(--${owner}-font-size-button);
+        background-color: var(--${owner}-btn-bg-color);
       }
 
     `;

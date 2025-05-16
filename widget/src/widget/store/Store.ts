@@ -1,4 +1,5 @@
 import { DeviceOS } from "@services/DeviceService";
+import { OWNER } from "@widget/vars";
 
 import type { TState } from "./Store.types";
 
@@ -99,6 +100,7 @@ class Store {
 
 /** Изначальные данные для Store */
 const initialState: TState = {
+  owner: OWNER,
   surveyTimer: -1,
   sessionId: undefined,
   device: DeviceOS.Mobile,

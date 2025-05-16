@@ -9,7 +9,6 @@ import TextareaQuestion from "@components/Page/Question/Textarea";
 import CompletionScreen from "@components/Page/Screen/Completion";
 import PersonalScreen from "@components/Page/Screen/Personal";
 import WelcomeScreen from "@components/Page/Screen/Welcome";
-import { OWNER } from "@widget/vars";
 
 /** Экраны */
 export type TScreenComponents = {
@@ -47,10 +46,11 @@ type CustomElementConstructor<T = HTMLElement> = {
  * @returns {void}
  */
 export function registerWebComponent<S extends keyof TSelectorCreate>(
+  owner: string,
   selector: S,
   component: CustomElementConstructor<TSelectorCreate[S]>
 ): void {
-  const ownerSelector = `${OWNER}-${selector}`;
+  const ownerSelector = `${owner}-${selector}`;
 
   if (!customElements.get(ownerSelector)) {
     customElements.define(ownerSelector, component);
@@ -62,8 +62,8 @@ export function registerWebComponent<S extends keyof TSelectorCreate>(
  * @param {string} selector Селектор компонента для создания.
  * @returns {HTMLElement} Созданный компонент.
  */
-export function createWebComponent<S extends keyof TSelectorCreate>(selector: S): TSelectorCreate[S] {
-  const ownerSelector = `${OWNER}-${selector}`;
+export function createWebComponent<S extends keyof TSelectorCreate>(owner: string, selector: S): TSelectorCreate[S] {
+  const ownerSelector = `${owner}-${selector}`;
 
   return document.createElement(ownerSelector) as TSelectorCreate[S];
 }

@@ -1,5 +1,5 @@
 import Store from "@widget/store/Store";
-import { OWNER, SERVER_URL } from "@widget/vars";
+import { SERVER_URL } from "@widget/vars";
 
 import type { ISurvey, TAnswer, TQuestion } from "@widget/Survey.types";
 
@@ -147,6 +147,8 @@ export default abstract class Question extends HTMLElement {
   protected styleQuestionElement(): HTMLStyleElement {
     const style = document.createElement("style");
 
+    const owner = this.store?.getStateByKey("owner");
+
     style.textContent = `
       .question-container {
         gap: 16px;
@@ -161,8 +163,8 @@ export default abstract class Question extends HTMLElement {
 
       .question-container * {
         box-sizing: border-box;
-        color: var(--${OWNER}-text-color);
-        font-family: var(--${OWNER}-font-family);
+        color: var(--${owner}-text-color);
+        font-family: var(--${owner}-font-family);
       }
 
       .question-header {
@@ -174,15 +176,15 @@ export default abstract class Question extends HTMLElement {
       .question-title {
         margin: 0;
         overflow-wrap: break-word;
-        color: var(--${OWNER}-text-color);
-        font-size: var(--${OWNER}-font-size-header);
+        color: var(--${owner}-text-color);
+        font-size: var(--${owner}-font-size-header);
       }
 
       .question-description {
         margin: 0;
         overflow-wrap: break-word;
-        color: var(--${OWNER}-text-color);
-        font-size: var(--${OWNER}-font-size-description);
+        color: var(--${owner}-text-color);
+        font-size: var(--${owner}-font-size-description);
       }
 
       .question-form {
@@ -212,8 +214,8 @@ export default abstract class Question extends HTMLElement {
         border-radius: 5px;
         width: fit-content;
         height: fit-content;
-        color: var(--${OWNER}-btn-color);
-        font-size: var(--${OWNER}-font-size-button);
+        color: var(--${owner}-btn-color);
+        font-size: var(--${owner}-font-size-button);
       }
 
       .question-send-button:hover:not(:disabled),
@@ -228,7 +230,7 @@ export default abstract class Question extends HTMLElement {
 
       .question-send-button {
         border: none;
-        background-color: var(--${OWNER}-btn-bg-color);
+        background-color: var(--${owner}-btn-bg-color);
       }
 
       .question-send-button:disabled {
@@ -238,8 +240,8 @@ export default abstract class Question extends HTMLElement {
 
       .question-skip-button {
         background: transparent;
-        color: var(--${OWNER}-btn-bg-color);
-        border: 1px solid var(--${OWNER}-btn-bg-color);
+        color: var(--${owner}-btn-bg-color);
+        border: 1px solid var(--${owner}-btn-bg-color);
       }
     `;
 

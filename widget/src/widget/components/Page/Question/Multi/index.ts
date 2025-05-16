@@ -1,5 +1,4 @@
 import Question from "..";
-import { OWNER } from "@widget/vars";
 
 import type { TAnswer } from "@widget/Survey.types";
 
@@ -148,6 +147,8 @@ export default class MultiQuestion extends Question {
   private styleElement(): HTMLStyleElement {
     const style = document.createElement("style");
 
+    const owner = this.store?.getStateByKey("owner");
+
     style.textContent = `
       .question-options {
         width: 100%;
@@ -178,7 +179,7 @@ export default class MultiQuestion extends Question {
       .checkbox .fake {
         width: 18px;
         height: 18px;
-        border: 2px solid var(--${OWNER}-btn-bg-color);
+        border: 2px solid var(--${owner}-btn-bg-color);
         border-radius: 4px;
         transition: background 0.2s, border-color 0.2s;
         position: relative;
@@ -199,8 +200,8 @@ export default class MultiQuestion extends Question {
       }
 
       .checkbox input:checked + .fake {
-        background: var(--${OWNER}-btn-bg-color);
-        border-color: var(--${OWNER}-btn-bg-color);
+        background: var(--${owner}-btn-bg-color);
+        border-color: var(--${owner}-btn-bg-color);
       }
 
       .checkbox input:checked + .fake::after {
@@ -213,14 +214,14 @@ export default class MultiQuestion extends Question {
       }
 
       .checkbox .text {
-        font-size: var(--${OWNER}-font-size-description);
+        font-size: var(--${owner}-font-size-description);
         line-height: 1.25;
-        color: var(--${OWNER}-text-color);
+        color: var(--${owner}-text-color);
       }
 
       @media (min-width: 600px) {
         .checkbox .text {
-          font-size: var(--${OWNER}-font-size-button);
+          font-size: var(--${owner}-font-size-button);
         }
       }
     `;

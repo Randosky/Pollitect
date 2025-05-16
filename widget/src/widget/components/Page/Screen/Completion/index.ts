@@ -1,6 +1,5 @@
-// CompletionScreen.ts
 import { setCookie } from "@services/CookieService";
-import { OWNER, SERVER_URL } from "@widget/vars";
+import { SERVER_URL } from "@widget/vars";
 
 import type { TCompletionScreen } from "@/widget/Survey.types";
 
@@ -168,6 +167,8 @@ export default class CompletionScreen extends Screen {
   private styleElement(): HTMLStyleElement {
     const style = document.createElement("style");
 
+    const owner = this.store?.getStateByKey("owner");
+
     style.textContent = `
       .completion-content {
         justify-content: center;
@@ -187,7 +188,7 @@ export default class CompletionScreen extends Screen {
       .success-icon {
         width: 80px;
         height: 80px;
-        stroke: var(--${OWNER}-btn-bg-color);
+        stroke: var(--${owner}-btn-bg-color);
         stroke-dasharray: 166;
         stroke-dashoffset: 166;
         animation: draw 0.7s ease-out forwards;
@@ -200,7 +201,7 @@ export default class CompletionScreen extends Screen {
 
       .success-text {
         font-size: 1.2rem;
-        color: var(--${OWNER}-text-color);
+        color: var(--${owner}-text-color);
         text-align: center;
       }
 

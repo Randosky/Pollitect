@@ -6,6 +6,7 @@ import { injectWidgetStyles } from "@services/StylesService";
 import type { ISurvey } from "./Survey.types";
 
 import Store from "./store/Store";
+import { OWNER } from "./vars";
 
 class Survey {
   /** Данные опроса */
@@ -26,8 +27,10 @@ class Survey {
     this.store.updateState("sessionId", sessionId);
     /** инициализируем таймер в сторе */
     this.store.updateState("surveyTimer", data.display_settings.timer_sec);
+    /** Инициализируем опрос-владелец для подстановки уникального идентификатора */
+    this.store.updateState("owner", `${OWNER}-${data.id}`);
 
-    registerWebComponent("survey-widget", SurveyElement);
+    registerWebComponent(`${OWNER}-${data.id}`, "survey-widget", SurveyElement);
 
     this.init();
   }
@@ -42,14 +45,14 @@ class Survey {
     const { design_settings } = this.data;
 
     /** Инициализация стилей */
-    injectWidgetStyles(design_settings);
+    injectWidgetStyles(this.store?.getStateByKey("owner"), design_settings);
 
     /** Регистрируем функцию как внешнюю функцию для обработки смены устройства */
     this.deviceService.setExternalChangeHandler(this.handleDeviceChange);
     this.handleDeviceChange(this.deviceService.getDeviceOS());
 
     /** Создаем опрос */
-    this.surveyElement = createWebComponent("survey-widget");
+    this.surveyElement = createWebComponent(this.store?.getStateByKey("owner"), "survey-widget");
     this.surveyElement!.data = this.data;
   }
 

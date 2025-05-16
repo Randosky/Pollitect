@@ -1,5 +1,4 @@
 import Question from "..";
-import { OWNER } from "@widget/vars";
 
 import type { TAnswer } from "@widget/Survey.types";
 
@@ -130,16 +129,18 @@ export default class DropdownQuestion extends Question {
   private styleElement(): HTMLStyleElement {
     const style = document.createElement("style");
 
+    const owner = this.store?.getStateByKey("owner");
+
     style.textContent = `
       .question-select {
         width: 100%;
         max-width: 400px;
         padding: 8px 12px;
-        font-size: var(--${OWNER}-font-size-description);
-        border: 1px solid var(--${OWNER}-btn-bg-color);
+        font-size: var(--${owner}-font-size-description);
+        border: 1px solid var(--${owner}-btn-bg-color);
         border-radius: 6px;
         background: #fff;
-        color: var(--${OWNER}-text-color);
+        color: var(--${owner}-text-color);
         appearance: none;
         background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888888'/%3E%3C/svg%3E");
         background-repeat: no-repeat;
@@ -150,7 +151,7 @@ export default class DropdownQuestion extends Question {
 
       .question-select:focus {
         outline: none;
-        box-shadow: 0 0 0 1px var(--${OWNER}-btn-bg-color);
+        box-shadow: 0 0 0 1px var(--${owner}-btn-bg-color);
       }
     `;
 

@@ -1,5 +1,4 @@
 import Question from "..";
-import { OWNER } from "@widget/vars";
 
 import type { TAnswer } from "@widget/Survey.types";
 
@@ -114,14 +113,16 @@ export default class TextareaQuestion extends Question {
   private styleElement(): HTMLStyleElement {
     const style = document.createElement("style");
 
+    const owner = this.store?.getStateByKey("owner");
+
     style.textContent = `
       .question-textarea {
         width: 100%;
         max-width: 400px;
         min-height: 100px;
         padding: 8px 12px;
-        font-size: var(--${OWNER}-font-size-button);
-        border: 1px solid var(--${OWNER}-btn-bg-color);
+        font-size: var(--${owner}-font-size-button);
+        border: 1px solid var(--${owner}-btn-bg-color);
         border-radius: 5px;
         background: #fff;
         color: #222;
@@ -134,7 +135,7 @@ export default class TextareaQuestion extends Question {
 
       .question-textarea::-webkit-scrollbar-track {
         border-radius: 5px;
-        background: var(--${OWNER}-secondary-bg-color);
+        background: var(--${owner}-secondary-bg-color);
       }
 
       .question-textarea::-webkit-scrollbar-thumb {
@@ -144,7 +145,7 @@ export default class TextareaQuestion extends Question {
 
       .question-textarea:focus {
         outline: none;
-        box-shadow: 0 0 0 1px var(--${OWNER}-btn-bg-color);
+        box-shadow: 0 0 0 1px var(--${owner}-btn-bg-color);
       }
     `;
 

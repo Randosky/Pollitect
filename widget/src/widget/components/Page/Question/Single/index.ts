@@ -1,5 +1,4 @@
 import Question from "..";
-import { OWNER } from "@widget/vars";
 
 import type { TAnswer } from "@widget/Survey.types";
 
@@ -140,6 +139,8 @@ export default class SingleQuestion extends Question {
   private styleElement(): HTMLStyleElement {
     const style = document.createElement("style");
 
+    const owner = this.store?.getStateByKey("owner");
+
     style.textContent = `
       .question-options {
         width: 100%;
@@ -170,7 +171,7 @@ export default class SingleQuestion extends Question {
       .question-option .fake {
         width: 20px;
         height: 20px;
-        border: 2px solid var(--${OWNER}-btn-bg-color);
+        border: 2px solid var(--${owner}-btn-bg-color);
         border-radius: 50%;
         position: relative;
         transition: border-color 0.2s;
@@ -180,7 +181,7 @@ export default class SingleQuestion extends Question {
         position: absolute;
         inset: 4px;
         border-radius: 50%;
-        background: var(--${OWNER}-btn-bg-color);
+        background: var(--${owner}-btn-bg-color);
         transform: scale(0);
         transition: transform 0.2s;
       }
@@ -188,7 +189,7 @@ export default class SingleQuestion extends Question {
         transform: scale(1);
       }
       .question-option .text {
-        font-size: var(--${OWNER}-font-size-button);
+        font-size: var(--${owner}-font-size-button);
         line-height: 140%;
       }
     `;
