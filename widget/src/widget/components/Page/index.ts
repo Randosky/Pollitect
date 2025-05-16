@@ -49,18 +49,16 @@ export class SurveyElement extends HTMLElement {
     this.shadow = this.attachShadow({ mode: "open" });
     this.store = Store;
 
-    const owner = this.store!.getStateByKey("owner");
-
-    registerWebComponent(owner, "binary-question", BinaryQuestion);
-    registerWebComponent(owner, "date-question", DateQuestion);
-    registerWebComponent(owner, "dropdown-question", DropdownQuestion);
-    registerWebComponent(owner, "multi-question", MultiQuestion);
-    registerWebComponent(owner, "single-question", SingleQuestion);
-    registerWebComponent(owner, "text-question", TextQuestion);
-    registerWebComponent(owner, "textarea-question", TextareaQuestion);
-    registerWebComponent(owner, "welcome-screen", WelcomeScreen);
-    registerWebComponent(owner, "personal-screen", PersonalScreen);
-    registerWebComponent(owner, "completion-screen", CompletionScreen);
+    registerWebComponent("binary-question", BinaryQuestion);
+    registerWebComponent("date-question", DateQuestion);
+    registerWebComponent("dropdown-question", DropdownQuestion);
+    registerWebComponent("multi-question", MultiQuestion);
+    registerWebComponent("single-question", SingleQuestion);
+    registerWebComponent("text-question", TextQuestion);
+    registerWebComponent("textarea-question", TextareaQuestion);
+    registerWebComponent("welcome-screen", WelcomeScreen);
+    registerWebComponent("personal-screen", PersonalScreen);
+    registerWebComponent("completion-screen", CompletionScreen);
   }
 
   /**
@@ -170,7 +168,7 @@ export class SurveyElement extends HTMLElement {
   ): TScreenComponent | undefined => {
     if (!data.active) return;
 
-    const component = createWebComponent(this.store!.getStateByKey("owner"), type);
+    const component = createWebComponent(type);
 
     component.data = {
       screen: data,
@@ -187,7 +185,7 @@ export class SurveyElement extends HTMLElement {
    * @returns {TQuestionComponent} массив веб-компонентов вопросов
    */
   private createQuestionComponent = (question: TQuestion): TQuestionComponent => {
-    const component = createWebComponent(this.store!.getStateByKey("owner"), `${question.type}-question`);
+    const component = createWebComponent(`${question.type}-question`);
 
     component.data = {
       question,

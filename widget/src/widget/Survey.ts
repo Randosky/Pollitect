@@ -30,7 +30,7 @@ class Survey {
     /** Инициализируем опрос-владелец для подстановки уникального идентификатора */
     this.store.updateState("owner", `${OWNER}-${data.id}`);
 
-    registerWebComponent(`${OWNER}-${data.id}`, "survey-widget", SurveyElement);
+    registerWebComponent("survey-widget", SurveyElement);
 
     this.init();
   }
@@ -52,7 +52,7 @@ class Survey {
     this.handleDeviceChange(this.deviceService.getDeviceOS());
 
     /** Создаем опрос */
-    this.surveyElement = createWebComponent(this.store?.getStateByKey("owner"), "survey-widget");
+    this.surveyElement = createWebComponent("survey-widget");
     this.surveyElement!.data = this.data;
   }
 

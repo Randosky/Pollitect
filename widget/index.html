@@ -63,34 +63,36 @@
     ></script>
 
     <script type="module">
-      /** Ищем контейнер */
-      const container = document.getElementById("app");
+      window.mockSurveys.forEach(survey => {
+        /** Ищем контейнер */
+        const container = document.getElementById("app");
 
-      /** Инициализируем опрос */
-      const surveyInstance = new Survey(window.mockSurvey, Date.now());
+        /** Инициализируем опрос */
+        const surveyInstance = new Survey(survey, Date.now());
 
-      window._pollitect = surveyInstance;
+        window._pollitect = surveyInstance;
 
-      const surveyEl = surveyInstance.surveyElement;
+        const surveyEl = surveyInstance.surveyElement;
 
-      // определяем способ вставки
-      switch (window.mockSurvey.design_settings.placement) {
-        case "after":
-          /** после — ставим элемент сразу после контейнера */
-          container.insertAdjacentElement("afterend", surveyEl);
-          break;
+        // определяем способ вставки
+        switch (survey.design_settings.placement) {
+          case "after":
+            /** после — ставим элемент сразу после контейнера */
+            container.insertAdjacentElement("afterend", surveyEl);
+            break;
 
-        case "before":
-          /** до — ставим элемент сразу перед контейнером */
-          container.insertAdjacentElement("beforebegin", surveyEl);
-          break;
+          case "before":
+            /** до — ставим элемент сразу перед контейнером */
+            container.insertAdjacentElement("beforebegin", surveyEl);
+            break;
 
-        case "inbuilt":
+          case "inbuilt":
 
-        default:
-          /** встроенный — помещаем внутрь контейнера */
-          container.appendChild(surveyEl);
-      }
+          default:
+            /** встроенный — помещаем внутрь контейнера */
+            container.appendChild(surveyEl);
+        }
+      });
     </script>
 
     <!-- Тестирование с запросом -->
