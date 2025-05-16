@@ -143,18 +143,30 @@ export class SurveyElement extends HTMLElement {
   private createTimer() {
     if (!this.container) return;
 
-    const containerRects = this.container.getBoundingClientRect();
-
-    const left = containerRects.left + containerRects.width - TIMER_WIDTH - TIMER_MARGIN;
-    const top = containerRects.top - TIMER_HEIGHT - TIMER_MARGIN;
-
     this.timerEl = document.createElement("div");
     this.timerEl.classList.add("timer");
-    this.timerEl.style.left = `${left}px`;
-    this.timerEl.style.top = `${top}px`;
+
+    // Сразу установить начальную позицию
+    this.updateTimerPosition();
 
     this.shadow.appendChild(this.timerEl);
+
+    window.addEventListener("scroll", this.updateTimerPosition.bind(this));
+    window.addEventListener("resize", this.updateTimerPosition.bind(this));
   }
+
+  /** Обновление позиции таймера */
+  private updateTimerPosition = () => {
+    if (!this.container || !this.timerEl) return;
+
+    const rect = this.container.getBoundingClientRect();
+
+    const left = rect.left + rect.width - TIMER_WIDTH - TIMER_MARGIN;
+    const top = rect.top + window.scrollY + TIMER_MARGIN;
+
+    this.timerEl.style.left = `${left}px`;
+    this.timerEl.style.top = `${top}px`;
+  };
 
   /**
    * Создает экземпляр экрана
