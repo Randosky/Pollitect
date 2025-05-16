@@ -47,7 +47,7 @@ function injectColorVariables(owner: string, settings: TDesignSettings): void {
     :root {
       --${owner}-secondary-bg-color: #f2f0f0;
 
-      --${owner}-font-family: '${settings.font_family}', sans-serif;
+      --${owner}-font-family: '${owner}-${settings.font_family}', sans-serif;
       --${owner}-text-color: ${settings.text_color};
       --${owner}-bg-color: ${settings.background_color};
       --${owner}-btn-bg-color: ${settings.button_color};
@@ -93,7 +93,7 @@ function injectFontStyles(owner: string, fontFamily: TFontFamily): void {
 
       return `
         @font-face {
-          font-family: "${fontFamily}";
+          font-family: "${owner}-${fontFamily}";
           src: url("${SERVER_URL}/fonts/${fontFamily.toLowerCase().replace(/\s/g, "-")}/${file}") format("truetype");
           font-weight: ${weight};
           font-style: ${italic ? "italic" : "normal"};

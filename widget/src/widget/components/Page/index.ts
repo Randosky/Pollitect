@@ -145,8 +145,8 @@ export class SurveyElement extends HTMLElement {
 
     const containerRects = this.container.getBoundingClientRect();
 
-    const left = containerRects.left + containerRects.width - TIMER_WIDTH - TIMER_MARGIN + window.scrollX;
-    const top = containerRects.top - TIMER_HEIGHT - TIMER_MARGIN + window.scrollX;
+    const left = containerRects.left + containerRects.width - TIMER_WIDTH - TIMER_MARGIN;
+    const top = containerRects.top - TIMER_HEIGHT - TIMER_MARGIN;
 
     this.timerEl = document.createElement("div");
     this.timerEl.classList.add("timer");

@@ -72,10 +72,10 @@ const AddFieldModal: React.FC<AddFieldModalProps> = ({ existingTypes, initial, i
       <TextField
         size="mobile"
         config={{
-          labelProps: { value: "Лейбл поля" },
+          labelProps: { value: "Название поля" },
           inputProps: {
             value: label,
-            placeholder: initial?.type ? `Например, ${PERSONAL_SCREEN_FIELDS_MAP[initial.type]}` : "",
+            placeholder: type ? `Например, "${PERSONAL_SCREEN_FIELDS_MAP[type]}"` : "",
             onChange: e => setLabel(e.target.value),
             required: true,
           },
@@ -85,10 +85,10 @@ const AddFieldModal: React.FC<AddFieldModalProps> = ({ existingTypes, initial, i
       <TextField
         size="mobile"
         config={{
-          labelProps: { value: "Подсказка поля" },
+          labelProps: { value: "Подсказка внутри поля" },
           inputProps: {
             value: placeholder,
-            placeholder: initial?.type ? `Например, Введите ${PERSONAL_SCREEN_FIELDS_MAP[initial.type]}` : "",
+            placeholder: type ? `Например, "Введите ${PERSONAL_SCREEN_FIELDS_MAP[type]}"` : "",
             onChange: e => setPlaceholder(e.target.value),
           },
         }}
