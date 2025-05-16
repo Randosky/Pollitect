@@ -1,6 +1,6 @@
 import { getCookie } from "@services/CookieService";
 import randomId from "@utils/getRandomId";
-import { SERVER_URL } from "@widget/vars";
+import { SERVER_URL_WIDGET } from "@widget/vars";
 import "core-js";
 import "regenerator-runtime/runtime";
 
@@ -36,7 +36,7 @@ function getUserId(script: HTMLScriptElement): string {
 /** Загружает JSON-описание опроса с бэка */
 async function loadSurveyData(userId: string): Promise<ISurvey[]> {
   const resp = await fetch(
-    `${SERVER_URL}?userId=${encodeURIComponent(userId)}&url=${encodeURIComponent(window.location.origin)}`,
+    `${SERVER_URL_WIDGET}?userId=${encodeURIComponent(userId)}&url=${encodeURIComponent(window.location.origin)}`,
     { method: "GET" }
   );
 

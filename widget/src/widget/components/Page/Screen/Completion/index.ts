@@ -1,5 +1,5 @@
 import { setCookie } from "@services/CookieService";
-import { SERVER_URL } from "@widget/vars";
+import { SERVER_URL_WIDGET } from "@widget/vars";
 
 import type { TCompletionScreen } from "@/widget/Survey.types";
 
@@ -104,7 +104,7 @@ export default class CompletionScreen extends Screen {
     if (!sessionId || !surveyId) return;
 
     try {
-      await fetch(`${SERVER_URL}/complete`, {
+      await fetch(`${SERVER_URL_WIDGET}/complete`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sessionId, surveyId, timer }),

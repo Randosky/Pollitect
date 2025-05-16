@@ -1,4 +1,4 @@
-import { SERVER_URL } from "@widget/vars";
+import { SERVER_URL_WIDGET } from "@widget/vars";
 
 import type { TPersonalScreen, TScreenPersonalField } from "@/widget/Survey.types";
 
@@ -185,7 +185,7 @@ export default class PersonalScreen extends Screen {
       });
 
       try {
-        await fetch(`${SERVER_URL}/personal`, {
+        await fetch(`${SERVER_URL_WIDGET}/personal`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ surveyId, sessionId, personal }),

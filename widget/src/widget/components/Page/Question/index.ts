@@ -1,5 +1,5 @@
 import Store from "@widget/store/Store";
-import { SERVER_URL } from "@widget/vars";
+import { SERVER_URL_WIDGET } from "@widget/vars";
 
 import type { ISurvey, TAnswer, TQuestion } from "@widget/Survey.types";
 
@@ -131,7 +131,7 @@ export default abstract class Question extends HTMLElement {
     if (!sessionId) return;
 
     try {
-      await fetch(`${SERVER_URL}/answer`, {
+      await fetch(`${SERVER_URL_WIDGET}/answer`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sessionId, surveyId: this.data?.surveyData.id, answer }),
