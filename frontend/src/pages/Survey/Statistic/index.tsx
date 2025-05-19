@@ -143,12 +143,28 @@ const ByUser: React.FC = () => {
             )}
           </div>
 
-          {session.name && session.email && session.phone && session.address && (
+          {session.name || session.email || session.phone || session.address || (
             <div className={styles.sessionPersonal}>
-              {session.name && <div>👤&nbsp;{session.name}</div>}
-              {session.email && <div>✉&nbsp;{session.email}</div>}
-              {session.phone && <div>📞&nbsp;{session.phone}</div>}
-              {session.address && <div>🏠&nbsp;{session.address}</div>}
+              {session.name && (
+                <div>
+                  {"\u{1F464}"}&nbsp;{session.name}
+                </div>
+              )}
+              {session.email && (
+                <div>
+                  {"\u{2709}"}&nbsp;{session.email}
+                </div>
+              )}
+              {session.phone && (
+                <div>
+                  {"\u{1F4DE}"}&nbsp;{session.phone}
+                </div>
+              )}
+              {session.address && (
+                <div>
+                  {"\u{1F3E0}"}&nbsp;{session.address}
+                </div>
+              )}
             </div>
           )}
 
