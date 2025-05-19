@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 
-import { useAppSelector } from "@store/hooks";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
+import { openToaster } from "@store/slices/layout";
 import Button from "@ui/Button";
 import { useCopyToClipboard } from "@uidotdev/usehooks";
 import { Link } from "react-router-dom";
@@ -14,6 +15,8 @@ import SurveyCard from "./SurveyCard";
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 const DashboardView: React.FC<TDashboardViewProps> = ({ surveyCards }) => {
+  const dispatch = useAppDispatch();
+
   const [, handleCopy] = useCopyToClipboard();
 
   const userId = useAppSelector(state => state.user.id);
@@ -25,6 +28,12 @@ const DashboardView: React.FC<TDashboardViewProps> = ({ surveyCards }) => {
     return `<script src="${scriptSrc}" type="text/javascript" charset="utf-8" data-user="${userId}" defer></script>`;
   }, [userId]);
 
+  const onClickCopy = () => {
+    handleCopy(copyText);
+
+    dispatch(openToaster({ content: "Скрипт скопирован" }));
+  };
+
   return (
     <section className={styles.dashboard}>
       <div className={styles.headerRow}>
@@ -34,7 +43,7 @@ const DashboardView: React.FC<TDashboardViewProps> = ({ surveyCards }) => {
           <Button
             variant="primary"
             className={styles.copyBtn}
-            onClick={() => handleCopy(copyText)}
+            onClick={onClickCopy}
           >
             Скопировать скрипт
           </Button>

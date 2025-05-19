@@ -35,6 +35,10 @@
     strong {
       font-size: 14px;
     }
+
+    .time span:not(:last-child) { 
+      margin-right: 4px;
+    }
   }
 }
 

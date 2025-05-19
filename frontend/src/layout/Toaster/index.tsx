@@ -9,7 +9,7 @@ import styles from "./Toaster.module.scss";
 
 /** Контенер для рендера списка тостеров */
 export default function Toaster() {
-  const { show, content, onClose } = useAppSelector(state => state.layout.toaster);
+  const { show, content, status = "error", onClose } = useAppSelector(state => state.layout.toaster);
 
   const dispatch = useAppDispatch();
 
@@ -40,7 +40,7 @@ export default function Toaster() {
   return (
     <div className={styles.toastr}>
       {isVisible && (
-        <div className={classNames(styles.toastr__container, toggle ? styles.toastr__active : null)}>
+        <div className={classNames(styles.toastr__container, styles[status], toggle ? styles.toastr__active : null)}>
           <p className={styles.toastr__text}>{content}</p>
         </div>
       )}

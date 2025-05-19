@@ -112,6 +112,10 @@
       color: var(--text);
     }
   }
+
+  .statTime span:not(:last-child) {
+    margin-right: 4px;
+  }
 }
 
 .actions {

@@ -89,7 +89,9 @@ const Summary: React.FC = () => {
       </div>
       <div className={styles.stat}>
         <h2>Среднее время</h2>
-        <p>{statistics.averageTimeSec !== null ? formatTime(statistics.averageTimeSec || 0) : "—"}</p>
+        <p className={styles.time}>
+          {statistics.averageTimeSec !== null ? formatTime(statistics.averageTimeSec || 0) : "—"}
+        </p>
       </div>
     </section>
   );

@@ -276,7 +276,7 @@ export default abstract class Screen extends HTMLElement {
         margin-top: auto;
         line-height: 140%;
         overflow-wrap: break-word;
-        color: var(--${owner}-text-color);
+        color: #222;
         font-size: var(--${owner}-font-size-legal-info);
       }
 

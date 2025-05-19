@@ -133,7 +133,9 @@ const SurveyCard: React.FC<TSurveyCardProps> = ({ surveyCard }) => {
           <strong>{completedPercent || 0}%</strong> <span>завершенных опросов</span>
         </div>
         {averageTimeSec !== undefined && (
-          <div className={styles.statItem}>{formatTime(averageTimeSec || 0)} в среднем</div>
+          <div className={classNames(styles.statItem, styles.statTime)}>
+            {formatTime(averageTimeSec || 0)} в среднем
+          </div>
         )}
       </div>
 

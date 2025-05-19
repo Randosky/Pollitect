@@ -227,7 +227,7 @@ export default class PersonalScreen extends Screen {
         width: fit-content;
         margin-bottom: 6px;
         font-size: var(--${owner}-font-size-description);
-        color: var(--${owner}-text-color);
+        color: #222;
         position: relative;
       }
 
@@ -259,7 +259,7 @@ export default class PersonalScreen extends Screen {
         margin-top: 8px;
         cursor: pointer;
         background: transparent;
-        color: var(--${owner}-text-color);
+        color: #222;
         border: 1px solid var(--${owner}-btn-bg-color);
         font-size: var(--${owner}-font-size-description);
       }

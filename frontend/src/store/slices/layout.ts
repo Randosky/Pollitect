@@ -12,6 +12,7 @@ export interface ModalState {
 
 export interface ToasterState {
   show: boolean;
+  status?: "success" | "error";
   content?: ReactElement | string;
   onClose?: () => void;
 }
@@ -68,6 +69,7 @@ export const layoutSlice = createSlice({
     closeToaster: state => {
       state.toaster = {
         show: false,
+        status: undefined,
         content: undefined,
         onClose: undefined,
       };

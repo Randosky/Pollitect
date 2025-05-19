@@ -20,9 +20,16 @@
     line-height: 140%;
     border-radius: 32px;
     text-align: center;
-    background-color: var(--bg-error);
     color: var(--text-error);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+
+    &.error {
+      background-color: var(--bg-error);
+    }
+
+    &.success {
+      background-color: var(--bg-success);
+    }
 
     &:not(:first-child) {
       margin-top: 16px;
