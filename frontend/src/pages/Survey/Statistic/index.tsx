@@ -145,10 +145,102 @@ const ByUser: React.FC = () => {
 
           {session.name || session.email || session.phone || session.address || (
             <div className={styles.sessionPersonal}>
-              {session.name && <div>👤&nbsp;{session.name}</div>}
-              {session.email && <div>✉&nbsp;{session.email}</div>}
-              {session.phone && <div>📞&nbsp;{session.phone}</div>}
-              {session.address && <div>🏠&nbsp;{session.address}</div>}
+              {session.name && (
+                <div>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    style={{ verticalAlign: "middle", marginRight: "4px" }}
+                  >
+                    <circle
+                      cx="12"
+                      cy="8"
+                      r="4"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                    <path
+                      d="M4 20c0-4 4-6 8-6s8 2 8 6"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                  </svg>
+                  {session.name}
+                </div>
+              )}
+              {session.email && (
+                <div>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    style={{ verticalAlign: "middle", marginRight: "4px" }}
+                  >
+                    <path
+                      d="M4 4h16v16H4V4z"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                    <path
+                      d="M4 4l8 8 8-8"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                  </svg>
+                  {session.email}
+                </div>
+              )}
+              {session.phone && (
+                <div>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    style={{ verticalAlign: "middle", marginRight: "4px" }}
+                  >
+                    <path
+                      d="M6 2h12v20H6z"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                    <circle
+                      cx="12"
+                      cy="18"
+                      r="1"
+                      fill="currentColor"
+                    />
+                  </svg>
+                  {session.phone}
+                </div>
+              )}
+              {session.address && (
+                <div>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    style={{ verticalAlign: "middle", marginRight: "4px" }}
+                  >
+                    <path
+                      d="M12 2C8 2 4 5 4 10c0 4 4 8 8 12 4-4 8-8 8-12 0-5-4-8-8-8z"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                    <circle
+                      cx="12"
+                      cy="10"
+                      r="2"
+                      fill="currentColor"
+                    />
+                  </svg>
+                  {session.address}
+                </div>
+              )}
             </div>
           )}
 
