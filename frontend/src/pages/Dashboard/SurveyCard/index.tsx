@@ -130,8 +130,7 @@ const SurveyCard: React.FC<TSurveyCardProps> = ({ surveyCard }) => {
           {pluralizeRu(completedCount, ["прохождение", "прохождения", "прохождений"])}
         </div>
         <div className={styles.statItem}>
-          <strong>{completedPercent || 0}%</strong>{" "}
-          {pluralizeRu(completedPercent || 0, ["завершен", "завершено", "завершено"])}
+          <strong>{completedPercent || 0}%</strong> <span>завершенных опросов</span>
         </div>
         {averageTimeSec !== undefined && (
           <div className={styles.statItem}>{formatTime(averageTimeSec || 0)} в среднем</div>

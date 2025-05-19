@@ -19,7 +19,7 @@ app.use(helmet());
 app.use(cookieParser());
 app.use(express.json());
 
-// API с авторизацией (credentials: true) — только из localhost:7124
+// API с авторизацией (credentials: true) — только с личного кабинета
 const restrictedCors = cors({
   origin: process.env.FRONTEND_URL,
   credentials: true,

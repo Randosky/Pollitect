@@ -84,7 +84,7 @@ const Summary: React.FC = () => {
         <strong>{total || 0}</strong>
       </div>
       <div className={styles.stat}>
-        <h2>Завершено</h2>
+        <h2>Процент завершенных опросов</h2>
         <strong>{percent || 0}%</strong>
       </div>
       <div className={styles.stat}>
