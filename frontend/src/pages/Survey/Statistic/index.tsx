@@ -88,7 +88,7 @@ const Summary: React.FC = () => {
         <strong>{percent || 0}%</strong>
       </div>
       <div className={styles.stat}>
-        <h2>Среднее время</h2>
+        <h2>Среднее время прохождения</h2>
         <p className={styles.time}>
           {statistics.averageTimeSec !== null ? formatTime(statistics.averageTimeSec || 0) : "—"}
         </p>

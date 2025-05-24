@@ -3,6 +3,8 @@ import { ReactElement } from "react";
 import Dashboard from "@pages/Dashboard";
 import Home from "@pages/Home";
 import Login from "@pages/Login";
+import PersonalDataPolicy from "@pages/PersonalDataPolicy";
+import PrivacyPolicy from "@pages/PrivacyPolicy";
 import Registration from "@pages/Registration";
 import Survey from "@pages/Survey";
 import Constructor from "@pages/Survey/Constructor";
@@ -101,6 +103,18 @@ const AppRouter = (): ReactElement => {
         <Route
           path="about"
           element={<About />}
+        />
+
+        {/* Политика конфиденциальности */}
+        <Route
+          path="privacy"
+          element={<PrivacyPolicy />}
+        />
+
+        {/* Политика обработки персональных данных */}
+        <Route
+          path="personal-data"
+          element={<PersonalDataPolicy />}
         />
 
         {/* Страница 404 */}

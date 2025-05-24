@@ -1,11 +1,16 @@
-.input {
-  width: 200px;
-}
-
 .timerRow {
   gap: 16px;
   display: flex;
   flex-direction: column;
+}
+
+.timerInputs {
+  display: flex;
+  gap: 8px;
+}
+
+.timerInput {
+  width: 100px;
 }
 
 .hint {

@@ -1,0 +1,56 @@
+@import "@styles/breakpoints";
+
+.page {
+  max-width: 800px;
+  margin: 0 auto;
+  margin-top: 32px;
+  padding: 48px 24px;
+  background-color: var(--white);
+  color: var(--text);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+  @media (max-width: $md) {
+    margin-top: 16px;
+    padding: 40px 20px;
+    border-radius: 12px;
+  }
+
+  @media (max-width: $sm) {
+    margin-top: 8px;
+    padding: 32px 16px;
+    border-radius: 8px;
+  }
+}
+
+.heading {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 32px;
+  color: var(--text-secondary);
+
+  @media (max-width: $md) {
+    font-size: 1.75rem;
+    margin-bottom: 28px;
+  }
+
+  @media (max-width: $sm) {
+    font-size: 1.5rem;
+    margin-bottom: 24px;
+  }
+}
+
+.paragraph {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  color: var(--text);
+
+  @media (max-width: $md) {
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: $sm) {
+    font-size: 0.9rem;
+  }
+}

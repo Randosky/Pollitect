@@ -9,6 +9,7 @@ import Checkbox from "@ui/Checkbox";
 import Select from "@ui/Select";
 import { TextField } from "@ui/TextField";
 import classNames from "classnames";
+import { Link } from "react-router-dom";
 
 import { PERSONAL_SCREEN_FIELDS } from "../../Constuctor.config";
 
@@ -273,19 +274,23 @@ const PersonalScreen: React.FC = React.memo(() => {
 
           <span className={styles.legalInfo}>
             Отправляя форму, я принимаю условия{" "}
-            <a
-              href="/"
+            <Link
+              to="/privacy"
               target="_blank"
+              rel="noopener noreferrer"
+              className={styles.legalInfo__link}
             >
               политики конфиденциальности
-            </a>{" "}
+            </Link>{" "}
             и даю согласие на обработку моих{" "}
-            <a
-              href="/"
+            <Link
+              to="/personal-data"
               target="_blank"
+              rel="noopener noreferrer"
+              className={styles.legalInfo__link}
             >
               персональных данных
-            </a>
+            </Link>
           </span>
         </form>
       </div>
