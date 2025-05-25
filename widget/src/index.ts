@@ -1,6 +1,6 @@
 import { getCookie } from "@services/CookieService";
 import randomId from "@utils/getRandomId";
-import { SERVER_URL_WIDGET } from "@widget/vars";
+import { OWNER, SERVER_URL_WIDGET } from "@widget/vars";
 import "core-js";
 import "regenerator-runtime/runtime";
 
@@ -49,14 +49,14 @@ async function loadSurveyData(userId: string): Promise<ISurvey[]> {
 function shouldPrevent(survey: ISurvey): boolean {
   const surveyId = survey.id!;
   const prevent = survey.display_settings.prevent_repeat;
-  const done = getCookie(`survey_${surveyId}_completed`) === "true";
+  const done = getCookie(`${OWNER}-${surveyId}-completed`) === "true";
 
   return prevent && done;
 }
 
 /** Возвращает sessionId из sessionStorage или создаёт новый и сохраняет */
 function getSessionIdForSurvey(surveyId: number): number {
-  const key = `survey_${surveyId}_session`;
+  const key = `${OWNER}-${surveyId}-session`;
   const raw = sessionStorage.getItem(key);
   const existing = raw ? Number(raw) : NaN;
 

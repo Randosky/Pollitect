@@ -1,4 +1,4 @@
-import { SERVER_URL_WIDGET } from "@widget/vars";
+import { FRONTEND_URL, SERVER_URL_WIDGET } from "@widget/vars";
 
 import type { TPersonalScreen, TScreenPersonalField } from "@/widget/Survey.types";
 
@@ -59,9 +59,9 @@ export default class PersonalScreen extends Screen {
     /** Юридическая информация */
     const legalHtml = `
       Отправляя форму, я принимаю условия
-      <a href="/" target="_blank">политики конфиденциальности</a>
+      <a href="${FRONTEND_URL}/privacy" target="_blank">политики конфиденциальности</a>
       и даю согласие на обработку моих
-      <a href="/" target="_blank">персональных данных</a>
+      <a href="${FRONTEND_URL}/personal-data" target="_blank">персональных данных</a>
     `;
     const legalEl = this.createLegalInfo(legalHtml);
 
@@ -115,7 +115,7 @@ export default class PersonalScreen extends Screen {
       input.id = `personal-${field.type}`;
       input.name = field.type;
       input.required = field.required;
-      input.placeholder = field.placeholder;
+      input.placeholder = field.placeholder || "";
 
       switch (field.type) {
         case "email":

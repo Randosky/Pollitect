@@ -24,6 +24,7 @@ class Survey {
     this.store = Store;
     this.deviceService = new DeviceService();
 
+    /** инициализируем текущую сессию */
     this.store.updateState("sessionId", sessionId);
     /** инициализируем таймер в сторе */
     this.store.updateState("surveyTimer", data.display_settings.timer_sec);

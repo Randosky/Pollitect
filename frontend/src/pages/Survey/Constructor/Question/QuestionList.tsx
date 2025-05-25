@@ -36,7 +36,7 @@ const QuestionList = () => {
       }
 
       // Проверка наличия вариантов, если поле options есть
-      if (["single", "multi", "binary", "dropdown"].includes(question.type)) {
+      if (["single", "multi", "dropdown"].includes(question.type)) {
         const hasValidOption = question.options?.some(opt => opt.trim() !== "");
 
         if (!hasValidOption) {

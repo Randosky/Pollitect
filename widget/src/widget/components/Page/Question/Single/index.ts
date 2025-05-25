@@ -147,6 +147,7 @@ export default class SingleQuestion extends Question {
         display: grid;
         row-gap: 24px;
         column-gap: 32px;
+        overflow-x: auto;
         grid-auto-flow: column;
         grid-auto-columns: max-content;
         grid-template-rows: repeat(4, auto);

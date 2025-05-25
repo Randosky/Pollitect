@@ -1,6 +1,6 @@
 import { createWebComponent, registerWebComponent } from "@services/ComponentService";
 import Store from "@widget/store/Store";
-import { MS_IN_SECOND, SECONDS_IN_MIN } from "@widget/vars";
+import { CURRENT_STEP_KEY, MS_IN_SECOND, SECONDS_IN_MIN, TIMER_KEY } from "@widget/vars";
 
 import type { ISurvey, TQuestion } from "../../Survey.types";
 import type {
@@ -33,7 +33,7 @@ export class SurveyElement extends HTMLElement {
   /** Данные опроса */
   private externalData?: ISurvey;
   /** Текущий шаг */
-  private currentStep: number = -1;
+  private currentStep: number;
   /** Массив шагов */
   private steps: (TScreenComponent | TQuestionComponent)[] = [];
 
@@ -48,6 +48,8 @@ export class SurveyElement extends HTMLElement {
     super();
     this.shadow = this.attachShadow({ mode: "open" });
     this.store = Store;
+
+    this.currentStep = Number(sessionStorage.getItem(CURRENT_STEP_KEY) || 0) - 1;
 
     registerWebComponent("binary-question", BinaryQuestion);
     registerWebComponent("date-question", DateQuestion);
@@ -157,12 +159,14 @@ export class SurveyElement extends HTMLElement {
 
   /** Обновление позиции таймера */
   private updateTimerPosition = () => {
-    if (!this.container || !this.timerEl) return;
+    const paddings = this.data?.design_settings?.padding;
+
+    if (!paddings || !this.container || !this.timerEl) return;
 
     const rect = this.container.getBoundingClientRect();
 
-    const left = rect.left + rect.width - TIMER_WIDTH - TIMER_MARGIN;
-    const top = rect.top + window.scrollY + TIMER_MARGIN;
+    const left = rect.left + paddings[3];
+    const top = rect.height + rect.top - TIMER_HEIGHT - paddings[0];
 
     this.timerEl.style.left = `${left}px`;
     this.timerEl.style.top = `${top}px`;
@@ -213,10 +217,17 @@ export class SurveyElement extends HTMLElement {
     if (!this.container) return;
 
     this.currentStep++;
+    sessionStorage.setItem(CURRENT_STEP_KEY, this.currentStep.toString());
 
     /** Если перешли на первый вопрос и есть таймер */
-    if (this.currentStep === 1 && (this.data?.display_settings.timer_sec || 0) > 0) {
+    if (this.currentStep >= 1 && (this.data?.display_settings.timer_sec || 0) > 0) {
       this.startTimer();
+    }
+
+    /** Останавливаем таймер на последней странице */
+    if (this.currentStep === this.steps.length - 1) {
+      this.stopTimer();
+      this.timerEl?.parentNode?.removeChild(this.timerEl);
     }
 
     const currentComponent = this.steps[this.currentStep];
@@ -240,7 +251,7 @@ export class SurveyElement extends HTMLElement {
     this.stopTimer();
 
     /** Начало таймера */
-    let remaining = this.data.display_settings.timer_sec;
+    let remaining = Number(sessionStorage.getItem(TIMER_KEY)) || this.data.display_settings.timer_sec;
 
     this.updateTimerDisplay(remaining);
     this.timerEl.classList.add("show");
@@ -284,6 +295,8 @@ export class SurveyElement extends HTMLElement {
 
     /** Обновляем время в сторе */
     this.store?.updateState("surveyTimer", sec);
+    /** Обновляем время в хранилище */
+    sessionStorage.setItem(TIMER_KEY, sec.toString());
   }
 
   private styleElement(): HTMLStyleElement {

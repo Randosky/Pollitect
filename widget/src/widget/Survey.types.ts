@@ -143,7 +143,7 @@ export type TScreenPersonalField = {
   /** Метка для поля */
   label: string;
   /** Placeholder-атрибут для поля ввода */
-  placeholder: string;
+  placeholder?: string;
 };
 
 /** Общие настройки дизайна для экранов (приветствие, персональные данные, завершение) */

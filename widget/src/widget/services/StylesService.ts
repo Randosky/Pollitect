@@ -110,25 +110,21 @@ function injectFontStyles(owner: string, fontFamily: TFontFamily): void {
  * Простая эвристика определения веса шрифта по названию файла
  */
 function detectFontWeight(filename: string): number {
-  const name = filename.toLowerCase();
+  const regexps: [RegExp, number][] = [
+    [/thin/i, 100],
+    [/extralight/i, 200],
+    [/light/i, 300],
+    [/regular/i, 400],
+    [/medium/i, 500],
+    [/semibold/i, 600],
+    [/bold/i, 700],
+    [/extrabold/i, 800],
+    [/black/i, 900],
+  ];
 
-  if (name.includes("thin")) return 100;
-
-  if (name.includes("extralight")) return 200;
-
-  if (name.includes("light")) return 300;
-
-  if (name.includes("regular")) return 400;
-
-  if (name.includes("medium")) return 500;
-
-  if (name.includes("semibold")) return 600;
-
-  if (name.includes("bold")) return 700;
-
-  if (name.includes("extrabold")) return 800;
-
-  if (name.includes("black")) return 900;
+  for (const [regexp, weight] of regexps) {
+    if (regexp instanceof RegExp && regexp.test(filename)) return weight;
+  }
 
   return 400;
 }
