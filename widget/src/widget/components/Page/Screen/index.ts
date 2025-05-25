@@ -234,6 +234,7 @@ export default abstract class Screen extends HTMLElement {
         height: 100%;
         display: flex;
         overflow-y: auto;
+        border-radius: unset;
         flex-direction: column;
         text-align: ${alignment};
         align-items: ${alignItems};

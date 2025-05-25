@@ -21,5 +21,11 @@ export const SECONDS_IN_MIN = 60;
 /** Ключ текущего шага в хранилище */
 export const CURRENT_STEP_KEY = `${OWNER}-current-step`;
 
-/** Оставшееся время таймера */
+/** Оставшееся время таймера в хранилище */
 export const TIMER_KEY = `${OWNER}-timer`;
+
+/** Пройден ли опросов в куки */
+export const SURVEY_COMPLETED = `${OWNER}-completed`;
+
+/** Текущая сессия в хранилище */
+export const SURVEY_SESSION_ID = `${OWNER}-session`;

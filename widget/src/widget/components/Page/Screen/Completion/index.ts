@@ -1,5 +1,6 @@
 import { setCookie } from "@services/CookieService";
-import { CURRENT_STEP_KEY, OWNER, SERVER_URL_WIDGET, TIMER_KEY } from "@widget/vars";
+import { addIdToString } from "@utils/addIdToString";
+import { CURRENT_STEP_KEY, SERVER_URL_WIDGET, SURVEY_COMPLETED, SURVEY_SESSION_ID, TIMER_KEY } from "@widget/vars";
 
 import type { TCompletionScreen } from "@/widget/Survey.types";
 
@@ -114,14 +115,14 @@ export default class CompletionScreen extends Screen {
       document.body.style.removeProperty("overflow");
 
       /** Устанавливаем куки о прохождении */
-      setCookie(`${OWNER}-${this.data?.surveyData?.id}-completed`, "true");
+      setCookie(addIdToString(SURVEY_COMPLETED, surveyId), "true");
 
       /** Очищаем sessionId для этого survey в хранилище */
-      sessionStorage.removeItem(`${OWNER}-${surveyId}-session`);
+      sessionStorage.removeItem(addIdToString(SURVEY_SESSION_ID, surveyId));
       /** Очищаем текущий шаг в хранилище */
-      sessionStorage.removeItem(CURRENT_STEP_KEY);
+      sessionStorage.removeItem(addIdToString(CURRENT_STEP_KEY, surveyId));
       /** Очищаем таймер в хранилище */
-      sessionStorage.removeItem(TIMER_KEY);
+      sessionStorage.removeItem(addIdToString(TIMER_KEY, surveyId));
 
       this.showSuccess();
     } catch (error) {

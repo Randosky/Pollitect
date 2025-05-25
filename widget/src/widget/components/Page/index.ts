@@ -1,4 +1,5 @@
 import { createWebComponent, registerWebComponent } from "@services/ComponentService";
+import { addIdToString } from "@utils/addIdToString";
 import Store from "@widget/store/Store";
 import { CURRENT_STEP_KEY, MS_IN_SECOND, SECONDS_IN_MIN, TIMER_KEY } from "@widget/vars";
 
@@ -21,8 +22,7 @@ import CompletionScreen from "./Screen/Completion";
 import PersonalScreen from "./Screen/Personal";
 import WelcomeScreen from "./Screen/Welcome";
 
-const TIMER_MARGIN = 8;
-const TIMER_WIDTH = 52;
+const TIMER_WIDTH = 65;
 const TIMER_HEIGHT = 28;
 
 export class SurveyElement extends HTMLElement {
@@ -33,7 +33,7 @@ export class SurveyElement extends HTMLElement {
   /** Данные опроса */
   private externalData?: ISurvey;
   /** Текущий шаг */
-  private currentStep: number;
+  private currentStep: number = -1;
   /** Массив шагов */
   private steps: (TScreenComponent | TQuestionComponent)[] = [];
 
@@ -48,8 +48,6 @@ export class SurveyElement extends HTMLElement {
     super();
     this.shadow = this.attachShadow({ mode: "open" });
     this.store = Store;
-
-    this.currentStep = Number(sessionStorage.getItem(CURRENT_STEP_KEY) || 0) - 1;
 
     registerWebComponent("binary-question", BinaryQuestion);
     registerWebComponent("date-question", DateQuestion);
@@ -90,7 +88,11 @@ export class SurveyElement extends HTMLElement {
   private init(): void {
     if (!this.externalData) return;
 
-    const { questions, welcomeScreen, personalScreen, completionScreen } = this.externalData;
+    const { id: surveyId, questions, welcomeScreen, personalScreen, completionScreen } = this.externalData;
+
+    if (surveyId) {
+      this.currentStep = Number(sessionStorage.getItem(addIdToString(CURRENT_STEP_KEY, surveyId)) || 0) - 1;
+    }
 
     /** Добавляем экран приветствия */
     if (welcomeScreen.active) {
@@ -214,10 +216,12 @@ export class SurveyElement extends HTMLElement {
 
   /** Переходим к следующему шагу */
   public next(): void {
-    if (!this.container) return;
+    const surveyId = this.data?.id;
+
+    if (!surveyId || !this.container) return;
 
     this.currentStep++;
-    sessionStorage.setItem(CURRENT_STEP_KEY, this.currentStep.toString());
+    sessionStorage.setItem(addIdToString(CURRENT_STEP_KEY, surveyId), this.currentStep.toString());
 
     /** Если перешли на первый вопрос и есть таймер */
     if (this.currentStep >= 1 && (this.data?.display_settings.timer_sec || 0) > 0) {
@@ -244,14 +248,18 @@ export class SurveyElement extends HTMLElement {
 
   /** Запускаем обратный отсчёт */
   public startTimer(): void {
+    const surveyId = this.data?.id;
+
     /** Не запускаем, если нет таймера */
-    if (!this.timerEl || !this.data || this.data.display_settings.timer_sec <= 0) return;
+    if (!surveyId || !this.timerEl || !this.data || this.data.display_settings.timer_sec <= 0) return;
 
     /** остановить прежний, если был */
     this.stopTimer();
 
     /** Начало таймера */
-    let remaining = Number(sessionStorage.getItem(TIMER_KEY)) || this.data.display_settings.timer_sec;
+    let remaining =
+      Number(sessionStorage.getItem(addIdToString(TIMER_KEY, surveyId))) ||
+      this.data.display_settings.timer_sec;
 
     this.updateTimerDisplay(remaining);
     this.timerEl.classList.add("show");
@@ -273,7 +281,9 @@ export class SurveyElement extends HTMLElement {
 
   /** Обновляем текст таймера в формате MM:SS */
   private updateTimerDisplay(sec: number) {
-    if (!this.timerEl) return;
+    const surveyId = this.data?.id;
+
+    if (!surveyId || !this.timerEl) return;
 
     /** Если таймер закончился переходим в конец */
     if (sec <= 0 && this.container) {
@@ -296,7 +306,7 @@ export class SurveyElement extends HTMLElement {
     /** Обновляем время в сторе */
     this.store?.updateState("surveyTimer", sec);
     /** Обновляем время в хранилище */
-    sessionStorage.setItem(TIMER_KEY, sec.toString());
+    sessionStorage.setItem(addIdToString(TIMER_KEY, surveyId), sec.toString());
   }
 
   private styleElement(): HTMLStyleElement {
@@ -337,6 +347,7 @@ export class SurveyElement extends HTMLElement {
           position: fixed;
           padding: 4px 8px;
           border-radius: 5px;
+          text-align: center;
           width: ${TIMER_WIDTH}px;
           height: ${TIMER_HEIGHT}px;
           box-sizing: border-box;
