@@ -143,7 +143,7 @@ const ByUser: React.FC = () => {
             )}
           </div>
 
-          {session.name || session.email || session.phone || session.address || (
+          {session.name || session.email || session.phone || session.address ? (
             <div className={styles.sessionPersonal}>
               {session.name && (
                 <div>
@@ -242,7 +242,7 @@ const ByUser: React.FC = () => {
                 </div>
               )}
             </div>
-          )}
+          ) : null}
 
           <div className={styles.sessionAnswers}>
             {session.answers.map((ans, idx) => {
