@@ -1,6 +1,8 @@
+@import "@styles/breakpoints";
+
 .header {
   height: min-content;
-  padding: 24px 32px;
+  padding: 24px 8px;
   display: flex;
   align-items: center;
   background: var(--bg);
@@ -10,5 +12,23 @@
     display: flex;
     cursor: pointer;
     align-items: center;
+  }
+}
+
+@media (min-width: $sm) {
+  .header {
+    padding: 24px 16px;
+  }
+}
+
+@media (min-width: $md) {
+  .header {
+    padding: 24px 32px;
+  }
+}
+
+@media (min-width: $lg) {
+  .header {
+    padding: 24px 48px;
   }
 }

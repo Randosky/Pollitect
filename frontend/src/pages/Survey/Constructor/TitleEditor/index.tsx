@@ -9,6 +9,8 @@ import { useDebounce } from "@uidotdev/usehooks";
 
 import { TextField } from "@/ui/TextField";
 
+import styles from "./TitleEditor.module.scss";
+
 const MIN_LENGTH = 3;
 const DEBOUCE_TIME = 500;
 
@@ -54,6 +56,7 @@ const TitleEditor: React.FC = () => {
     <TextField
       type="input"
       config={{
+        containerProps: { className: styles.titleEditor },
         inputProps: {
           value: title,
           onChange: (e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value),

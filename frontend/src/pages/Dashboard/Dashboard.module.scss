@@ -6,9 +6,9 @@
   gap: 24px;
 
   .headerRow {
+    gap: 24px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
 
     .title {
       font-size: 28px;
@@ -18,6 +18,7 @@
     .buttons {
       gap: 16px;
       display: flex;
+      align-self: flex-end;
     }
 
     .copyBtn {
@@ -60,6 +61,17 @@
     display: flex;
     flex-direction: column;
     gap: 24px;
+  }
+}
+
+@media (min-width: $xs) {
+  .dashboard {
+    .headerRow {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
   }
 }
 

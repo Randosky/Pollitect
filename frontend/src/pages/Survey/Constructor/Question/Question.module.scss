@@ -7,8 +7,8 @@
 .questionPage {
   gap: 32px;
   width: 100%;
-  display: grid;
-  grid-template-columns: 200px 1fr;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ----------------------------------
@@ -20,7 +20,8 @@
   padding: 16px;
   border-radius: 5px;
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  flex-direction: row;
   background-color: var(--white);
 
   .sidebar__button {
@@ -45,6 +46,7 @@
 ----------------------------------- */
 .questionList {
   gap: 32px;
+  min-height: 350px;
   padding-bottom: 8px;
   box-sizing: border-box;
   display: flex;
@@ -163,7 +165,7 @@
 .optionInput {
 }
 
-.optionRadio{ 
+.optionRadio {
   gap: 0;
 }
 
@@ -187,4 +189,36 @@
   width: fit-content;
   align-self: flex-end;
   color: var(--text-secondary);
+}
+
+@media (min-width: $sm) {
+  .questionPage {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+  }
+
+  .sidebar {
+    gap: 16px;
+    padding: 16px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--white);
+
+    .sidebar__button {
+      font-size: 14px;
+      font-weight: 500;
+      padding: 8px 16px;
+      overflow-y: auto;
+      color: var(--text);
+      background: var(--bg-secondary-contrast);
+
+      &:hover,
+      &:focus,
+      &:active {
+        color: var(--text-hover);
+        background: var(--bg-secondary-contrast-hover);
+      }
+    }
+  }
 }

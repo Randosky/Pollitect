@@ -17,10 +17,12 @@
   }
 
   .tabs {
-    display: flex;
+    width: 100%;
     gap: 16px;
-    justify-self: center;
+    display: flex;
     grid-area: tabs;
+    justify-self: center;
+    flex-direction: column;
   }
 
   .logout {
@@ -29,6 +31,8 @@
   }
 
   .tab {
+    width: 100%;
+    text-align: center;
     padding: 8px 16px;
     cursor: pointer;
     border-radius: 4px;
@@ -46,6 +50,19 @@
       &:hover {
         background: var(--bg-contrast-hover);
       }
+    }
+  }
+}
+
+@media (min-width: $xs) {
+  .header {
+    .tabs {
+      width: fit-content;
+      flex-direction: row;
+    }
+
+    .tab {
+      width: fit-content;
     }
   }
 }

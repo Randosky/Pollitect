@@ -13,12 +13,14 @@
 }
 
 .sidebar {
+  min-height: 350px;
   padding: 24px 16px;
   overflow-y: auto;
   overflow-x: hidden;
 }
 
 .previewArea {
+  min-height: 350px;
   padding: 24px 16px;
   overflow: auto;
 

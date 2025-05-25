@@ -3,7 +3,7 @@ import React, { ReactElement } from "react";
 import authAxiosInstance from "@api/authInstance";
 import { useError } from "@hooks/useError";
 import { useAppDispatch } from "@store/hooks";
-import { openToaster } from "@store/slices/layout";
+import { openToaster, setLoaderData } from "@store/slices/layout";
 import { type TUserWithAccessToken, updateUserState } from "@store/slices/user";
 import { validateEmptyFields } from "@utils/validateEmptyFields";
 import { useNavigate } from "react-router-dom";
@@ -36,6 +36,8 @@ const LoginContainer: React.FC = (): ReactElement => {
         return;
       }
 
+      dispatch(setLoaderData(true));
+
       try {
         const { data } = await authAxiosInstance.post<TUserWithAccessToken>("/login", {
           email,
@@ -46,6 +48,8 @@ const LoginContainer: React.FC = (): ReactElement => {
         navigate(`/dashboard/${data.user.id}`);
       } catch (error) {
         proccessError(error);
+      } finally {
+        dispatch(setLoaderData(false));
       }
     },
     [email, password]

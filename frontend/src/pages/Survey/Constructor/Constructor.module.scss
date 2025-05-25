@@ -30,10 +30,8 @@
 
 .header {
   gap: 16px;
-  align-items: end;
-  justify-content: end;
-  display: grid;
-  grid-template-columns: 300px 1fr;
+  display: flex;
+  flex-direction: column;
 }
 
 .nav {
@@ -68,5 +66,14 @@
       background: var(--bg);
       color: var(--text);
     }
+  }
+}
+
+@media (min-width: $sm) {
+  .header {
+    align-items: end;
+    justify-content: end;
+    display: grid;
+    grid-template-columns: auto 1fr;
   }
 }

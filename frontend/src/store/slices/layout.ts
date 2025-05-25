@@ -36,6 +36,7 @@ const initialState: LayoutState = {
   },
   toaster: {
     show: false,
+    status: undefined,
     content: undefined,
     onClose: undefined,
   },

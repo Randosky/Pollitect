@@ -3,7 +3,7 @@ import React from "react";
 import authAxiosInstance from "@api/authInstance";
 import { useError } from "@hooks/useError";
 import { useAppDispatch } from "@store/hooks";
-import { openToaster } from "@store/slices/layout";
+import { openToaster, setLoaderData } from "@store/slices/layout";
 import { type TUserWithAccessToken, updateUserState } from "@store/slices/user";
 import { validateEmptyFields } from "@utils/validateEmptyFields";
 import { useNavigate } from "react-router-dom";
@@ -30,6 +30,8 @@ const RegistrationContainer: React.FC = () => {
         return;
       }
 
+      dispatch(setLoaderData(true));
+
       try {
         const { data } = await authAxiosInstance.post<TUserWithAccessToken>("/register", {
           name,
@@ -41,6 +43,8 @@ const RegistrationContainer: React.FC = () => {
         navigate(`/dashboard/${data.user.id}`);
       } catch (error) {
         proccessError(error);
+      } finally {
+        dispatch(setLoaderData(false));
       }
     },
     [email, password]

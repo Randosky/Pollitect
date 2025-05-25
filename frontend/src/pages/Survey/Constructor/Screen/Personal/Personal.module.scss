@@ -2,8 +2,8 @@
 
 .body {
   gap: 16px;
-  display: grid;
-  grid-template-columns: 1fr 35%;
+  display: flex;
+  flex-direction: column;
 }
 
 .form {
@@ -14,7 +14,6 @@
   justify-self: flex-end;
 
   width: 100%;
-  max-width: 400px;
   padding: 16px;
 
   background: var(--bg);
@@ -101,8 +100,14 @@
 }
 
 @media (min-width: $sm) {
+  .body {
+    display: grid;
+    grid-template-columns: 1fr 35%;
+  }
+
   .form {
     padding: 24px;
     gap: 16px;
+    max-width: 400px;
   }
 }

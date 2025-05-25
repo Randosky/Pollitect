@@ -31,7 +31,7 @@ const DashboardView: React.FC<TDashboardViewProps> = ({ surveyCards }) => {
   const onClickCopy = () => {
     handleCopy(copyText);
 
-    dispatch(openToaster({ content: "Скрипт скопирован" }));
+    dispatch(openToaster({ status: "success", content: "Скрипт скопирован" }));
   };
 
   return (

@@ -1,0 +1,12 @@
+@import "@styles/breakpoints";
+
+.titleEditor {
+  width: 100%;
+}
+
+@media (min-width: $xs) {
+  .titleEditor {
+    width: fit-content;
+    min-width: 300px;
+  }
+}
