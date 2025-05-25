@@ -3,25 +3,62 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import Question from ".";
 import { useFormWithFooter } from "@hooks/useFormWithFooter";
 import { useSurveyController } from "@hooks/useSurveyController";
-import { useAppSelector } from "@store/hooks";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
+import { openToaster } from "@store/slices/layout";
 import Button from "@ui/Button";
 
 import { QUESTION_TYPES, QUESTION_TYPES_MAP } from "../Constuctor.config";
 
-import type { TQuestion, TQuestionType } from "@pages/Survey/Survey.types";
+import type { ISurvey, TQuestion, TQuestionType } from "@pages/Survey/Survey.types";
 
 import styles from "./Question.module.scss";
 
 const QuestionList = () => {
+  const dispatch = useAppDispatch();
+
   const { id, questions } = useAppSelector(state => state.survey.surveyForm);
 
   const questionsRef = useRef<HTMLDivElement | null>(null);
 
   const { saveSurvey } = useSurveyController();
 
+  /** Функция валидации вопросов */
+  const validateQuestions = useCallback((questions: TQuestion[]): boolean => {
+    for (let i = 0; i < questions.length; i++) {
+      const question = questions[i];
+      const questionIndex = i + 1;
+
+      // Проверка наличия заголовка
+      if (question.title.trim() === "") {
+        dispatch(openToaster({ content: `У вопроса №${questionIndex} отсутствует заголовок` }));
+
+        return false;
+      }
+
+      // Проверка наличия вариантов, если поле options есть
+      if (["single", "multi", "binary", "dropdown"].includes(question.type)) {
+        const hasValidOption = question.options?.some(opt => opt.trim() !== "");
+
+        if (!hasValidOption) {
+          dispatch(
+            openToaster({ content: `У вопроса №${questionIndex} необходимо указать хотя бы один вариант ответа` })
+          );
+
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }, []);
+
   /** Функция сохранения формы */
   const saveForm = useCallback(
-    async (newForm: TQuestion[]) => await saveSurvey(id, { questions: newForm }),
+    async (newForm: TQuestion[]): Promise<ISurvey | undefined> => {
+      if (!validateQuestions(newForm)) return;
+
+      return await saveSurvey(id, { questions: newForm });
+    },
     [id, saveSurvey]
   );
 

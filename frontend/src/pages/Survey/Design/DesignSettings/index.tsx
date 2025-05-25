@@ -122,6 +122,7 @@ const DesignSettings: React.FC<TDesignSettingsProps> = ({
 
       {/* ───── скругление ───── */}
       <IndentsEditor
+        isBorder
         label="Скругление краев"
         value={settings.borderRadius}
         onChange={val => onChange({ borderRadius: val })}

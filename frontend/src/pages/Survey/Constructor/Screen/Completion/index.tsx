@@ -170,6 +170,7 @@ const CompletionScreen: React.FC = React.memo(() => {
           value={form.design_settings.layout}
           onChange={handleDesign}
         >
+          <option disabled>Расположение картинки</option>
           <option value="without_image">Без картинки</option>
           <option value="with_image">Картинка слева</option>
           <option value="image_background">Фон‑картинка</option>
@@ -181,6 +182,7 @@ const CompletionScreen: React.FC = React.memo(() => {
           value={form.design_settings.alignment}
           onChange={handleDesign}
         >
+          <option disabled>Выравнивание текста</option>
           <option value="left">Слева</option>
           <option value="center">Центр</option>
           <option value="right">Справа</option>

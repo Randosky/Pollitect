@@ -224,6 +224,7 @@ const WelcomeScreen: React.FC = React.memo((): React.ReactElement => {
           onChange={handleDesign}
           name="layout"
         >
+          <option disabled>Расположение картинки</option>
           <option value="without_image">Без картинки</option>
           <option value="with_image">Картинка слева</option>
           <option value="image_background">Фон‑картинка</option>
@@ -235,6 +236,7 @@ const WelcomeScreen: React.FC = React.memo((): React.ReactElement => {
           onChange={handleDesign}
           name="alignment"
         >
+          <option disabled>Выравнивание текста</option>
           <option value="left">Слева</option>
           <option value="center">Центр</option>
           <option value="right">Справа</option>

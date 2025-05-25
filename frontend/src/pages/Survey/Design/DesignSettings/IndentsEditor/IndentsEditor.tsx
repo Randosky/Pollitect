@@ -8,12 +8,24 @@ import type { TIndents } from "@pages/Survey/Survey.types";
 import styles from "../DesignSettings.module.scss";
 
 type TIndentsEditorProps = {
+  isBorder?: boolean;
   label: string;
   value: TIndents;
   onChange: (val: TIndents) => void;
 };
 
-const IndentsEditor: React.FC<TIndentsEditorProps> = ({ label, value, onChange }) => {
+type TPosition = "Top" | "Right" | "Bottom" | "Left";
+
+const POSITIONS: TPosition[] = ["Top", "Right", "Bottom", "Left"];
+const POSITION_MAP: Record<TPosition, string> = { Top: "Сверху", Right: "Справа", Bottom: "Снизу", Left: "Слева" };
+const POSITION_BORDER_MAP: Record<TPosition, string> = {
+  Top: "Слева-сверху",
+  Right: "Справа-сверху",
+  Bottom: "Справа-снизу",
+  Left: "Слева-снизу",
+};
+
+const IndentsEditor: React.FC<TIndentsEditorProps> = ({ isBorder, label, value, onChange }) => {
   const [mode, setMode] = useState<"one" | "two" | "four">("one");
 
   /** единое значение */
@@ -96,11 +108,12 @@ const IndentsEditor: React.FC<TIndentsEditorProps> = ({ label, value, onChange }
       default:
         return (
           <>
-            {["Top", "Right", "Bottom", "Left"].map((p, i) => (
+            {POSITIONS.map((p, i) => (
               <TextField
                 key={p}
                 size="mobile"
                 config={{
+                  labelProps: { value: isBorder ? POSITION_BORDER_MAP[p] : POSITION_MAP[p] },
                   inputProps: {
                     id: `${label}-${p.toLowerCase()}`,
                     type: "number",
@@ -110,7 +123,7 @@ const IndentsEditor: React.FC<TIndentsEditorProps> = ({ label, value, onChange }
                   },
                 }}
               >
-                <span className={styles.hint}>px</span>
+                <span className={styles.hint}> px</span>
               </TextField>
             ))}
           </>
@@ -129,7 +142,7 @@ const IndentsEditor: React.FC<TIndentsEditorProps> = ({ label, value, onChange }
           onChange={e => setMode(e.target.value as "one" | "two" | "four")}
         >
           <option value="one">Один для всех</option>
-          <option value="two">Верх/низ и бока</option>
+          {!isBorder && <option value="two">Верх/низ и бока</option>}
           <option value="four">Каждая сторона</option>
         </Select>
       </div>
